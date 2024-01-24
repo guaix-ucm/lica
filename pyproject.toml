@@ -29,6 +29,9 @@ dependencies = [
     # 'rawpy',
     # 'exifread',
     # 'numpy',
+    # 'tabulate',
+    # 'jinja2',
+    # 'python-decouple',
 ]
 
 
