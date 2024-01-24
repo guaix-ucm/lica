@@ -3,7 +3,7 @@ requires = ["setuptools >= 45", "wheel", "setuptools_scm[toml]>=6.2"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "raw-plot"
+name = "lica"
 dynamic = ["version"]
 description = "Assorte collection of utilities (functions, classes, etc.) used in other projects at LICA, UCM"
 readme = "README.md"
