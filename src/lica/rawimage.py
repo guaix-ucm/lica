@@ -152,18 +152,18 @@ class Rect:
 
 class RawImage:
 
-    LABELS = (('Red', 'R'), ('Green 1','G1'), ('Green 2', 'G2'), ('Blue', 'B') )
+    LABELS = (('Red', 'R'), ('Green r','Gr'), ('Green b', 'Gb'), ('Blue', 'B') )
     BAYER_LETTER = ['B','G','R','G']
     BAYER_PTN_LIST = ('RGGB', 'BGGR', 'GRBG', 'GBRG')
     CFA_OFFSETS = {
         # Esto era segun mi entendimiento
-        'RGGB' : {'R':{'x': 0,'y': 0}, 'G1':{'x': 1,'y': 0}, 'G2':{'x': 0,'y': 1}, 'B':{'x': 1,'y': 1}}, 
-        'BGGR' : {'R':{'x': 1,'y': 1}, 'G1':{'x': 1,'y': 0}, 'G2':{'x': 0,'y': 1}, 'B':{'x': 0,'y': 0}},
-        'GRBG' : {'R':{'x': 1,'y': 0}, 'G1':{'x': 0,'y': 0}, 'G2':{'x': 1,'y': 1}, 'B':{'x': 0,'y': 1}},
-        'GBRG' : {'R':{'x': 0,'y': 1}, 'G1':{'x': 0,'y': 0}, 'G2':{'x': 1,'y': 1}, 'B':{'x': 1,'y': 0}},
+        'RGGB' : {'R':{'x': 0,'y': 0}, 'Gr':{'x': 1,'y': 0}, 'Gb':{'x': 0,'y': 1}, 'B':{'x': 1,'y': 1}}, 
+        'BGGR' : {'R':{'x': 1,'y': 1}, 'Gr':{'x': 1,'y': 0}, 'Gb':{'x': 0,'y': 1}, 'B':{'x': 0,'y': 0}},
+        'GRBG' : {'R':{'x': 1,'y': 0}, 'Gr':{'x': 0,'y': 0}, 'Gb':{'x': 1,'y': 1}, 'B':{'x': 0,'y': 1}},
+        'GBRG' : {'R':{'x': 0,'y': 1}, 'Gr':{'x': 0,'y': 0}, 'Gb':{'x': 1,'y': 1}, 'B':{'x': 1,'y': 0}},
     }
 
-    CHANNELS = ('R', 'G1', 'G2', 'B')
+    CHANNELS = ('R', 'Gr', 'Gb', 'B')
 
     def __init__(self, path):
         self._path = path
@@ -276,7 +276,7 @@ class RawImage:
         return self._cfa
 
     def saturation_levels(self, channels=None):
-        self._check_channels(channels, err_msg="saturation_levels on G=(G1+G2)/2 channel not available")
+        self._check_channels(channels, err_msg="saturation_levels on G=(Gr+Gb)/2 channel not available")
         if self._white_levels is None:
             self._img()
         if self._white_levels is None:
@@ -284,7 +284,7 @@ class RawImage:
         return [self._white_levels[self.CHANNELS.index(ch)] for ch in channels]
 
     def black_levels(self, channels=None):
-        self._check_channels(channels, err_msg="black_levels on G=(G1+G2)/2 channel not available")
+        self._check_channels(channels, err_msg="black_levels on G=(Gr+Gb)/2 channel not available")
         if self._biases is None:
             self._img()
         return [self._biases[self.CHANNELS.index(ch)] for ch in channels]
@@ -306,7 +306,7 @@ class RawImage:
 
     def statistics(self, roi=None, channels=None):
         '''In-place statistics calculation for RPi Zero'''
-        self._check_channels(channels, err_msg="In-place statistics on G=(G1+G2)/2 channel not available")
+        self._check_channels(channels, err_msg="In-place statistics on G=(Gr+Gb)/2 channel not available")
         with rawpy.imread(self._path) as img:
             # very imporatnt to be under the image context manager
             # when doing manipulations on img.raw_image
@@ -332,7 +332,7 @@ class SimulatedDarkImage(RawImage):
 
     def debayered(self, roi=None, channels=None):
         '''Get a stack of Bayer colour planes selected by the channels sequence'''
-        self._check_channels(channels, err_msg="In-place statistics on G=(G1+G2)/2 channel not available")
+        self._check_channels(channels, err_msg="In-place statistics on G=(Gr+Gb)/2 channel not available")
         with rawpy.imread(self._path) as img:
             self._read_img_metadata(img)
             raw_pixels_list = list()
