@@ -50,6 +50,9 @@ def vdate(datestr):
             pass
     return date
 
+def vmonth(datestr):
+    return datetime.datetime.strptime(datestr, '%Y-%m')
+
 def vfloat(num):
     '''Validator that admits fractions'''
     return float(fractions.Fraction(num))
