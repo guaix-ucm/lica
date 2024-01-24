@@ -67,23 +67,23 @@ def vfloat01(num):
 
 
 _COLOR_PLANES_COMBINATIONS = {
-    1: ( ['R',], ['G1',], ['G2'], ['G',], ['B',]),
-    2: ( ['R','G1'], ['R','G2'], ['R','G'], ['R','B'], ['G1','G2'], ['G1','B'], ['G2', 'B'], ['G', 'B']),
-    3: ( ['R','G1','G2'], ['R', 'G1', 'B'],  ['R', 'G2', 'B'], ['R', 'G', 'B'], ['G1', 'G2', 'B'], ),
-    4: ( ['R','G1','G2','B'], )
+    1: ( ['R',], ['Gr',], ['Gb'], ['G',], ['B',]),
+    2: ( ['R','Gr'], ['R','Gb'], ['R','G'], ['R','B'], ['Gr','Gb'], ['Gr','B'], ['Gb', 'B'], ['G', 'B']),
+    3: ( ['R','Gr','Gb'], ['R', 'Gr', 'B'],  ['R', 'Gb', 'B'], ['R', 'G', 'B'], ['Gr', 'Gb', 'B'], ),
+    4: ( ['R','Gr','Gb','B'], )
 }
 
 def _channel_comparator(chan_a, chan_b):
-    '''Compares channels so that R < G1 < G2 < G < B'''
+    '''Compares channels so that R < Gr < Gb < G < B'''
     if chan_a == chan_b:
         return 0
     if chan_a == 'R':
         return -1
     if chan_a == 'B':
         return 1
-    if chan_a == 'G1':
-        return -11 if chan_b in ('G2', 'G', 'B') else 1
-    if chan_a == 'G2':
+    if chan_a == 'Gr':
+        return -11 if chan_b in ('Gb', 'G', 'B') else 1
+    if chan_a == 'Gb':
         return -1 if chan_b in ('G', 'B') else 1
     if chan_a == 'G':
         return -11 if chan_b in ('B',) else 1
