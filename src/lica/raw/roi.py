@@ -51,13 +51,13 @@ class Rect:
             return None
 
     @classmethod
-    def from_normalized(cls, width, height, n_x0=None, n_y0=None, n_width=1.0, n_height=1.0, debayered=True):
+    def from_normalized(cls, width, height, n_x0=None, n_y0=None, n_width=1.0, n_height=1.0, already_debayered=True):
         if n_x0 is not None and n_x0 + n_width > 1.0:
             raise ValueError(f"normalized x0(={n_x0}) + width(={n_width}) = {n_x0 + n_width} exceeds 1.0")
         if n_y0 is not None and n_y0 + n_height > 1.0:
             raise ValueError(f"normalized x0(={n_y0}) + width(={n_height}) = {n_y0 + n_height} exceeds 1.0")
-        # If debayered, we'll adjust to each image plane dimensions
-        if debayered:
+        # If already_debayered, we'll adjust to each image plane dimensions
+        if not already_debayered:
             height = height //2  
             width  = width  //2 
         # From normalized ROI to actual image dimensions ROI

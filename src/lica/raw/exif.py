@@ -52,7 +52,7 @@ class UnsupportedCFAError(ValueError):
 # Auxiliar classes
 # ----------------
 
-class RawImage:
+class ExifImage:
 
     BAYER_LETTER = ['B','G','R','G']
     BAYER_PTN_LIST = ('RGGB', 'BGGR', 'GRBG', 'GBRG')
@@ -97,6 +97,8 @@ class RawImage:
         self._metadata['exposure'] = fractions.Fraction(str(exif.get('EXIF ExposureTime', 0)))
         self._metadata['width'] = width
         self._metadata['height'] = height
+        self._metadata['roi'] = None
+        self._metadata['channels'] = None
 
     def _exif(self):
         with open(self._path, 'rb') as f:
@@ -149,23 +151,25 @@ class RawImage:
     def label(self, i):
         return self.LABELS[i]
 
+    def metadata(self):
+        if self._metadata.get('camera') is None:
+            self._exif()
+        return self._metadata
+
     def name(self):
         return self._metadata['name']
-
-    def shape(self):
-        return self._shape
-
-    def roi(self, n_x0=None, n_y0=None, n_width=1.0, n_heigth=1.0):
-        return Rect.from_normalized(self._shape[1], self._shape[0], n_x0, n_y0, n_width, n_heigth)
 
     def exposure(self):
         '''Useul for image list sorting by exposure time'''
         return self._metadata['exposure']
 
-    def exif(self):
-        if self._metadata.get('camera') is None:
-            self._exif()
-        return self._metadata
+    def shape(self):
+        return self._shape
+
+    def roi(self, n_x0=None, n_y0=None, n_width=1.0, n_heigth=1.0):
+        self['roi'] =  Rect.from_normalized(self._shape[1], self._shape[0], n_x0, n_y0, n_width, n_heigth, already_debayered=False)
+        return self['roi']
+
 
     def cfa_pattern(self):
         '''Returns the Bayer pattern as RGGB, BGGR, GRBG, GBRG strings'''
@@ -189,7 +193,7 @@ class RawImage:
             self._img()
         return [self._biases[CHANNELS.index(ch)] for ch in channels]
 
-    def debayered(self, roi=None, channels=None):
+    def load(self, roi=None, channels=None):
         '''Get a stack of Bayer colour planes selected by the channels sequence'''
         with rawpy.imread(self._path) as img:
             self._read_img_metadata(img)
@@ -201,6 +205,8 @@ class RawImage:
                 raw_pixels = img.raw_image[y::2, x::2].copy() # This is the real debayering thing
                 raw_pixels = self._trim(raw_pixels, roi)
                 raw_pixels_list.append(raw_pixels)
+        self._metadata['roi'] = self.roi() if roi is None else roi
+        self._metadata['channels'] = CHANNELS if channels is None else channels
         return self._to_stack(raw_pixels_list, channels)
         
 
@@ -220,10 +226,12 @@ class RawImage:
                 raw_pixels = self._trim(raw_pixels, roi)
                 average, stddev = round(raw_pixels.mean(),1), round(raw_pixels.std(),3)
                 stats_list.append([average, stddev])
+        self._metadata['roi'] = self.roi() if roi is None else roi
+        self._metadata['channels'] = CHANNELS if channels is None else channels
         return self._to_stack(stats_list, channels)
 
 
-class SimulatedDarkImage(RawImage):
+class SimulatedDarkImage(ExifImage):
 
     def __init__(self, path, dk_current=1.0, rd_noise=1.0):
         super().__init__(path)
@@ -245,20 +253,3 @@ class SimulatedDarkImage(RawImage):
                 raw_pixels = self._trim(raw_pixels, roi)
                 raw_pixels_list.append(raw_pixels)
         return self._to_stack(raw_pixels_list, channels)
-
-
-# Convenience function when plotting titles
-def imageset_metadata(path, x0, y0, width, height, channels):
-    '''returns common metadata for all the image set with different exposure times'''
-    image = RawImage(path)
-    roi = image.roi(x0, y0, width, height)
-    exif = image.exif()
-    return {
-        'camera': exif['camera'],
-        'iso': exif['iso'],
-        'roi': roi,
-        'cols': image.shape()[0],
-        'rows': image.shape()[1],
-        'maker': exif['maker'],
-        'channels': tuple(channels)
-    }

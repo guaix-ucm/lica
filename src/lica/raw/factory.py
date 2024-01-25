@@ -10,19 +10,28 @@
 # System wide imports
 # -------------------
 
+
+import os
+
 # ---------------------
 # Thrid-party libraries
 # ---------------------
 
-# ---------
-# Constants
-# ---------
 
-LABELS = (('Red', 'R'), ('Green r','Gr'), ('Green b', 'Gb'), ('Blue', 'B'))
-CHANNELS = ('R', 'Gr', 'Gb', 'B')
+# -----------
+# Own package
+# -----------
 
-FITS_EXTENSIONS = ('.fts', '.fit', '.fits')
+from . import CHANNELS, LABELS, FITS_EXTENSIONS
+from .fits import FitsImage
+from .exif import ExifImage
 
-# ----------
-# Exceptions
-# ----------
+class ImageFactory:
+
+	def imageFor(self, path):
+		extension = os.path.splitext(path)[1]:
+		if extension in FITS_EXTENSIONS:
+			image = FitImage(path)
+		else
+			image = ExifImage(path)
+		return image
