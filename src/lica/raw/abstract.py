@@ -22,7 +22,7 @@ import os
 # -----------
 
 from .constants import CHANNELS, LABELS
-from .roi import Rect, NRect
+from .roi import  NRect
 
 
 class AbstractImageLoader:
