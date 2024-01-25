@@ -25,18 +25,11 @@ import os
 from .fits import FitsImage
 from .exif import ExifImage
 
-# ---------
-# Constants
-# ---------
 
-LABELS = (('Red', 'R'), ('Green r','Gr'), ('Green b', 'Gb'), ('Blue', 'B'))
-CHANNELS = ('R', 'Gr', 'Gb', 'B')
-
-FITS_EXTENSIONS = ('.fts', '.fit', '.fits')
 
 class ImageFactory:
 
-	def imageFor(self, path):
+	def image_from(self, path):
 		extension = os.path.splitext(path)[1]:
 		if extension in FITS_EXTENSIONS:
 			image = FitImage(path)
