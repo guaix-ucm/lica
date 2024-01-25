@@ -22,17 +22,19 @@ import os
 # Own package
 # ----------
 
-from .fits import FitsImage
-from .exif import ExifImage
+from .fits import FitsImageLoader
+from .exif import ExifImageLoader
 from .constants import FITS_EXTENSIONS
 
 
-class ImageFactory:
+class ImageLoaderFactory:
 
 	def image_from(self, path):
 		extension = os.path.splitext(path)[1]
 		if extension in FITS_EXTENSIONS:
 			image = FitImage(path)
 		else:
-			image = ExifImage(path)
+			image = ExifImageLoader(path)
 		return image
+
+

@@ -30,6 +30,13 @@ class Point:
     def __repr__(self):
         return f"({self.x},{self.y})"
 
+class NRect:
+    '''Normalized rectangle with 0..1 floating point coordinates and dimensions'''
+     def __init__(self, v_x0=None ,v_y0=None, v_width=1.0, v_height=1.0): 
+        self.x0 = v_x0
+        self.y0 = v_y0
+        self.w = v_width
+        self.h = v_height
 
 class Rect:
     """ Region of interest """
@@ -51,20 +58,20 @@ class Rect:
             return None
 
     @classmethod
-    def from_normalized(cls, width, height, n_x0=None, n_y0=None, n_width=1.0, n_height=1.0, already_debayered=True):
-        if n_x0 is not None and n_x0 + n_width > 1.0:
-            raise ValueError(f"normalized x0(={n_x0}) + width(={n_width}) = {n_x0 + n_width} exceeds 1.0")
-        if n_y0 is not None and n_y0 + n_height > 1.0:
-            raise ValueError(f"normalized x0(={n_y0}) + width(={n_height}) = {n_y0 + n_height} exceeds 1.0")
+    def from_normalized(cls, width, height, v_roi, already_debayered=True):
+        if v_roi.x0 is not None and v_roi.x0 + v_roi.w > 1.0:
+            raise ValueError(f"normalized x0(={v_roi.x0}) + width(={v_roi.w}) = {v_roi.x0 + v_roi.w} exceeds 1.0")
+        if v_roi.y0 is not None and v_roi.y0 + v_roi.h > 1.0:
+            raise ValueError(f"normalized x0(={v_roi.y0}) + width(={v_roi.h}) = {v_roi.y0 + v_roi.h} exceeds 1.0")
         # If already_debayered, we'll adjust to each image plane dimensions
         if not already_debayered:
             height = height //2  
             width  = width  //2 
         # From normalized ROI to actual image dimensions ROI
-        w = int(width * n_width) 
-        h = int(height * n_height)
-        x0 = (width  - w)//2 if n_x0 is None else int(width * n_x0)
-        y0 = (height - h)//2 if n_y0 is None else int(height * n_y0)
+        w = int(width * v_roi.w) 
+        h = int(height * v_roi.h)
+        x0 = (width  - w)//2 if v_roi.x0 is None else int(width * v_roi.x0)
+        y0 = (height - h)//2 if v_roi.y0 is None else int(height * v_roi.y0)
         return cls(x0, x0+w ,y0, y0+h)
 
     @classmethod

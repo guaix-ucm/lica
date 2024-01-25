@@ -18,7 +18,7 @@
 # Own package
 # ----------
 
-from .factory import ImageFactory
+from .factory import ImageLoaderFactory
 from .roi import Rect
 from .constants import LABELS, CHANNELS, FITS_EXTENSIONS
 
