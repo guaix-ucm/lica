@@ -22,6 +22,8 @@ import rawpy
 import exifread
 import numpy as np
 
+from . import CHANNELS
+
 # ---------
 # Constants
 # ---------
@@ -151,7 +153,6 @@ class Rect:
 
 class RawImage:
 
-    LABELS = (('Red', 'R'), ('Green r','Gr'), ('Green b', 'Gb'), ('Blue', 'B') )
     BAYER_LETTER = ['B','G','R','G']
     BAYER_PTN_LIST = ('RGGB', 'BGGR', 'GRBG', 'GBRG')
     CFA_OFFSETS = {
@@ -161,8 +162,6 @@ class RawImage:
         'GRBG' : {'R':{'x': 1,'y': 0}, 'Gr':{'x': 0,'y': 0}, 'Gb':{'x': 1,'y': 1}, 'B':{'x': 0,'y': 1}},
         'GBRG' : {'R':{'x': 0,'y': 1}, 'Gr':{'x': 0,'y': 0}, 'Gb':{'x': 1,'y': 1}, 'B':{'x': 1,'y': 0}},
     }
-
-    CHANNELS = ('R', 'Gr', 'Gb', 'B')
 
     def __init__(self, path):
         self._path = path
@@ -212,7 +211,7 @@ class RawImage:
         self._metadata['note'] = str(exif.get('EXIF MakerNote', None)) # Useless fo far ...
 
     def _check_channels(self, channels, err_msg):
-        channels = self.CHANNELS if channels is None else channels
+        channels = CHANNELS if channels is None else channels
         if 'G' in channels:
             raise NotImplementedError(err_msg)
 
@@ -237,7 +236,7 @@ class RawImage:
                     aver_green = (initial_list[1] + initial_list[2]).astype(np.float32) / 2
                     output_list.append(aver_green)
                 else:
-                    i = self.CHANNELS.index(ch)
+                    i = CHANNELS.index(ch)
                     output_list.append(initial_list[i])
         return np.stack(output_list)
 
@@ -281,13 +280,13 @@ class RawImage:
             self._img()
         if self._white_levels is None:
             raise NotImplementedError("saturation_levels for this image not available using LibRaw")
-        return [self._white_levels[self.CHANNELS.index(ch)] for ch in channels]
+        return [self._white_levels[CHANNELS.index(ch)] for ch in channels]
 
     def black_levels(self, channels=None):
         self._check_channels(channels, err_msg="black_levels on G=(Gr+Gb)/2 channel not available")
         if self._biases is None:
             self._img()
-        return [self._biases[self.CHANNELS.index(ch)] for ch in channels]
+        return [self._biases[CHANNELS.index(ch)] for ch in channels]
 
     def debayered(self, roi=None, channels=None):
         '''Get a stack of Bayer colour planes selected by the channels sequence'''
@@ -295,7 +294,7 @@ class RawImage:
             self._read_img_metadata(img)
             cfa_pattern = self._cfa
             raw_pixels_list = list()
-            for channel in self.CHANNELS:
+            for channel in CHANNELS:
                 x = self.CFA_OFFSETS[cfa_pattern][channel]['x']
                 y = self.CFA_OFFSETS[cfa_pattern][channel]['y']
                 raw_pixels = img.raw_image[y::2, x::2].copy() # This is the real debayering thing
@@ -338,8 +337,8 @@ class SimulatedDarkImage(RawImage):
             raw_pixels_list = list()
             rng = np.random.default_rng()
             shape = (self._shape[0]//2, self._shape[1]//2)
-            dark = [self._dk_current * self.exposure() for ch in self.CHANNELS]
-            for i, channel in enumerate(self.CHANNELS):
+            dark = [self._dk_current * self.exposure() for ch in CHANNELS]
+            for i, channel in enumerate(CHANNELS):
                 raw_pixels = self._biases[i] + dark[i]+ self._rd_noise * rng.standard_normal(size=shape)
                 raw_pixels = np.asarray(raw_pixels, dtype=np.uint16)
                 raw_pixels = self._trim(raw_pixels, roi)
