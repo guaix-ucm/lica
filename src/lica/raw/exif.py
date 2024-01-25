@@ -66,8 +66,8 @@ class ExifImageLoader:
         'GBRG' : {'R':{'x': 0,'y': 1}, 'Gr':{'x': 0,'y': 0}, 'Gb':{'x': 1,'y': 1}, 'B':{'x': 1,'y': 0}},
     }
 
-    def __init__(self, path, v_roi=None, channels=None):
-        super().__init__(path, roi, channels)
+    def __init__(self, path, n_roi=None, channels=None):
+        super().__init__(path, n_roi, channels)
         self._color_desc = None
         self._cfa = None
         self._biases = None

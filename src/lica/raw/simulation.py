@@ -33,8 +33,8 @@ from .abstract import ExifImageLoader
 
 class SimulatedDarkImage(ExifImageLoader):
 
-    def __init__(self, path,  roi=None, channels=None, dk_current=1.0, rd_noise=1.0):
-        super().__init__(path, roi, channels)
+    def __init__(self, path,  n_roi=None, channels=None, dk_current=1.0, rd_noise=1.0):
+        super().__init__(path, n_roi, channels)
         self._dk_current = dk_current
         self._rd_noise = rd_noise
         self._biases = (256, 256, 256, 256)

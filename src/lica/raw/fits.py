@@ -40,8 +40,8 @@ log = logging.getLogger(__name__)
 
 class FitsImageLoader(AbstractImageLoader):
 
-    def __init__(self, path):
-        super().__init__(path, roi, channels)
+    def __init__(self, path, v_roi, channels):
+        super().__init__(path, v_roi, channels)
         self._fits()
 
     def get_header(header, tag, default=None):
