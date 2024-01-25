@@ -132,7 +132,7 @@ class FitsImage:
 
     def cfa_pattern(self):
         '''Returns the Bayer pattern as RGGB, BGGR, GRBG, GBRG strings'''
-       raise NotImplementeError("Not yet. Missing FITS keyword for this")
+        raise NotImplementeError("Not yet. Missing FITS keyword for this")
 
     def saturation_levels(self, channels=None):
         self._check_channels(channels, err_msg="saturation_levels on G=(Gr+Gb)/2 channel not available")
