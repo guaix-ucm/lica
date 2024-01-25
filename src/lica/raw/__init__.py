@@ -19,7 +19,7 @@
 # ----------
 
 from .factory import ImageLoaderFactory
-from .roi import Rect
+from .roi import Rect, NRect
 from .constants import LABELS, CHANNELS, FITS_EXTENSIONS
 
 # ---------
