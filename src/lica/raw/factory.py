@@ -24,7 +24,7 @@ import os
 
 from .fits import FitsImage
 from .exif import ExifImage
-
+from .constants import FITS_EXTENSIONS
 
 
 class ImageFactory:
