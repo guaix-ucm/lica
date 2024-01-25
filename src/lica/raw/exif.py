@@ -91,8 +91,8 @@ class ExifImageLoader(AbstractImageLoader):
             exif = exifread.process_file(f, details=True)
         if not exif:
             raise ValueError('Could not open EXIF metadata')
-        width  = int(str(exif.get('EXIF ExifImageLoaderWidth')))
-        height = int(str(exif.get('EXIF ExifImageLoaderLength')))
+        width  = int(str(exif.get('EXIF ExifImageWidth')))
+        height = int(str(exif.get('EXIF ExifImageLength')))
         # General purpose metadata
         self._shape = (height, width)
         self._roi =  Rect.from_normalized(self._shape[1], self._shape[0], self._v_roi, already_debayered=False)
