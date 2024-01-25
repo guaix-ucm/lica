@@ -30,7 +30,7 @@ from .exif import ExifImage
 class ImageFactory:
 
 	def image_from(self, path):
-		extension = os.path.splitext(path)[1]:
+		extension = os.path.splitext(path)[1]
 		if extension in FITS_EXTENSIONS:
 			image = FitImage(path)
 		else
