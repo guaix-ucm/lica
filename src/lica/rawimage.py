@@ -250,7 +250,7 @@ class RawImage:
         return self.LABELS[i]
 
     def name(self):
-        return os.path.basename(self._path)
+        return self._metadata['name']
 
     def shape(self):
         return self._shape
