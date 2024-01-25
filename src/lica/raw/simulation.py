@@ -28,7 +28,7 @@ import numpy as np
 
 from .constants import CHANNELS, LABELS
 from .roi import Rect, NRect
-from .abstract import ExifImageLoader
+from .exif import ExifImageLoader
 
 
 class SimulatedDarkImage(ExifImageLoader):

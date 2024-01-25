@@ -21,6 +21,7 @@
 from .factory import ImageLoaderFactory
 from .roi import Rect, NRect
 from .constants import LABELS, CHANNELS, FITS_EXTENSIONS
+from .simulation import SimulatedDarkImage
 
 # ---------
 # Constants
