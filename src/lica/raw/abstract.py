@@ -107,4 +107,4 @@ class AbstractImageLoader:
 
     def statistics(self):
         '''In-place statistics calculation for RPi Zero'''
-         raise NotImplementedError
+        raise NotImplementedError
