@@ -17,6 +17,8 @@ import os
 # Thrid-party libraries
 # ---------------------
 
+import numpy as np
+
 # -----------
 # Own package
 # -----------
