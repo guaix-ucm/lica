@@ -87,7 +87,7 @@ class FITSImage:
         return self._metadata
 
     def shape(self):
-        return self._shape if len(self._shape) = 2 else tuple(self._shape[1:])
+        return self._shape if len(self._shape) == 2 else tuple(self._shape[1:])
 
     def roi(self, n_x0=None, n_y0=None, n_width=1.0, n_heigth=1.0):
         if len (self._shape) == 3:
