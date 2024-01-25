@@ -20,11 +20,19 @@ import os
 
 # -----------
 # Own package
-# -----------
+# ----------
 
-from . import CHANNELS, LABELS, FITS_EXTENSIONS
 from .fits import FitsImage
 from .exif import ExifImage
+
+# ---------
+# Constants
+# ---------
+
+LABELS = (('Red', 'R'), ('Green r','Gr'), ('Green b', 'Gb'), ('Blue', 'B'))
+CHANNELS = ('R', 'Gr', 'Gb', 'B')
+
+FITS_EXTENSIONS = ('.fts', '.fit', '.fits')
 
 class ImageFactory:
 

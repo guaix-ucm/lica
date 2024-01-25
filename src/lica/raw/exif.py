@@ -26,7 +26,7 @@ import numpy as np
 # Own package
 # -----------
 
-from . import CHANNELS, LABELS
+from .constants import CHANNELS, LABELS
 from .roi import Rect
 
 # ---------

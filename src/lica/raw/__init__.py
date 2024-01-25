@@ -14,14 +14,18 @@
 # Thrid-party libraries
 # ---------------------
 
+# -----------
+# Own package
+# ----------
+
+from .factory import ImageFactory
+from .roi import Rect
+from .constants import LABELS, CHANNELS, FITS_EXTENSIONS
+
 # ---------
 # Constants
 # ---------
 
-LABELS = (('Red', 'R'), ('Green r','Gr'), ('Green b', 'Gb'), ('Blue', 'B'))
-CHANNELS = ('R', 'Gr', 'Gb', 'B')
-
-FITS_EXTENSIONS = ('.fts', '.fit', '.fits')
 
 # ----------
 # Exceptions

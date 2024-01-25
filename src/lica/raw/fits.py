@@ -25,7 +25,7 @@ from astropy.io import fits
 # Own package
 # -----------
 
-from . import CHANNELS, LABELS
+from .constants import CHANNELS, LABELS
 from .roi import Rect
 
 
