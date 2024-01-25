@@ -38,7 +38,7 @@ from .abstract import AbstractImageLoader
 
 log = logging.getLogger(__name__)
 
-class FitsImageLoader:(AbstractImageLoader)
+class FitsImageLoader:(AbstractImageLoader):
 
     def __init__(self, path):
         super().__init__(path, roi, channels)
