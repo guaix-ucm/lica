@@ -18,8 +18,8 @@
 # Constants
 # ---------
 
- LABELS = (('Red', 'R'), ('Green r','Gr'), ('Green b', 'Gb'), ('Blue', 'B') )
- CHANNELS = ('R', 'Gr', 'Gb', 'B')
+LABELS = (('Red', 'R'), ('Green r','Gr'), ('Green b', 'Gb'), ('Blue', 'B'))
+CHANNELS = ('R', 'Gr', 'Gb', 'B')
 
 # ----------
 # Exceptions
