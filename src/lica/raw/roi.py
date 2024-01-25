@@ -32,7 +32,7 @@ class Point:
 
 class NRect:
 	'''Normalized rectangle with 0..1 floating point coordinates and dimensions'''
-	 def __init__(self, n_x0=None ,n_y0=None, n_width=1.0, n_height=1.0): 
+	def __init__(self, n_x0=None ,n_y0=None, n_width=1.0, n_height=1.0): 
 		self.x0 = n_x0
 		self.y0 = n_y0
 		self.w = n_width
