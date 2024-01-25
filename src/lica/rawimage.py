@@ -359,5 +359,5 @@ def imageset_metadata(path, x0, y0, width, height, channels):
         'cols': image.shape()[0],
         'rows': image.shape()[1],
         'maker': exif['maker'],
-        'channels': channels
+        'channels': tuple(channels)
     }
