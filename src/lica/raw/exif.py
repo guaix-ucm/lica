@@ -167,8 +167,8 @@ class ExifImage:
         return self._shape
 
     def roi(self, n_x0=None, n_y0=None, n_width=1.0, n_heigth=1.0):
-        self['roi'] =  Rect.from_normalized(self._shape[1], self._shape[0], n_x0, n_y0, n_width, n_heigth, already_debayered=False)
-        return self['roi']
+        self._metadata['roi'] =  Rect.from_normalized(self._shape[1], self._shape[0], n_x0, n_y0, n_width, n_heigth, already_debayered=False)
+        return self._metadata['roi']
 
 
     def cfa_pattern(self):

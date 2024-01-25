@@ -128,7 +128,8 @@ class FitsImage:
             width = self._shape[1]
             height = self._shape[0]
             debayered=False
-        return Rect.from_normalized(width, height, n_x0, n_y0, n_width, n_heigth,  already_debayered=debayered)
+        self._metadata['roi'] =  Rect.from_normalized(self._shape[1], self._shape[0], n_x0, n_y0, n_width, n_heigth, already_debayered=debayered)
+        return self._metadata['roi']
 
     def cfa_pattern(self):
         '''Returns the Bayer pattern as RGGB, BGGR, GRBG, GBRG strings'''
