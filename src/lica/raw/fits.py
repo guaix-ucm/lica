@@ -101,7 +101,7 @@ class FitsImageLoader(AbstractImageLoader):
             pixels = hdul[0].data
             assert len(pixels.shape) == 3
             pixels = self._trim(pixels)
-            if channels is None or len(channels) == 4:
+            if self._channels is None or len(self._channels) == 4:
                 return pixels.copy()
             return self._select_by_channels(pixels)
 
