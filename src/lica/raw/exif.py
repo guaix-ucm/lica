@@ -79,7 +79,7 @@ class ExifImageLoader(AbstractImageLoader):
         with rawpy.imread(self._path) as img:
             self._read_img_metadata(img)
 
-    def _read_img_metadata(self, img):
+    def _read_img_metadata(self, img_desc):
         '''To be used in teh context of a image m¡context manager'''
         self._color_desc = img_desc.color_desc.decode('utf-8')
         self._cfa = ''.join([ self.BAYER_LETTER[img_desc.raw_pattern[row,column]] for row in (1,0) for column in (1,0)])
