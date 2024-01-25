@@ -193,6 +193,7 @@ class RawImage:
         width  = int(str(exif.get('EXIF ExifImageWidth')))
         height = int(str(exif.get('EXIF ExifImageLength')))
         self._shape = (height, width)
+        self._metadata['name'] = os.path.basename(self._path)
         self._metadata['exposure'] = fractions.Fraction(str(exif.get('EXIF ExposureTime', 0)))
         self._metadata['width'] = width
         self._metadata['height'] = height
