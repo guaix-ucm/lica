@@ -32,7 +32,7 @@ class ImageLoaderFactory:
 	def image_from(self, path, n_roi=None, channels=None):
 		extension = os.path.splitext(path)[1]
 		if extension in FITS_EXTENSIONS:
-			image = FitImage(path, n_roi, channels)
+			image = FitImageLoader(path, n_roi, channels)
 		else:
 			image = ExifImageLoader(path, n_roi, channels)
 		return image
