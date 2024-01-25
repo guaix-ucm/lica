@@ -26,7 +26,6 @@ import numpy as np
 # Constants
 # ---------
 
-log = logging.getLogger(__name__)
 
 # ----------
 # Exceptions
@@ -75,7 +74,7 @@ class Point:
 class Rect:
     """ Region of interest """
 
-    PATTERN = r'\[(\d+):(\d+),(\d+):(\d+)\]'
+    PATTERN = r'\[(\d+):(\d+),(\d+):(\d+)\]' # NumPy style [row0:row1,col0:col1] 
 
     @classmethod
     def from_string(cls, Rect_str):
@@ -83,20 +82,20 @@ class Rect:
         pattern = re.compile(Rect.PATTERN)
         matchobj = pattern.search(Rect_str)
         if matchobj:
-            y1 = int(matchobj.group(1))
-            y2 = int(matchobj.group(2))
-            x1 = int(matchobj.group(3))
-            x2 = int(matchobj.group(4))
-            return cls(x1,x2,y1,y2)
+            y0 = int(matchobj.group(1))
+            y1 = int(matchobj.group(2))
+            x0 = int(matchobj.group(3))
+            x1 = int(matchobj.group(4))
+            return cls(x0,x1,y0,y1)
         else:
             return None
 
     @classmethod
     def from_normalized(cls, width, height, n_x0=None, n_y0=None, n_width=1.0, n_height=1.0, debayered=True):
-        if n_x0 is not None:
-            assert n_x0 + n_width <= 1.0, f"normalized x0(={n_x0}) + width(={n_width}) = {n_x0 + n_width} exceeds 1.0"
-        if n_y0 is not None:
-            assert n_y0 + n_height <= 1.0, f"normalized x0(={n_y0}) + width(={n_height}) = {n_y0 + n_height} exceeds 1.0"
+        if n_x0 is not None and n_x0 + n_width > 1.0:
+            raise ValueError(f"normalized x0(={n_x0}) + width(={n_width}) = {n_x0 + n_width} exceeds 1.0")
+        if n_y0 is not None and n_y0 + n_height > 1.0:
+            raise ValueError(f"normalized x0(={n_y0}) + width(={n_height}) = {n_y0 + n_height} exceeds 1.0")
         # If debayered, we'll adjust to each image plane dimensions
         if debayered:
             height = height //2  
@@ -110,40 +109,40 @@ class Rect:
 
     @classmethod
     def from_dict(cls, Rect_dict):
-        return cls(Rect_dict['x1'], Rect_dict['x2'],Rect_dict['y1'], Rect_dict['y2'])
+        return cls(Rect_dict['x0'], Rect_dict['x1'],Rect_dict['y0'], Rect_dict['y1'])
     
-    def __init__(self, x1 ,x2, y1, y2):        
-        self.x1 = min(x1,x2)
-        self.y1 = min(y1,y2)
-        self.x2 = max(x1,x2)
-        self.y2 = max(y1,y2)
+    def __init__(self, x0 ,x1, y0, y1):        
+        self.x0 = min(x0,x1)
+        self.y0 = min(y0,y1)
+        self.x1 = max(x0,x1)
+        self.y1 = max(y0,y1)
 
     def to_dict(self):
-        return {'x1':self.x1, 'y1':self.y1, 'x2':self.x2, 'y2':self.y2}
+        return {'x0':self.x0, 'y0':self.y0, 'x1':self.x1, 'y1':self.y1}
         
     def xy(self):
         '''To use when displaying Rectangles in matplotlib'''
-        return(self.x1, self.y1)
+        return(self.x0, self.y0)
 
     def width(self):
-        return abs(self.x2 - self.x1)
+        return abs(self.x1 - self.x0)
 
     def height(self):
-        return abs(self.y2 - self.y1)
+        return abs(self.y1 - self.y0)
         
     def dimensions(self):
         '''returns width and height'''
-        return abs(self.x2 - self.x1), abs(self.y2 - self.y1)
+        return abs(self.x1 - self.x0), abs(self.y1 - self.y0)
 
     def __add__(self, point):
-        return Rect(self.x1 + point.x, self.x2 + point.x, self.y1 + point.y, self.y2 + point.y)
+        return Rect(self.x0 + point.x, self.x1 + point.x, self.y0 + point.y, self.y1 + point.y)
 
     def __radd__(self, point):
         return self.__add__(point)
         
     def __repr__(self):
         '''string in NumPy section notation'''
-        return f"[{self.y1}:{self.y2},{self.x1}:{self.x2}]"
+        return f"[{self.y0}:{self.y1},{self.x0}:{self.x1}]"
       
 
 # ----------------
@@ -218,11 +217,11 @@ class RawImage:
 
     def _trim(self, raw_pixels, roi):
         if roi:
-            y1 = roi.y1  
-            y2 = roi.y2
-            x1 = roi.x1 
-            x2 = roi.x2
-            raw_pixels = raw_pixels[y1:y2, x1:x2]  # Extract ROI 
+            y0 = roi.y0  
+            y1 = roi.y1
+            x0 = roi.x0 
+            x1 = roi.x1
+            raw_pixels = raw_pixels[y0:y1, x0:x1]  # Extract ROI 
         return raw_pixels
 
 
@@ -234,7 +233,7 @@ class RawImage:
             for ch in channels:
                 if ch == 'G':
                     # This assumes that initial list is a pixel array list
-                    aver_green = (initial_list[1] + initial_list[2]) // 2
+                    aver_green = (initial_list[1] + initial_list[2]).astype(np.float32) / 2
                     output_list.append(aver_green)
                 else:
                     i = self.CHANNELS.index(ch)
@@ -339,7 +338,6 @@ class SimulatedDarkImage(RawImage):
             rng = np.random.default_rng()
             shape = (self._shape[0]//2, self._shape[1]//2)
             dark = [self._dk_current * self.exposure() for ch in self.CHANNELS]
-            log.info("DARK Curent is %s", dark)
             for i, channel in enumerate(self.CHANNELS):
                 raw_pixels = self._biases[i] + dark[i]+ self._rd_noise * rng.standard_normal(size=shape)
                 raw_pixels = np.asarray(raw_pixels, dtype=np.uint16)
