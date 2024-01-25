@@ -89,10 +89,10 @@ class FitsImageLoader(AbstractImageLoader):
     def _trim(self, pixels):
         '''Special case for 3D FITS'''
         if self._roi:
-            y0 = roi.y0  
-            y1 = roi.y1
-            x0 = roi.x0 
-            x1 = roi.x1
+            y0 = self._.y0  
+            y1 = self._.y1
+            x0 = self._.x0 
+            x1 = self._.x1
             pixels = pixels[:, y0:y1, x0:x1]  if self._dim == 3 else pixels[y0:y1, x0:x1]    
         return pixels
 
