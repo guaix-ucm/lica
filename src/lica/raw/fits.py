@@ -44,7 +44,7 @@ class FitsImageLoader(AbstractImageLoader):
         super().__init__(path, v_roi, channels)
         self._fits()
 
-    def get_header(header, tag, default=None):
+    def get_header(self, header, tag, default=None):
         try:
             value = header[tag]
         except KeyError:
