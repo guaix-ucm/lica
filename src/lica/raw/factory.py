@@ -33,6 +33,6 @@ class ImageFactory:
 		extension = os.path.splitext(path)[1]
 		if extension in FITS_EXTENSIONS:
 			image = FitImage(path)
-		else
+		else:
 			image = ExifImage(path)
 		return image
