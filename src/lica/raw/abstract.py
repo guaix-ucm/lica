@@ -32,7 +32,7 @@ class AbstractImageLoader:
     def __init__(self, path, n_roi=None, channels=None):
         self._path = path
         self._n_roi = NRect(0.0, 0.0, 1.0, 1.0) if n_roi is None else n_roi
-        self._full_image = True if (n_roi.w == 1 and n_roi.h == 1) else False
+        self._full_image = True if (self._n_roi.w == 1 and self._n_roi.h == 1) else False
         self._channels = CHANNELS if channels is None else channels
         self._shape = None
         self._roi = None
