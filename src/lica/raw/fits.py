@@ -113,7 +113,7 @@ class FitsImageLoader(AbstractImageLoader):
         if self._dim == 2:
             nparray = self._load_debayer()
         else:
-            nparray = self._load_cube(roi, channels)
+            nparray = self._load_cube()
         return nparray
 
     def statistics(self):
