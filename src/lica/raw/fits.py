@@ -110,7 +110,7 @@ class FitsImageLoader(AbstractImageLoader):
 
     def shape(self):
         '''Overrdies base method'''
-         if self._dim == 2:
+        if self._dim == 2:
             return super().shape()
         else:
             return self._shape
