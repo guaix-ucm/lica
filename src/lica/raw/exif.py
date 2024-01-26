@@ -94,15 +94,15 @@ class ExifImageLoader(AbstractImageLoader):
         width  = int(str(exif.get('EXIF ExifImageWidth')))
         height = int(str(exif.get('EXIF ExifImageLength')))
         # General purpose metadata
-        self._shape = (height, width)
-        self._roi =  Roi.from_normalized_roi(self._shape[1], self._shape[0], self._n_roi, already_debayered=False)
+        self._shape = (height//2, width//2)
+        self._roi =  Roi.from_normalized_roi(width, height, self._n_roi, already_debayered=False)
         self._metadata['name'] = os.path.basename(self._path)
         self._metadata['roi'] = str(self._roi)
         self._metadata['channels'] = ' '.join(self._channels)
         # Metadata coming from EXIF
         self._metadata['exposure'] = fractions.Fraction(str(exif.get('EXIF ExposureTime', 0)))
-        self._metadata['width'] = width
-        self._metadata['height'] = height
+        self._metadata['width'] = width // 2
+        self._metadata['height'] = height //2
         self._metadata['iso'] = str(exif.get('EXIF ISOSpeedRatings', None))
         self._metadata['camera'] = str(exif.get('Image Model', None)).strip()
         self._metadata['focal_length'] = fractions.Fraction(str(exif.get('EXIF FocalLength', 0)))
