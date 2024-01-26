@@ -92,6 +92,10 @@ class AbstractImageLoader:
         '''Already debayered'''
         return self._shape
 
+    def channels(self):
+        '''Already debayered'''
+        return self._channels
+
     def roi(self):
         return self._roi
 
