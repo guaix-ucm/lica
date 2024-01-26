@@ -86,7 +86,7 @@ class AbstractImageLoader:
 
     def exposure(self):
         '''Useul for image list sorting by exposure time'''
-        return self._metadata['exposure']
+        return float(self._metadata['exposure'])
 
     def shape(self):
         '''Already debayered'''
