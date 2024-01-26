@@ -90,7 +90,7 @@ class AbstractImageLoader:
 
     def shape(self):
         '''Already debayered'''
-        return (self._shape[0] // 2, self._shape[1])
+        return (self._shape[0] // 2, self._shape[1] // 2)
 
     def roi(self):
         return self._roi
