@@ -59,7 +59,7 @@ class NormRoi:
 	def __repr__(self):
 		x0 = np.nan if self.x0 is None else self.x0
 		y0 = np.nan if self.y0 is None else self.y0
-		return f"[P0=({self.x0:.4f},{self.y0:.4f}) DIM=({self.width:.4f} x {self.height:.4f})]"
+		return f"[P0=({x0:.4f},{y0:.4f}) DIM=({self.width:.4f} x {self.height:.4f})]"
 
 class Roi:
 	""" Region of interest """
