@@ -38,6 +38,9 @@ class NormRoi:
 		self.width = n_width
 		self.height = n_height
 
+	def __repr__(self):
+		return f"[P0=({self.x0},{self.y0}) DIM=({self.width:.f} x {self.height:.f})]"
+
 class Roi:
 	""" Region of interest """
 
