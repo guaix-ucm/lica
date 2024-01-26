@@ -24,19 +24,20 @@ import numpy as np
 # -----------
 
 from .constants import CHANNELS, LABELS
-from .roi import  NRect
+from .roi import  NormRoi
 
 
 class AbstractImageLoader:
 
-    def __init__(self, path, n_roi=None, channels=None):
+    def __init__(self, path, n_roi=None, channels=None, azotea=False):
         self._path = path
-        self._n_roi = NRect(0.0, 0.0, 1.0, 1.0) if n_roi is None else n_roi
-        self._full_image = True if (self._n_roi.w == 1 and self._n_roi.h == 1) else False
+        self._n_roi = NormRoi(0.0, 0.0, 1.0, 1.0) if n_roi is None else n_roi
+        self._full_image = True if (self._n_roi.width == 1 and self._n_roi.height == 1) else False
         self._channels = CHANNELS if channels is None else channels
         self._shape = None
         self._roi = None
         self._metadata = dict()
+        self._azotea = azotea # To enforce AZOTEA metadata is present
          
 
     # -----------------------------
@@ -48,6 +49,7 @@ class AbstractImageLoader:
             raise NotImplementedError(err_msg)
 
     def _trim(self, pixels):
+        '''Default version for 2D not debayered images'''
         if not self._full_image:
             roi = self._roi
             y0 = roi.y0  
@@ -87,7 +89,8 @@ class AbstractImageLoader:
         return self._metadata['exposure']
 
     def shape(self):
-        return self._shape
+        '''Already debayered'''
+        return (self._shape[0] // 2, self._shape[1])
 
     def roi(self):
         return self._roi
@@ -106,7 +109,6 @@ class AbstractImageLoader:
         '''Load a stack of Bayer colour planes selected by the channels sequence'''
         raise NotImplementedError
         
-
     def statistics(self):
         '''In-place statistics calculation for RPi Zero'''
         raise NotImplementedError

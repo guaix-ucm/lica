@@ -25,7 +25,7 @@ from astropy.io import fits
 # -----------
 
 from .constants import CHANNELS, LABELS
-from .roi import Rect, NRect
+from .roi import Roi, NormRoi
 from .abstract import AbstractImageLoader
 
 # ----------------
@@ -71,7 +71,7 @@ class FitsImageLoader(AbstractImageLoader):
                 already_debayered = True
             # Generic metadata
             self._shape = (height, width)
-            self._roi =  Rect.from_normalized(self._shape[1], self._shape[0], self._n_roi, already_debayered=already_debayered)
+            self._roi =  Roi.from_normalized_roi(self._shape[1], self._shape[0], self._n_roi, already_debayered=already_debayered)
             self._metadata['name'] = os.path.basename(self._path)
             self._metadata['roi'] = str(self._roi)
             self._metadata['channels'] = ' '.join(self._channels)
@@ -107,6 +107,13 @@ class FitsImageLoader(AbstractImageLoader):
 
     def _load_debayer(self):
         raise NotImplementedError
+
+     def shape(self):
+        '''Overrdies base method'''
+         if self._dim == 2:
+            return super().shape()
+        else:
+            return self._shape
 
     def load(self):
         ''' For the time being we only support FITS 3D cubes'''

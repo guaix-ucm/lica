@@ -27,7 +27,7 @@ import numpy as np
 # -----------
 
 from .constants import CHANNELS, LABELS
-from .roi import Rect, NRect
+from .roi import Roi, NormRoi
 from .exif import ExifImageLoader
 
 
