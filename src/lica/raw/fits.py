@@ -79,7 +79,7 @@ class FitsImageLoader(AbstractImageLoader):
             self._metadata['width'] = self._shape[1]
             self._metadata['height'] = self._shape[0]
             self._metadata['iso'] = self.get_header(header, 'ISO')
-            self._metadata['camera'] = self.get_header(header,'SENSOR')
+            self._metadata['camera'] = self.get_header(header,'CAMERA')
             self._metadata['maker'] = self.get_header(header,'MAKER')
             self._metadata['datetime'] = self.get_header(header,'DATE-OBS')
             self._metadata['focal_length'] = self.get_header(header,'FOCAL-LEN')
