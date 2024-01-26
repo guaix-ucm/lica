@@ -59,25 +59,25 @@ class FitsImageLoader(AbstractImageLoader):
             if self._dim == 2:
                 height = header['NAXIS2']
                 width =  header['NAXIS1']
-                self._shape = (height, width)
                 # Here we need to debayer, so a CFA keyword is needed
                 self._cfa = self.get_header(header, 'BAYER')
-                already_debayered=False
+                self._roi =  Roi.from_normalized_roi(width, height, self._n_roi, already_debayered=False)
+                self._shape = (height //2, width //2)
             else:
                 assert self._dim == 3
                 Z = header['NAXIS3']
                 height = header['NAXIS2']
                 width =  header['NAXIS1']
                 already_debayered = True
+                self._roi =  Roi.from_normalized_roi(width, height, self._n_roi, already_debayered=True)
+                self._shape = (height, width)
             # Generic metadata
-            self._shape = (height, width)
-            self._roi =  Roi.from_normalized_roi(self._shape[1], self._shape[0], self._n_roi, already_debayered=already_debayered)
             self._metadata['name'] = os.path.basename(self._path)
             self._metadata['roi'] = str(self._roi)
             self._metadata['channels'] = ' '.join(self._channels)
             self._metadata['exposure'] = header['EXPTIME']
-            self._metadata['width'] = width
-            self._metadata['height'] = height
+            self._metadata['width'] = self._shape[1]
+            self._metadata['height'] = self._shape[0]
             self._metadata['iso'] = self.get_header(header, 'ISO')
             self._metadata['camera'] = self.get_header(header,'SENSOR')
             self._metadata['maker'] = self.get_header(header,'MAKER')
