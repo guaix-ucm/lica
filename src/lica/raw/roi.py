@@ -1,4 +1,22 @@
+# -*- coding: utf-8 -*-
+# ----------------------------------------------------------------------
+# Copyright (c) 2021
+#
+# See the LICENSE file for details
+# see the AUTHORS file for authors
+# ----------------------------------------------------------------------
 
+#--------------------
+# System wide imports
+# -------------------
+
+# ---------------------
+# Thrid-party libraries
+# ---------------------
+
+import numpy as np
+
+# -----
 # ----------------------
 # Module utility classes
 # ----------------------
@@ -39,8 +57,8 @@ class NormRoi:
 		self.height = n_height
 
 	def __repr__(self):
-		x0 = if np.nan if self.x0 is None else self.x0
-		y0 = if np.nan if self.y0 is None else self.y0
+		x0 = np.nan if self.x0 is None else self.x0
+		y0 = np.nan if self.y0 is None else self.y0
 		return f"[P0=({x0:.f},{y0:.f}) DIM=({self.width:.f} x {self.height:.f})]"
 
 class Roi:
