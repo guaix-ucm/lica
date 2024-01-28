@@ -66,6 +66,10 @@ class ImageStatistics:
             self._bias =  np.full((N,1,1), bias)
         log.info("Bias level per channel: %s", self._bias.reshape(-1))
 
+    def loader(self):
+        '''access to underying image loader for extra methods such as image.exptime()'''
+        return self._image
+
     def run(self):
         pixels = self._image.load().astype(float, copy=False) - self._bias  # Stack of image color planes, cropped by ROI
         self._pixels = pixels
