@@ -25,6 +25,6 @@ def open_database(path=None, env_var=None):
 		path = decouple.config(env_var)
     if not os.path.exists(path):
         raise IOError("No SQLite3 Database file found in {0}. Exiting ...".format(path))
-    return sqlite3.connect(path)
+    return sqlite3.connect(path), path
  
 
