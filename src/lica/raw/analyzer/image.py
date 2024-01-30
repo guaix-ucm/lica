@@ -71,8 +71,7 @@ class ImageStatistics:
         return self._image
 
     def run(self):
-        pixels = self._image.load().astype(float, copy=False) - self._bias  # Stack of image color planes, cropped by ROI
-        self._pixels = pixels
+        self._pixels = self._image.load().astype(float, copy=False) - self._bias  # Stack of image color planes, cropped by ROI
 
     def name(self):
         return self._image.name()
@@ -109,22 +108,27 @@ class ImagePairStatistics(ImageStatistics):
         self._path_b = path_b
         self._image_b = self._factory.image_from(path_b, n_roi, channels)
         self._diff = None
+        self._pair_mean = None
+        self._pair_variance = None
 
     def run(self):
-        self._pixels_a = self._image.load().astype(float, copy=False)  - self._bias  # Stack of image color planes, cropped by ROI
+        super().run()
         self._pixels_b = self._image_b.load().astype(float, copy=False) - self._bias
 
     def names(self):
+        '''Like name() but returns'''
         return self._image.name(), self._image_b.name()
 
-    def mean(self):
-        if not self._mean:
-            self._mean = np.mean( (self._pixels_a + self._pixels_b),  axis=(1,2)) / 2
+    def pair_mean(self):
+        '''Mean of pair of images'''
+        if not self._pair_mean:
+            self._pair_mean = np.mean( (self._pixels + self._pixels_b),  axis=(1,2)) / 2
         return self._mean
 
-    def variance(self):
-        if not self._variance:
-            self._variance = np.var((self._pixels_a - self._pixels_b), axis=(1,2)) / 2
+    def adj_pair_variance(self):
+        '''variance of pair adjusted by a final 1/2 factor'''
+        if not self._pair_variance:
+            self._pair_variance = np.var((self._pixels - self._pixels_b), axis=(1,2)) / 2
         return np.sqrt(self._variance)
 
   
