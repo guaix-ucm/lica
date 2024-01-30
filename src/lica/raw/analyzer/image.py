@@ -87,7 +87,7 @@ class ImageStatistics:
     def variance(self):
         if not self._variance:
             self._variance = np.var(self._pixels, axis=(1,2))
-        return np.sqrt(self._variance)
+        return self._variance
 
     def std(self):
         if not self._variance:
