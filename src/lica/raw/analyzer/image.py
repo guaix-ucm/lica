@@ -129,6 +129,6 @@ class ImagePairStatistics(ImageStatistics):
         '''variance of pair adjusted by a final 1/2 factor'''
         if not self._pair_variance:
             self._pair_variance = np.var((self._pixels - self._pixels_b), axis=(1,2)) / 2
-        return np.sqrt(self._variance)
+        return np.sqrt(self._pair_variance)
 
   
