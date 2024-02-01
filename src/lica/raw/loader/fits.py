@@ -75,12 +75,12 @@ class FitsImageLoader(AbstractImageLoader):
             self._metadata['name'] = os.path.basename(self._path)
             self._metadata['roi'] = str(self._roi)
             self._metadata['channels'] = ' '.join(self._channels)
-            self._metadata['exposure'] = header['EXPTIME']
             self._metadata['width'] = self._shape[1]
             self._metadata['height'] = self._shape[0]
-            self._metadata['iso'] = self.get_header(header, 'ISO')
-            self._metadata['camera'] = self.get_header(header,'CAMERA')
-            self._metadata['maker'] = self.get_header(header,'MAKER')
+            self._metadata['exposure'] = header['EXPTIME']
+            self._metadata['camera'] = self.get_header(header,'INSTRUME')
+            self._metadata['maker'] = self.get_header(header,'MAKER')       # ?
+            self._metadata['iso'] = self.get_header(header, 'ISO')  # ?
             self._metadata['datetime'] = self.get_header(header,'DATE-OBS')
             self._metadata['pedestal'] = self.get_header(header,'PEDESTAL')
             self._metadata['log-gain'] = self.get_header(header,'LOG-GAIN')
