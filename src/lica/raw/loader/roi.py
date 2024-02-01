@@ -91,10 +91,10 @@ class Roi:
 			height = height //2  
 			width  = width  //2 
 		# From normalized ROI to actual image dimensions ROI
-		w = int(width * n_roi.width) 
-		h = int(height * n_roi.height)
-		x0 = (width  - w)//2 if n_roi.x0 is None else int(width * n_roi.x0)
-		y0 = (height - h)//2 if n_roi.y0 is None else int(height * n_roi.y0)
+		w = int(round(width * n_roi.width), 0) 
+		h = int(round(height * n_roi.height), 0)
+		x0 = (width  - w)//2 if n_roi.x0 is None else int(round(width * n_roi.x0, 0))
+		y0 = (height - h)//2 if n_roi.y0 is None else int(round(height * n_roi.y0, 0))
 		return cls(x0, x0+w ,y0, y0+h)
 
 	@classmethod

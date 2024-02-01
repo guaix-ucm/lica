@@ -82,9 +82,16 @@ class FitsImageLoader(AbstractImageLoader):
             self._metadata['camera'] = self.get_header(header,'CAMERA')
             self._metadata['maker'] = self.get_header(header,'MAKER')
             self._metadata['datetime'] = self.get_header(header,'DATE-OBS')
-            self._metadata['focal_length'] = self.get_header(header,'FOCAL-LEN')
-            self._metadata['f_number'] = self.get_header(header,'F-NUMBER')
-        
+            self._metadata['pedestal'] = self.get_header(header,'PEDESTAL')
+            self._metadata['log-gain'] = self.get_header(header,'LOG-GAIN')
+            self._metadata['xpixsize'] = self.get_header(header,'XPIXSIZE')
+            self._metadata['ypixsize']  =self.get_header(header,'XPIXSIZE')
+            self._metadata['bayerpat'] = self.get_header(header,'BAYERPAT')
+            self._metadata['imagetyp'] = self.get_header(header,'IMAGETYP')
+            diam = self.get_header(header,'APTDIA')
+            focal = self.get_header(header,'FOCAL-LEN')
+            self._metadata['f_number'] = (focal/diam) if diam is not None and focal is not None else None
+            self._metadata['focal_length'] = focal
      
     def _trim(self, pixels):
         '''Special case for 3D FITS'''

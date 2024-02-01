@@ -85,6 +85,8 @@ class ExifImageLoader(AbstractImageLoader):
         self._cfa = ''.join([ self.BAYER_LETTER[img_desc.raw_pattern[row,column]] for row in (1,0) for column in (1,0)])
         self._biases = img_desc.black_level_per_channel
         self._white_levels = img_desc.camera_white_level_per_channel
+        self._metadata['pedestal'] = self.black_levels()
+        self._metadata['bayerpat'] = self._cfa
 
     def _exif(self):
         with open(self._path, 'rb') as f:
@@ -110,7 +112,13 @@ class ExifImageLoader(AbstractImageLoader):
         self._metadata['datetime'] = str(exif.get('Image DateTime', None))
         self._metadata['maker'] = str(exif.get('Image Make', None))
         self._metadata['note'] = str(exif.get('EXIF MakerNote', None)) # Useless fo far ...
-        
+        self._metadata['log-gain'] = None  # Not known until load time
+        self._metadata['xpixsize'] = None  # Not usually available in EXIF headers
+        self._metadata['ypixsize'] = None  # Not usually available in EXIF headers
+        self._metadata['bayerpat'] = None  # Not known until load time
+        self._metadata['pedestal'] = None  # Not known until load time
+        self._metadata['imagetyp'] = None  # using an heuristic based on file names
+ 
     # ----------
     # Public API 
     # ----------
@@ -135,7 +143,7 @@ class ExifImageLoader(AbstractImageLoader):
         self._check_channels(err_msg="black_levels on G=(Gr+Gb)/2 channel not available")
         if self._biases is None:
             self._img()
-        return [self._biases[CHANNELS.index(ch)] for ch in self._channels]
+        return tuple(self._biases[CHANNELS.index(ch)] for ch in self._channels)
 
     def load(self):
         '''Load a stack of Bayer colour planes selected by the channels sequence'''
