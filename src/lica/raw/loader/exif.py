@@ -78,6 +78,7 @@ class ExifImageLoader(AbstractImageLoader):
 
 
     def _raw_metadata(self, img):
+         '''To be used in teh context of an image context manager'''
         self._color_desc = img.color_desc.decode('utf-8')
         self._cfa = ''.join([ self.BAYER_LETTER[img.raw_pattern[row,column]] for row in (1,0) for column in (1,0)])
         self._biases = img.black_level_per_channel
@@ -87,15 +88,9 @@ class ExifImageLoader(AbstractImageLoader):
         self._metadata['colordesc'] = self._color_desc
 
     def _raw(self):
-        '''To be used in teh context of a image m¡context manager'''
         with rawpy.imread(self._path) as img:
-            self._color_desc = img.color_desc.decode('utf-8')
-            self._cfa = ''.join([ self.BAYER_LETTER[img.raw_pattern[row,column]] for row in (1,0) for column in (1,0)])
-            self._biases = img.black_level_per_channel
-            self._white_levels = img.camera_white_level_per_channel
-            self._metadata['pedestal'] = self.black_levels()
-            self._metadata['bayerpat'] = self._cfa
-            self._metadata['colordesc'] = self._color_desc
+            self._raw_metadata(img)
+
 
     def _exif(self):
         with open(self._path, 'rb') as f:
@@ -107,7 +102,8 @@ class ExifImageLoader(AbstractImageLoader):
         # General purpose metadata
         self._shape = (height//2, width//2)
         self._roi =  Roi.from_normalized_roi(width, height, self._n_roi, already_debayered=False)
-        self._metadata['name'] = os.path.basename(self._path)
+        self._name = os.path.basename(self._path)
+        self._metadata['name'] = name
         self._metadata['roi'] = str(self._roi)
         self._metadata['channels'] = ' '.join(self._channels)
         # Metadata coming from EXIF
@@ -131,7 +127,7 @@ class ExifImageLoader(AbstractImageLoader):
     # ----------
 
     def metadata(self):
-        if self._shape is None:
+        if self._name is None:
             self._exif()
         if self._cfa is None:
             self._raw()
@@ -139,6 +135,8 @@ class ExifImageLoader(AbstractImageLoader):
 
     def cfa_pattern(self):
         '''Returns the Bayer pattern as RGGB, BGGR, GRBG, GBRG strings'''
+        if self._color_desc is None:
+            self._raw()
         if self._color_desc != 'RGBG':
             raise UnsupporteCFAError(self._color_desc)
         return self._cfa
@@ -146,15 +144,21 @@ class ExifImageLoader(AbstractImageLoader):
     def saturation_levels(self):
         self._check_channels(err_msg="saturation_levels on G=(Gr+Gb)/2 channel not available")
         if self._white_levels is None:
+            self._raw()
+        if self._white_levels is None:
             raise NotImplementedError("saturation_levels for this image not available using LibRaw")
-        return [self._white_levels[CHANNELS.index(ch)] for ch in self._channels]
+        return tuple(self._white_levels[CHANNELS.index(ch)] for ch in self._channels)
 
     def black_levels(self):
         self._check_channels(err_msg="black_levels on G=(Gr+Gb)/2 channel not available")
+        if self._biases is None:
+            self._raw()
         return tuple(self._biases[CHANNELS.index(ch)] for ch in self._channels)
 
     def load(self):
         '''Load a stack of Bayer colour planes selected by the channels sequence'''
+        if self._name is None:
+            self._exif()
         with rawpy.imread(self._path) as img:
             self._raw_metadata(img)
             raw_pixels_list = list()
@@ -169,6 +173,8 @@ class ExifImageLoader(AbstractImageLoader):
     def statistics(self):
         '''In-place statistics calculation for RPi Zero'''
         self._check_channels(err_msg="In-place statistics on G=(Gr+Gb)/2 channel not available")
+        if self._name is None:
+            self._exif()
         with rawpy.imread(self._path) as img:
             # very imporatnt to be under the image context manager
             # when doing manipulations on img.raw_image
@@ -182,5 +188,3 @@ class ExifImageLoader(AbstractImageLoader):
                 average, stddev = raw_pixels.mean(), raw_pixels.std()
                 stats_list.append([average, stddev])
         return self._select_by_channels(stats_list)
-
-
