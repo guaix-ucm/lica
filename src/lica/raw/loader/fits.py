@@ -59,7 +59,7 @@ class FitsImageLoader(AbstractImageLoader):
             height = header['NAXIS2']
             width =  header['NAXIS1']
             # Here we need to debayer, so a CFA keyword is needed
-             self._cfa = self.get_header(header, 'BAYER')
+            self._cfa = self.get_header(header, 'BAYER')
             self._roi =  Roi.from_normalized_roi(width, height, self._n_roi, already_debayered=False)
             self._shape = (height //2, width //2)
         else:
