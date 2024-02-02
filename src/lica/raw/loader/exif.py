@@ -99,10 +99,10 @@ class ExifImageLoader(AbstractImageLoader):
             raise ValueError('Could not open EXIF metadata')
         width  = int(str(exif.get('EXIF ExifImageWidth')))
         height = int(str(exif.get('EXIF ExifImageLength')))
-        # General purpose metadata
+        self._name = os.path.basename(self._path)
         self._shape = (height//2, width//2)
         self._roi =  Roi.from_normalized_roi(width, height, self._n_roi, already_debayered=False)
-        self._name = os.path.basename(self._path)
+        # General purpose metadata
         self._metadata['name'] = name
         self._metadata['roi'] = str(self._roi)
         self._metadata['channels'] = ' '.join(self._channels)
