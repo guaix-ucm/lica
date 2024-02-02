@@ -115,6 +115,9 @@ class FitsImageLoader(AbstractImageLoader):
     def _load_debayer(self):
         raise NotImplementedError
 
+    def metadata(self):
+        return self._metadata
+
     def shape(self):
         '''Overrdies base method'''
         if self._dim == 2:

@@ -68,13 +68,23 @@ class ExifImageLoader(AbstractImageLoader):
 
     def __init__(self, path, n_roi=None, channels=None):
         super().__init__(path, n_roi, channels)
+        self._shape = None
         self._color_desc = None
         self._cfa = None
         self._biases = None
         self._white_levels = None
-        self._exif() # read exif metadata
-        self._raw() # read raw metadata
+        #self._exif() # read exif metadata
+        #self._raw() # read raw metadata
 
+
+    def _raw_metadata(self, img):
+        self._color_desc = img.color_desc.decode('utf-8')
+        self._cfa = ''.join([ self.BAYER_LETTER[img.raw_pattern[row,column]] for row in (1,0) for column in (1,0)])
+        self._biases = img.black_level_per_channel
+        self._white_levels = img.camera_white_level_per_channel
+        self._metadata['pedestal'] = self.black_levels()
+        self._metadata['bayerpat'] = self._cfa
+        self._metadata['colordesc'] = self._color_desc
 
     def _raw(self):
         '''To be used in teh context of a image m¡context manager'''
@@ -120,6 +130,13 @@ class ExifImageLoader(AbstractImageLoader):
     # Public API 
     # ----------
 
+    def metadata(self):
+        if self._shape is None:
+            self._exif()
+        if self._cfa is None:
+            self._raw()
+        return self._metadata
+
     def cfa_pattern(self):
         '''Returns the Bayer pattern as RGGB, BGGR, GRBG, GBRG strings'''
         if self._color_desc != 'RGBG':
@@ -139,6 +156,7 @@ class ExifImageLoader(AbstractImageLoader):
     def load(self):
         '''Load a stack of Bayer colour planes selected by the channels sequence'''
         with rawpy.imread(self._path) as img:
+            self._raw_metadata(img)
             raw_pixels_list = list()
             for channel in CHANNELS:
                 x = self.CFA_OFFSETS[self._cfa][channel]['x']
@@ -154,6 +172,7 @@ class ExifImageLoader(AbstractImageLoader):
         with rawpy.imread(self._path) as img:
             # very imporatnt to be under the image context manager
             # when doing manipulations on img.raw_image
+            self._raw_metadata(img)
             stats_list = list()
             for channel in CHANNELS:
                 x = self.CFA_OFFSETS[self._cfa][channel]['x']
