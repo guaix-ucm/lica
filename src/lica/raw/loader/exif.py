@@ -103,7 +103,7 @@ class ExifImageLoader(AbstractImageLoader):
         self._shape = (height//2, width//2)
         self._roi =  Roi.from_normalized_roi(width, height, self._n_roi, already_debayered=False)
         # General purpose metadata
-        self._metadata['name'] = name
+        self._metadata['name'] = self._name
         self._metadata['roi'] = str(self._roi)
         self._metadata['channels'] = ' '.join(self._channels)
         # Metadata coming from EXIF
