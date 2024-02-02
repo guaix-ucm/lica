@@ -78,7 +78,7 @@ class ExifImageLoader(AbstractImageLoader):
 
 
     def _raw_metadata(self, img):
-         '''To be used in teh context of an image context manager'''
+        '''To be used in teh context of an image context manager'''
         self._color_desc = img.color_desc.decode('utf-8')
         self._cfa = ''.join([ self.BAYER_LETTER[img.raw_pattern[row,column]] for row in (1,0) for column in (1,0)])
         self._biases = img.black_level_per_channel
