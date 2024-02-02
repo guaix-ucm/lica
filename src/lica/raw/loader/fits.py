@@ -143,7 +143,7 @@ class FitsImageLoader(AbstractImageLoader):
     def statistics(self):
         '''In-place statistics calculation for RPi Zero'''
         with fits.open(self._path) as hdul:
-            self._fits_metadata(hdul):
+            self._fits_metadata(hdul)
             pixels = hdul[0].data
             assert len(pixels.shape) == 3
             pixels = self._trim(pixels)
