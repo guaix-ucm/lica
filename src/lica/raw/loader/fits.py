@@ -133,7 +133,7 @@ class FitsImageLoader(AbstractImageLoader):
     def load(self, hdul):
         ''' For the time being we only support FITS 3D cubes'''
         with fits.open(self._path) as hdul:
-             self._fits_metadata(hdul):
+            self._fits_metadata(hdul)
             if self._dim == 2:
                 nparray = self._load_debayer(hdul)
             else:
