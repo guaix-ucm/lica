@@ -80,7 +80,7 @@ class ExifImageLoader(AbstractImageLoader):
         '''To be used in teh context of a image m¡context manager'''
         with rawpy.imread(self._path) as img:
             self._color_desc = img.color_desc.decode('utf-8')
-            self._cfa = ''.join([ self.BAYER_LETTER[img_desc.raw_pattern[row,column]] for row in (1,0) for column in (1,0)])
+            self._cfa = ''.join([ self.BAYER_LETTER[img.raw_pattern[row,column]] for row in (1,0) for column in (1,0)])
             self._biases = img.black_level_per_channel
             self._white_levels = img.camera_white_level_per_channel
             self._metadata['pedestal'] = self.black_levels()
