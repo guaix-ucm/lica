@@ -100,7 +100,7 @@ class AbstractImageLoader:
         return self._channels
 
     def roi(self):
-         if self._roi is None:
+        if self._roi is None:
             self.metadata()
         return self._roi
 
