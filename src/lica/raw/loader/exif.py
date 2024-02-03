@@ -189,6 +189,6 @@ class ExifImageLoader(AbstractImageLoader):
                 y = self.CFA_OFFSETS[self._cfa][channel]['y']
                 raw_pixels = img.raw_image[y::2, x::2]  # This is the real debayering thing
                 raw_pixels = self._trim(raw_pixels)
-                average, stddev = raw_pixels.mean(), raw_pixels.std()
-                stats_list.append([average, stddev])
+                stats = (raw_pixels.mean(), raw_pixels.var())
+                stats_list.append(stats)
         return self._select_by_channels(stats_list)
