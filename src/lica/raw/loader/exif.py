@@ -90,13 +90,13 @@ class ExifImageLoader(AbstractImageLoader):
 
     def _raw(self):
         with rawpy.imread(self._path) as img:
-            log.debug("LibRaw I/O for %s", os.path.basename(self._path))
+            log.debug(" -----> LibRaw I/O for %s", os.path.basename(self._path))
             self._raw_metadata(img)
 
 
     def _exif(self):
         with open(self._path, 'rb') as f:
-            log.debug("EXIF I/O for %s", os.path.basename(self._path))
+            log.debug(" -----> EXIF I/O for %s", os.path.basename(self._path))
             exif = exifread.process_file(f, details=True)
         if not exif:
             raise ValueError('Could not open EXIF metadata')
