@@ -74,8 +74,8 @@ class ExifImageLoader(AbstractImageLoader):
         self._cfa = None
         self._biases = None
         self._white_levels = None
-        #self._exif() # read exif metadata
-        #self._raw() # read raw metadata
+        self._exif() # read exif metadata
+        self._raw() # read raw metadata
 
 
     def _raw_metadata(self, img):
