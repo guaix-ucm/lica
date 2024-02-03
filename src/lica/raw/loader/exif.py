@@ -34,7 +34,7 @@ from .abstract import AbstractImageLoader
 # Constants
 # ---------
 
-log = logging.getLogger(__name__)
+#log = logging.getLogger(__name__)
 
 # ----------
 # Exceptions
@@ -90,13 +90,13 @@ class ExifImageLoader(AbstractImageLoader):
 
     def _raw(self):
         with rawpy.imread(self._path) as img:
-            log.info(" -----> LibRaw I/O [init] for %s", os.path.basename(self._path))
+            #log.info(" -----> LibRaw I/O [init] for %s", os.path.basename(self._path))
             self._raw_metadata(img)
 
 
     def _exif(self):
         with open(self._path, 'rb') as f:
-            log.info(" -----> EXIF I/O [init] for %s", os.path.basename(self._path))
+            #log.info(" -----> EXIF I/O [init] for %s", os.path.basename(self._path))
             exif = exifread.process_file(f, details=True)
         if not exif:
             raise ValueError('Could not open EXIF metadata')
@@ -163,7 +163,7 @@ class ExifImageLoader(AbstractImageLoader):
         if self._name is None:
             self._exif()
         with rawpy.imread(self._path) as img:
-            log.info(" -----> LibRaw I/O [load] for %s", os.path.basename(self._path))
+            #log.info(" -----> LibRaw I/O [load] for %s", os.path.basename(self._path))
             self._raw_metadata(img)
             raw_pixels_list = list()
             for channel in CHANNELS:
