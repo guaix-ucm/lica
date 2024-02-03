@@ -169,7 +169,7 @@ class ExifImageLoader(AbstractImageLoader):
             for channel in CHANNELS:
                 x = self.CFA_OFFSETS[self._cfa][channel]['x']
                 y = self.CFA_OFFSETS[self._cfa][channel]['y']
-                raw_pixels = img.raw_image[y::2, x::2].copy() # This is the real debayering thing
+                raw_pixels = img.raw_image[y::2, x::2] # This is the real debayering thing
                 raw_pixels = self._trim(raw_pixels)
                 raw_pixels_list.append(raw_pixels)
         return self._select_by_channels(raw_pixels_list) # Select the desired channels
