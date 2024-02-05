@@ -60,9 +60,9 @@ class ImageStatistics:
             except:
                 log.warn("No luck using embedded image black levels as bias")
                 self._bias =  np.full((N,1,1), 0)
-        elif type(bias) == str and os.path.exists(bias):
+        elif type(bias) == str:
             self._bias = self._factory.image_from(bias, self._n_roi, self._channels).load()
-        elif type(bias) == int or type(bias) == float:
+        elif type(bias) == float:
             self._bias =  np.full((N,1,1), bias)
         log.info("Bias level per channel: %s", self._bias.reshape(-1))
 
