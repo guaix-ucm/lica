@@ -148,10 +148,10 @@ class FitsImageLoader(AbstractImageLoader):
             assert len(pixels.shape) == 3
             pixels = self._trim(pixels)
             average = pixels.mean(axis=0)
-            stdev = pixels.stdev(axis=0)
+            variance = pixels.var(axis=0, dtype=np.float64, ddof=1)
             output_list = list()
             if channels is None or len(channels) == 4:
-                 output_list = list(zip(average.tolist(), stdev.tolist()))
+                 output_list = list(zip(average.tolist(), variance.tolist()))
             else:
                 for ch in channels:
                     if ch == 'G':
