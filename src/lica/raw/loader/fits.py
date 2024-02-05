@@ -130,7 +130,7 @@ class FitsImageLoader(AbstractImageLoader):
         else:
             return self._shape
 
-    def load(self, hdul):
+    def load(self):
         ''' For the time being we only support FITS 3D cubes'''
         with fits.open(self._path) as hdul:
             self._fits_metadata(hdul)
