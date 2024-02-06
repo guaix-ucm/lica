@@ -48,7 +48,7 @@ class ImageStatistics:
         self._mean = None
         self._variance = None
         self._median = None
-        self._configure(bias)
+        self._configure(bias, dark)
     
     def _configure(self, bias, dark):
         if self._bias is not None:
