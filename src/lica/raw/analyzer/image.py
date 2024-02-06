@@ -36,7 +36,7 @@ log = logging.getLogger(__name__)
 # -------
 
 class ImageStatistics:
-    def __init__(self, path, n_roi, channels, bias=None):
+    def __init__(self, path, n_roi, channels, bias=None, dark=None):
         self._path = path
         self._n_roi = n_roi
         self._channels = channels
@@ -44,12 +44,13 @@ class ImageStatistics:
         self._image = self._factory.image_from(path, n_roi, channels)
         self._pixels = None
         self._bias = None
+        self._dark = None
         self._mean = None
         self._variance = None
         self._median = None
-        self._configure_bias(bias)
+        self._configure(bias)
     
-    def _configure_bias(self, bias):
+    def _configure(self, bias, dark):
         if self._bias is not None:
             return
         N = len(self._channels)
@@ -64,14 +65,18 @@ class ImageStatistics:
             self._bias = self._factory.image_from(bias, self._n_roi, self._channels).load()
         elif type(bias) == float:
             self._bias =  np.full((N,1,1), bias)
-        log.info("Bias level per channel: %s", self._bias.reshape(-1))
+        if dark is not None:
+            self._dark = dark * self.exptime()
+            log.info("Bias level per channel: %s. Dark count is %.02g", self._bias.reshape(-1), self._dark)
+        else:
+            log.info("Bias level per channel: %s.", self._bias.reshape(-1)) 
 
     def loader(self):
         '''access to underying image loader for extra methods such as image.exptime()'''
         return self._image
 
     def run(self):
-        self._pixels = self._image.load().astype(dtype=np.float32, copy=False) - self._bias  # Stack of image color planes, cropped by ROI
+        self._pixels = self._image.load().astype(dtype=np.float32, copy=False) - self._bias - self._dark # Stack of image color planes, cropped by ROI
 
     def name(self):
         return self._image.name()
@@ -113,7 +118,7 @@ class ImagePairStatistics(ImageStatistics):
 
     def run(self):
         super().run()
-        self._pixels_b = self._image_b.load().astype(float, copy=False) - self._bias
+        self._pixels_b = self._image_b.load().astype(np.float32, copy=False) - self._bias - self._dark
 
     def names(self):
         '''Like name() but returns'''
