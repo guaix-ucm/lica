@@ -34,6 +34,7 @@ from .abstract import AbstractImageLoader
 # Constants
 # ---------
 
+#log = logging.getLogger(__name__)
 
 # ----------
 # Exceptions
@@ -68,35 +69,44 @@ class ExifImageLoader(AbstractImageLoader):
 
     def __init__(self, path, n_roi=None, channels=None):
         super().__init__(path, n_roi, channels)
+        self._shape = None
         self._color_desc = None
         self._cfa = None
         self._biases = None
         self._white_levels = None
-        self._exif()
+        #self._exif() # read exif metadata
+        #self._raw() # read raw metadata
 
-    def _img(self):
-        '''Gather as much rawpy image access as possible for efficiency'''
+
+    def _raw_metadata(self, img):
+        '''To be used in teh context of an image context manager'''
+        self._color_desc = img.color_desc.decode('utf-8')
+        self._cfa = ''.join([ self.BAYER_LETTER[img.raw_pattern[row,column]] for row in (1,0) for column in (1,0)])
+        self._biases = img.black_level_per_channel
+        self._white_levels = img.camera_white_level_per_channel
+        self._metadata['pedestal'] = self.black_levels()
+        self._metadata['bayerpat'] = self._cfa
+        self._metadata['colordesc'] = self._color_desc
+
+    def _raw(self):
         with rawpy.imread(self._path) as img:
-            self._read_img_metadata(img)
+            #log.info(" -----> LibRaw I/O [init] for %s", os.path.basename(self._path))
+            self._raw_metadata(img)
 
-    def _read_img_metadata(self, img_desc):
-        '''To be used in teh context of a image m¡context manager'''
-        self._color_desc = img_desc.color_desc.decode('utf-8')
-        self._cfa = ''.join([ self.BAYER_LETTER[img_desc.raw_pattern[row,column]] for row in (1,0) for column in (1,0)])
-        self._biases = img_desc.black_level_per_channel
-        self._white_levels = img_desc.camera_white_level_per_channel
 
     def _exif(self):
         with open(self._path, 'rb') as f:
+            #log.info(" -----> EXIF I/O [init] for %s", os.path.basename(self._path))
             exif = exifread.process_file(f, details=True)
         if not exif:
             raise ValueError('Could not open EXIF metadata')
         width  = int(str(exif.get('EXIF ExifImageWidth')))
         height = int(str(exif.get('EXIF ExifImageLength')))
-        # General purpose metadata
+        self._name = os.path.basename(self._path)
         self._shape = (height//2, width//2)
         self._roi =  Roi.from_normalized_roi(width, height, self._n_roi, already_debayered=False)
-        self._metadata['name'] = os.path.basename(self._path)
+        # General purpose metadata
+        self._metadata['name'] = self._name
         self._metadata['roi'] = str(self._roi)
         self._metadata['channels'] = ' '.join(self._channels)
         # Metadata coming from EXIF
@@ -110,15 +120,26 @@ class ExifImageLoader(AbstractImageLoader):
         self._metadata['datetime'] = str(exif.get('Image DateTime', None))
         self._metadata['maker'] = str(exif.get('Image Make', None))
         self._metadata['note'] = str(exif.get('EXIF MakerNote', None)) # Useless fo far ...
-        
+        self._metadata['log-gain'] = None  # Not known until load time
+        self._metadata['xpixsize'] = None  # Not usually available in EXIF headers
+        self._metadata['ypixsize'] = None  # Not usually available in EXIF headers
+        self._metadata['imagetyp'] = None  # using an heuristic based on file names
+ 
     # ----------
     # Public API 
     # ----------
 
+    def metadata(self):
+        if self._name is None:
+            self._exif()
+        if self._cfa is None:
+            self._raw()
+        return self._metadata
+
     def cfa_pattern(self):
         '''Returns the Bayer pattern as RGGB, BGGR, GRBG, GBRG strings'''
         if self._color_desc is None:
-            self._img()
+            self._raw()
         if self._color_desc != 'RGBG':
             raise UnsupporteCFAError(self._color_desc)
         return self._cfa
@@ -126,48 +147,48 @@ class ExifImageLoader(AbstractImageLoader):
     def saturation_levels(self):
         self._check_channels(err_msg="saturation_levels on G=(Gr+Gb)/2 channel not available")
         if self._white_levels is None:
-            self._img()
+            self._raw()
         if self._white_levels is None:
             raise NotImplementedError("saturation_levels for this image not available using LibRaw")
-        return [self._white_levels[CHANNELS.index(ch)] for ch in self._channels]
+        return tuple(self._white_levels[CHANNELS.index(ch)] for ch in self._channels)
 
     def black_levels(self):
         self._check_channels(err_msg="black_levels on G=(Gr+Gb)/2 channel not available")
         if self._biases is None:
-            self._img()
-        return [self._biases[CHANNELS.index(ch)] for ch in self._channels]
+            self._raw()
+        return tuple(self._biases[CHANNELS.index(ch)] for ch in self._channels)
 
     def load(self):
         '''Load a stack of Bayer colour planes selected by the channels sequence'''
+        if self._name is None:
+            self._exif()
         with rawpy.imread(self._path) as img:
-            self._read_img_metadata(img)
-            cfa_pattern = self._cfa
+            #log.info(" -----> LibRaw I/O [load] for %s", os.path.basename(self._path))
+            self._raw_metadata(img)
             raw_pixels_list = list()
             for channel in CHANNELS:
-                x = self.CFA_OFFSETS[cfa_pattern][channel]['x']
-                y = self.CFA_OFFSETS[cfa_pattern][channel]['y']
+                x = self.CFA_OFFSETS[self._cfa][channel]['x']
+                y = self.CFA_OFFSETS[self._cfa][channel]['y']
                 raw_pixels = img.raw_image[y::2, x::2].copy() # This is the real debayering thing
                 raw_pixels = self._trim(raw_pixels)
                 raw_pixels_list.append(raw_pixels)
         return self._select_by_channels(raw_pixels_list) # Select the desired channels
-        
 
     def statistics(self):
         '''In-place statistics calculation for RPi Zero'''
         self._check_channels(err_msg="In-place statistics on G=(Gr+Gb)/2 channel not available")
+        if self._name is None:
+            self._exif()
         with rawpy.imread(self._path) as img:
             # very imporatnt to be under the image context manager
             # when doing manipulations on img.raw_image
-            self._read_img_metadata(img)
-            cfa_pattern = self._cfa
+            self._raw_metadata(img)
             stats_list = list()
             for channel in CHANNELS:
-                x = self.CFA_OFFSETS[cfa_pattern][channel]['x']
-                y = self.CFA_OFFSETS[cfa_pattern][channel]['y']
+                x = self.CFA_OFFSETS[self._cfa][channel]['x']
+                y = self.CFA_OFFSETS[self._cfa][channel]['y']
                 raw_pixels = img.raw_image[y::2, x::2]  # This is the real debayering thing
                 raw_pixels = self._trim(raw_pixels)
-                average, stddev = raw_pixels.mean(), raw_pixels.std()
-                stats_list.append([average, stddev])
+                stats = (raw_pixels.mean(), raw_pixels.var(dtype=np.float64, ddof=1))
+                stats_list.append(stats)
         return self._select_by_channels(stats_list)
-
-

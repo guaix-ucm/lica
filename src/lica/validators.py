@@ -64,6 +64,16 @@ def vfloat01(num):
         raise ValueError(f"Value {num} out of bounds [0..1]")
     return num
 
+def vflopath(value):
+    '''Validator that admits either a single number or a file (representing an image)'''
+    try:
+        n = float(fractions.Fraction(value))
+    except ValueError:
+        if not os.path.isfile(value):
+            raise IOError(f"Not valid or existing file: {value}")
+        return value
+    return n
+
 # ---------------------------------------------------------------------
 # This section validates combination of color channels to show in plots
 # ---------------------------------------------------------------------

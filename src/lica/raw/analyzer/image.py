@@ -60,9 +60,9 @@ class ImageStatistics:
             except:
                 log.warn("No luck using embedded image black levels as bias")
                 self._bias =  np.full((N,1,1), 0)
-        elif type(bias) == str and os.path.exists(bias):
+        elif type(bias) == str:
             self._bias = self._factory.image_from(bias, self._n_roi, self._channels).load()
-        elif type(bias) == int or type(bias) == float:
+        elif type(bias) == float:
             self._bias =  np.full((N,1,1), bias)
         log.info("Bias level per channel: %s", self._bias.reshape(-1))
 
@@ -71,7 +71,7 @@ class ImageStatistics:
         return self._image
 
     def run(self):
-        self._pixels = self._image.load().astype(float, copy=False) - self._bias  # Stack of image color planes, cropped by ROI
+        self._pixels = self._image.load().astype(dtype=np.float32, copy=False) - self._bias  # Stack of image color planes, cropped by ROI
 
     def name(self):
         return self._image.name()
@@ -86,12 +86,12 @@ class ImageStatistics:
 
     def variance(self):
         if not self._variance:
-            self._variance = np.var(self._pixels, axis=(1,2))
+            self._variance = np.var(self._pixels, axis=(1,2), dtype=np.float64, ddof=1)
         return self._variance
 
     def std(self):
         if not self._variance:
-            self._variance = np.var(self._pixels, axis=(1,2))
+            self._variance = np.var(self._pixels, axis=(1,2), dtype=np.float64, ddof=1)
         return np.sqrt(self._variance)
 
     def median(self):
@@ -128,7 +128,7 @@ class ImagePairStatistics(ImageStatistics):
     def adj_pair_variance(self):
         '''variance of pair adjusted by a final 1/2 factor'''
         if not self._pair_variance:
-            self._pair_variance = np.var((self._pixels - self._pixels_b), axis=(1,2)) / 2
+            self._pair_variance = np.var((self._pixels - self._pixels_b), axis=(1,2), dtype=np.float64, ddof=1) / 2
         return self._pair_variance
 
   

@@ -35,6 +35,7 @@ class AbstractImageLoader:
         self._channels = CHANNELS if channels is None else channels
         self._shape = None
         self._roi = None
+        self._name = None
         self._metadata = dict()
         self._azotea = azotea # To enforce AZOTEA metadata is present
          
@@ -78,17 +79,20 @@ class AbstractImageLoader:
         return LABELS[i]
 
     def metadata(self):
-        return self._metadata
+        '''Returns a metadata dictionary¡'''
+        raise NotImplementedError
 
     def name(self):
-        return self._metadata['name']
+        return self.metadata()['name']
 
     def exposure(self):
         '''Useul for image list sorting by exposure time'''
-        return float(self._metadata['exposure'])
+        return float(self.metadata()['exposure'])
 
     def shape(self):
         '''Already debayered'''
+        if not self._shape:
+            self.metadata()
         return self._shape
 
     def channels(self):
@@ -96,6 +100,8 @@ class AbstractImageLoader:
         return self._channels
 
     def roi(self):
+        if self._roi is None:
+            self.metadata()
         return self._roi
 
     def cfa_pattern(self):

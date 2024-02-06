@@ -24,14 +24,17 @@ import os
 
 from .fits import FitsImageLoader
 from .exif import ExifImageLoader
+from .simulation import SimulatedDarkImage
 from .constants import FITS_EXTENSIONS
 
 
 class ImageLoaderFactory:
 
-	def image_from(self, path, n_roi=None, channels=None):
+	def image_from(self, path, n_roi=None, channels=None, simulated=False, **kwargs):
 		extension = os.path.splitext(path)[1]
-		if extension in FITS_EXTENSIONS:
+		if simulated:
+			image = SimulatedDarkImage(path, n_roi, channels, **kwargs)
+		elif extension in FITS_EXTENSIONS:
 			image = FitsImageLoader(path, n_roi, channels)
 		else:
 			image = ExifImageLoader(path, n_roi, channels)
