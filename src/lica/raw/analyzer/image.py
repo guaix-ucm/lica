@@ -66,7 +66,7 @@ class ImageStatistics:
         elif type(bias) == float:
             self._bias =  np.full((N,1,1), bias)
         if dark is not None:
-            self._dark = dark * self.exptime()
+            self._dark = dark * self._image.exptime()
             log.info("Bias level per channel: %s. Dark count is %.02g", self._bias.reshape(-1), self._dark)
         else:
             log.info("Bias level per channel: %s.", self._bias.reshape(-1)) 
