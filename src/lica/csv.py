@@ -10,13 +10,11 @@
 # System wide imports
 # -------------------
 
-import logging
+import csv
 
 # ---------
 # Constants
 # ---------
-
-log = logging.getLogger(__name__)
 
 # ------------------
 # Auxiliar functions
@@ -28,5 +26,9 @@ def write_csv(path, header, sequence, delimiter=';'):
         writer.writeheader()
         for row in sequence:
             writer.writerow(row)
-    log.info("generated CSV file: %s", path)
 
+def read_csv(path, delimiter=';'):
+    with open(path, newline='') as csvfile:
+        reader = csv.DictReader(csvfile, delimiter=delimiter)
+        sequence = [row for row in reader]
+        return sequence
