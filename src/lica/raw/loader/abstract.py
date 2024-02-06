@@ -85,7 +85,7 @@ class AbstractImageLoader:
     def name(self):
         return self.metadata()['name']
 
-    def exposure(self):
+    def exptime(self):
         '''Useul for image list sorting by exposure time'''
         return float(self.metadata()['exposure'])
 

@@ -43,7 +43,7 @@ class SimulatedDarkImage(ExifImageLoader):
         self._check_channels(err_msg="In-place statistics on G=(Gr+Gb)/2 channel not available")
         raw_pixels_list = list()
         rng = np.random.default_rng()
-        dark = [self._dk_current * self.exposure() for ch in CHANNELS]
+        dark = [self._dk_current * self.exptime() for ch in CHANNELS]
         for i, ch in enumerate(CHANNELS):
             raw_pixels = self._biases[i] + dark[i]+ self._rd_noise * rng.standard_normal(size=self._shape)
             raw_pixels = np.asarray(raw_pixels, dtype=np.uint16)
