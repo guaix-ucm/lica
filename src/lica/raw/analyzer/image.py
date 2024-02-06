@@ -108,8 +108,8 @@ class ImageStatistics:
 
 class ImagePairStatistics(ImageStatistics):
     '''Analize Image im pairs to remove Fixed Pattern Noise in the variance'''
-    def __init__(self, path_a, path_b, n_roi, channels, bias=None):
-        super().__init__(path_a, n_roi, channels, bias)
+    def __init__(self, path_a, path_b, n_roi, channels, bias=None, dark=None):
+        super().__init__(path_a, n_roi, channels, bias, dark)
         self._path_b = path_b
         self._image_b = self._factory.image_from(path_b, n_roi, channels)
         self._diff = None
