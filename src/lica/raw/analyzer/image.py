@@ -76,7 +76,10 @@ class ImageStatistics:
         return self._image
 
     def run(self):
-        self._pixels = self._image.load().astype(dtype=np.float32, copy=False) - self._bias - self._dark # Stack of image color planes, cropped by ROI
+        if self._dark is not None:
+            self._pixels = self._image.load().astype(dtype=np.float32, copy=False) - self._bias - self._dark # Stack of image color planes, cropped by ROI
+        else:
+            self._pixels = self._image.load().astype(dtype=np.float32, copy=False) - self._bias
 
     def name(self):
         return self._image.name()
@@ -118,7 +121,10 @@ class ImagePairStatistics(ImageStatistics):
 
     def run(self):
         super().run()
-        self._pixels_b = self._image_b.load().astype(np.float32, copy=False) - self._bias - self._dark
+        if self._dark is not None:
+            self._pixels_b = self._image_b.load().astype(np.float32, copy=False) - self._bias - self._dark
+        else:
+            self._pixels_b = self._image_b.load().astype(np.float32, copy=False) - self._bias
 
     def names(self):
         '''Like name() but returns'''
