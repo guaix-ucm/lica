@@ -74,6 +74,16 @@ def vflopath(value):
         return value
     return n
 
+def vmac(mac):
+    ''''Valid input MAC strings'''
+    try:
+        corrected_mac = ':'.join(f"{int(x,16):02X}" for x in mac.split(':'))
+    except ValueError:
+        raise ValueError("Invalid MAC: %s" % mac)
+    except AttributeError:
+        raise ValueError("Invalid MAC: %s" % mac)
+    return corrected_mac
+
 # ---------------------------------------------------------------------
 # This section validates combination of color channels to show in plots
 # ---------------------------------------------------------------------
