@@ -47,8 +47,7 @@ class SimulatedDarkImage(ExifImageLoader):
         rng = np.random.default_rng()
         dark = [self._dk_current * self.exptime() for ch in CHANNELS]
         for i, ch in enumerate(CHANNELS):
-            raw_pixels = self._biases[i] + dark[i] + rng.standard_normal(
-                scale=self._rd_noise, size=self._shape)
+            raw_pixels = self._biases[i] + dark[i] + self._rd_noise * rng.standard_normal(size=self._shape)
             raw_pixels = np.asarray(raw_pixels, dtype=np.uint16)
             raw_pixels = self._trim(raw_pixels)
             raw_pixels_list.append(raw_pixels)
