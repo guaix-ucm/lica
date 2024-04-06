@@ -35,8 +35,10 @@ class SimulatedDarkImage(ExifImageLoader):
 
     def __init__(self, path,  n_roi=None, channels=None, **kwargs):
         super().__init__(path, n_roi, channels) # The rest of metadata is taken from the EXIF & RAW header
-        self._dk_current = kwargs.get('dark_current', 0.0)
-        self._rd_noise = kwargs.get('read_noise', 1.0)
+        self._dk_current = kwargs.get('dark_current')
+        self._dk_current = 0.0 if self._dk_current is None else self._dk_current
+        self._rd_noise = kwargs.get('read_noise')
+        self._rd_noise = 1.0 if self._rd_noise is None else self._rd_noise
       
     def load(self):
         '''Get a stack of Bayer colour planes selected by the channels sequence'''
