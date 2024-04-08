@@ -36,16 +36,30 @@ log = logging.getLogger(__name__)
 # -------
 
 class ImageStatistics:
-    def __init__(self, path, n_roi, channels, bias=None, dark=None):
-        self._factory =  ImageLoaderFactory()
-        self._image = self._factory.image_from(path, n_roi, channels)
+    def __init__(self):
+        '''Should not be used to instantiate directly'''
         self._pixels = None
         self._bias = None
         self._dark = None
         self._mean = None
         self._variance = None
         self._median = None
-        self._configure(bias, dark)
+        self._factory =  ImageLoaderFactory()
+    
+    @classmethod
+    def from_path(cls, path, n_roi, channels, bias=None, dark=None):
+        obj = cls()
+        obj._image = obj._factory.image_from(path, n_roi, channels)
+        obj._configure(bias, dark)
+        return obj
+
+
+    @classmethod
+    def attach(cls, loader, bias=None, dark=None):
+        obj = cls()
+        obj._image = loader
+        obj._configure(bias, dark)
+        return obj
     
     def _configure(self, bias, dark):
         if self._bias is not None:
@@ -110,12 +124,20 @@ class ImageStatistics:
 
 class ImagePairStatistics(ImageStatistics):
     '''Analize Image im pairs to remove Fixed Pattern Noise in the variance'''
-    def __init__(self, path_a, path_b, n_roi, channels, bias=None, dark=None):
-        super().__init__(path_a, n_roi, channels, bias, dark)
-        self._image_b = self._factory.image_from(path_b, n_roi, channels)
+    def __init__(self):
+        super().__init__()
         self._diff = None
         self._pair_mean = None
         self._pair_variance = None
+
+
+    @classmethod
+    def from_path(cls, path_a, path_b, n_roi, channels, bias=None, dark=None):
+        obj = cls()
+        obj._image = obj._factory.image_from(path_a, n_roi, channels)
+        obj._configure(bias, dark)
+        obj._image_b = obj._factory.image_from(path,_b n_roi, channels)
+        return obj
 
     def run(self):
         super().run()
