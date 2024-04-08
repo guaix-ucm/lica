@@ -99,6 +99,9 @@ class AbstractImageLoader:
         '''Already debayered'''
         return self._channels
 
+    def n_roi(self):
+        return self._n_roi
+
     def roi(self):
         if self._roi is None:
             self.metadata()

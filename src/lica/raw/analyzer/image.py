@@ -37,9 +37,6 @@ log = logging.getLogger(__name__)
 
 class ImageStatistics:
     def __init__(self, path, n_roi, channels, bias=None, dark=None):
-        self._path = path
-        self._n_roi = n_roi
-        self._channels = channels
         self._factory =  ImageLoaderFactory()
         self._image = self._factory.image_from(path, n_roi, channels)
         self._pixels = None
@@ -53,7 +50,9 @@ class ImageStatistics:
     def _configure(self, bias, dark):
         if self._bias is not None:
             return
-        N = len(self._channels)
+        channels = self._image.channels()
+        n_roi = self._image.n_roi()
+        N = len(channels)
         if bias is None:
             try:
                 bias = self._image.black_levels()
@@ -62,7 +61,7 @@ class ImageStatistics:
                 log.warn("No luck using embedded image black levels as bias")
                 self._bias =  np.full((N,1,1), 0)
         elif type(bias) == str:
-            self._bias = self._factory.image_from(bias, self._n_roi, self._channels).load()
+            self._bias = self._factory.image_from(bias, n_roi, channels).load()
         elif type(bias) == float:
             self._bias =  np.full((N,1,1), bias)
         if dark is not None:
@@ -113,7 +112,6 @@ class ImagePairStatistics(ImageStatistics):
     '''Analize Image im pairs to remove Fixed Pattern Noise in the variance'''
     def __init__(self, path_a, path_b, n_roi, channels, bias=None, dark=None):
         super().__init__(path_a, n_roi, channels, bias, dark)
-        self._path_b = path_b
         self._image_b = self._factory.image_from(path_b, n_roi, channels)
         self._diff = None
         self._pair_mean = None
