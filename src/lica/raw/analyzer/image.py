@@ -136,7 +136,7 @@ class ImagePairStatistics(ImageStatistics):
         obj = cls()
         obj._image = obj._factory.image_from(path_a, n_roi, channels)
         obj._configure(bias, dark)
-        obj._image_b = obj._factory.image_from(path,_b n_roi, channels)
+        obj._image_b = obj._factory.image_from(path_b, n_roi, channels)
         return obj
 
     def run(self):
