@@ -110,14 +110,14 @@ class Roi:
         return cls(Roi_dict['x0'], Roi_dict['x1'],Roi_dict['y0'], Roi_dict['y1'])
 
     @classmethod
-    def extend_X(cls, roi, width already_debayered=True):
+    def extend_X(cls, roi, width, already_debayered=True):
         '''Produce a new ROI extendoing the existsing up to X Borders'''
         if not already_debayered:
             width  = width  //2 
         return cls(x0=0, x1=width, y0=roi.y0, y1=roi.y1)
 
     @classmethod
-    def extend_Y(cls, roi, height,  already_debayered=True):
+    def extend_Y(cls, roi, height, already_debayered=True):
         '''Produce a new ROI extendoing the existsing up to Y Borders'''
         if not already_debayered:
             height = height //2  
