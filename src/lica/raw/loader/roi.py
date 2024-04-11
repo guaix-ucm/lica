@@ -133,8 +133,8 @@ class Roi:
         return {'x0':self.x0, 'y0':self.y0, 'x1':self.x1, 'y1':self.y1}
         
     def xy(self):
-        '''To use when displaying Roiangles in matplotlib'''
-        return(self.x0, self.y0)
+        '''To use when displaying Rectangles in matplotlib'''
+        return (self.x0, self.y0)
 
     def width(self):
         return abs(self.x1 - self.x0)
@@ -145,6 +145,9 @@ class Roi:
     def dimensions(self):
         '''returns width and height'''
         return abs(self.x1 - self.x0), abs(self.y1 - self.y0)
+
+    def cemtre(self):
+        return self.x0 + self.width()//2, self.y0 + self.height()//2,
 
     def __add__(self, point):
         return Roi(self.x0 + point.x, self.x1 + point.x, self.y0 + point.y, self.y1 + point.y)
