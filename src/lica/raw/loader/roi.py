@@ -56,6 +56,14 @@ class NormRoi:
 		self.width = n_width
 		self.height = n_height
 
+	@classmethod
+    def from_roi(cls, roi, width, height):
+        n_x0 = roi.x0 / width
+        n_y0 = roi.y0 / height
+        n_width = (roi.x1 - roi.x0) / width
+        n_height = (roi.y1 - roi.y0) / height
+        return cls(n_x0, n_y0, n_width, n_height)
+
 	def __repr__(self):
 		x0 = np.nan if self.x0 is None else self.x0
 		y0 = np.nan if self.y0 is None else self.y0
