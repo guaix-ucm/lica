@@ -147,7 +147,7 @@ class Roi:
         return abs(self.x1 - self.x0), abs(self.y1 - self.y0)
 
     def centre(self):
-        return self.x0 + self.width()//2, self.y0 + self.height()//2,
+        return self.x0 + self.width()/2, self.y0 + self.height()/2,
 
     def __add__(self, point):
         return Roi(self.x0 + point.x, self.x1 + point.x, self.y0 + point.y, self.y1 + point.y)
