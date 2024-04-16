@@ -64,13 +64,28 @@ def vfloat01(num):
         raise ValueError(f"Value {num} out of bounds [0..1]")
     return num
 
+def vint(L, H, num):
+    '''Integer validator between [L..H]'''
+    if not (L <= num <= H):
+        raise ValueError(f"Value {num} out of bounds [{L}..{H}]")
+    return num
+
 def voddint(L, H, num):
     '''Odd integer validator between [L..H]'''
-    num = float(fractions.Fraction(num))
     if (L % 2) == 0:
         raise ValueError(f"Low bound value {L} is not an odd number")
     if (H % 2) == 0:
         raise ValueError(f"High bound value {H} is not an odd number")
+    if not (L <= num <= H):
+        raise ValueError(f"Value {num} out of bounds [{L}..{H}]")
+    return num
+
+def vevenint(L, H, num):
+    '''Even integer validator between [L..H]'''
+    if (L % 2) == 1:
+        raise ValueError(f"Low bound value {L} is not an even number")
+    if (H % 2) == 1:
+        raise ValueError(f"High bound value {H} is not an even number")
     if not (L <= num <= H):
         raise ValueError(f"Value {num} out of bounds [{L}..{H}]")
     return num
