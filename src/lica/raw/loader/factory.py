@@ -12,13 +12,10 @@
 
 
 import os
-import logging
 
 # ---------------------
 # Thrid-party libraries
 # ---------------------
-
-log = logging.getLogger(__name__)
 
 # -----------
 # Own package
@@ -35,7 +32,6 @@ class ImageLoaderFactory:
 
 	def image_from(self, path, n_roi=None, channels=None, simulated=False, **kwargs):
 		extension = os.path.splitext(path)[1]
-		log.info("File extension is %s", extension)
 		if simulated:
 			image = SimulatedDarkImage(path, n_roi, channels, **kwargs)
 		elif extension in FITS_EXTENSIONS:
@@ -43,8 +39,7 @@ class ImageLoaderFactory:
 		elif extension in DNG_EXTENSIONS:
 			image = DngImageLoader(path, n_roi, channels)
 		else:
-			image = DngImageLoader(path, n_roi, channels)
-			#image = ExifImageLoader(path, n_roi, channels)
+			image = ExifImageLoader(path, n_roi, channels)
 		return image
 
 
