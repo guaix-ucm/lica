@@ -74,8 +74,9 @@ class DngImageLoader(AbstractImageLoader):
         self._cfa = None
         self._biases = None
         self._white_levels = None
-        #self._exif() # read exif metadata
-        #self._raw() # read raw metadata
+        self._raw() # read raw metadata
+        self._exif() # read exif metadata
+
 
 
     def _raw_metadata(self, img):
@@ -87,7 +88,7 @@ class DngImageLoader(AbstractImageLoader):
         self._metadata['pedestal'] = self.black_levels()
         self._metadata['bayerpat'] = self._cfa
         self._metadata['colordesc'] = self._color_desc
-        self._sizes = (img.sizes.raw_height, img.sizes.raw_width)
+        self._shape = (img.sizes.raw_height, img.sizes.raw_width)
         log.info("Named Tuples %s",self._sizes)
 
     def _raw(self):
@@ -102,11 +103,15 @@ class DngImageLoader(AbstractImageLoader):
             exif = exifread.process_file(f, details=True)
         if not exif:
             raise ValueError('Could not open EXIF metadata in DNG')
-        width  = int(str(exif.get('Image ImageWidth')))
-        height = int(str(exif.get('Image ImageLength')))
+
+        # EXIF image size ias incorrectly reported and we have to read it from rawpy directly
+        # width  = int(str(exif.get('Image ImageWidth')))
+        # height = int(str(exif.get('Image ImageLength')))
+        width = self._shape[1]
+        height = self._shape[0]
         log.info("Reported image size from EXIF is %d rows x %d cols", height, width)
         self._name = os.path.basename(self._path)
-        self._shape = (height//2, width//2)
+       
         self._roi =  Roi.from_normalized_roi(width, height, self._n_roi, already_debayered=False)
         # General purpose metadata
         self._metadata['name'] = self._name
