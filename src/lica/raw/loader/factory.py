@@ -24,6 +24,7 @@ import os
 
 from .fits import FitsImageLoader
 from .exif import ExifImageLoader
+from .dng import DngImageLoader
 from .simulation import SimulatedDarkImage
 from .constants import FITS_EXTENSIONS
 
@@ -36,6 +37,8 @@ class ImageLoaderFactory:
 			image = SimulatedDarkImage(path, n_roi, channels, **kwargs)
 		elif extension in FITS_EXTENSIONS:
 			image = FitsImageLoader(path, n_roi, channels)
+		elif extension in DNG_EXTENSIONS:
+			image = DngImageLoader(path, n_roi, channels)
 		else:
 			image = ExifImageLoader(path, n_roi, channels)
 		return image

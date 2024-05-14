@@ -15,3 +15,5 @@ LABELS = (('Red', 'R'), ('Green r','Gr'), ('Green b', 'Gb'), ('Blue', 'B'))
 CHANNELS = ('R', 'Gr', 'Gb', 'B')
 
 FITS_EXTENSIONS = ('.fts', '.fit', '.fits')
+
+DNG_EXTENSIONS = ('.dng', '.DNG',)
