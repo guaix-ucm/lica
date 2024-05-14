@@ -100,7 +100,7 @@ class DngImageLoader(AbstractImageLoader):
             exif = exifread.process_file(f, details=True)
         if not exif:
             raise ValueError('Could not open EXIF metadata in DNG')
-        width  = int(str(exif.get('EXIF Image Width')))
+        width  = int(str(exif.get('Image Width')))
         height = int(str(exif.get('EXIF Image Height')))
         self._name = os.path.basename(self._path)
         self._shape = (height//2, width//2)
