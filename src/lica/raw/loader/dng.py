@@ -34,7 +34,7 @@ from .abstract import AbstractImageLoader
 # Constants
 # ---------
 
-#log = logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
 # ----------
 # Exceptions
@@ -100,6 +100,8 @@ class DngImageLoader(AbstractImageLoader):
             exif = exifread.process_file(f, details=True)
         if not exif:
             raise ValueError('Could not open EXIF metadata in DNG')
+
+        log.info("%s", exif.keys())
         width  = int(str(exif.get('Image Width')))
         height = int(str(exif.get('EXIF Image Height')))
         self._name = os.path.basename(self._path)
