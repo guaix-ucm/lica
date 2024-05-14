@@ -89,7 +89,6 @@ class DngImageLoader(AbstractImageLoader):
         self._metadata['bayerpat'] = self._cfa
         self._metadata['colordesc'] = self._color_desc
         self._shape = (img.sizes.raw_height, img.sizes.raw_width)
-        log.info("Named Tuples %s",self._sizes)
 
     def _raw(self):
         with rawpy.imread(self._path) as img:
