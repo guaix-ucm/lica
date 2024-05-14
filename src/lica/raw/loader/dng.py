@@ -154,8 +154,6 @@ class DngImageLoader(AbstractImageLoader):
     def load(self):
         '''Load a stack of Bayer colour planes selected by the channels sequence'''
         with rawpy.imread(self._path) as img:
-            #log.info(" -----> LibRaw I/O [load] for %s", os.path.basename(self._path))
-            self._raw_metadata(img)
             raw_pixels_list = list()
             for channel in CHANNELS:
                 x = self.CFA_OFFSETS[self._cfa][channel]['x']
