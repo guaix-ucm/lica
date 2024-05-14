@@ -100,10 +100,9 @@ class DngImageLoader(AbstractImageLoader):
             exif = exifread.process_file(f, details=True)
         if not exif:
             raise ValueError('Could not open EXIF metadata in DNG')
-
-        log.info("%s", exif.keys())
         width  = int(str(exif.get('Image ImageWidth')))
         height = int(str(exif.get('Image ImageLength')))
+        log.info("Reported image size from EXIF is %d rows x %d cols", height, width)
         self._name = os.path.basename(self._path)
         self._shape = (height//2, width//2)
         self._roi =  Roi.from_normalized_roi(width, height, self._n_roi, already_debayered=False)
