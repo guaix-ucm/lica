@@ -12,6 +12,7 @@
 
 
 import os
+import logging
 
 # ---------------------
 # Thrid-party libraries
@@ -33,6 +34,7 @@ class ImageLoaderFactory:
 
 	def image_from(self, path, n_roi=None, channels=None, simulated=False, **kwargs):
 		extension = os.path.splitext(path)[1]
+		log.info("File extension is %s", extension)
 		if simulated:
 			image = SimulatedDarkImage(path, n_roi, channels, **kwargs)
 		elif extension in FITS_EXTENSIONS:
