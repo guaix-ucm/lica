@@ -102,8 +102,8 @@ class DngImageLoader(AbstractImageLoader):
             raise ValueError('Could not open EXIF metadata in DNG')
 
         log.info("%s", exif.keys())
-        width  = int(str(exif.get('Image Width')))
-        height = int(str(exif.get('EXIF Image Height')))
+        width  = int(str(exif.get('Image ImageWidth')))
+        height = int(str(exif.get('Image ImageHeight')))
         self._name = os.path.basename(self._path)
         self._shape = (height//2, width//2)
         self._roi =  Roi.from_normalized_roi(width, height, self._n_roi, already_debayered=False)
@@ -115,7 +115,7 @@ class DngImageLoader(AbstractImageLoader):
         self._metadata['exposure'] = fractions.Fraction(str(exif.get('EXIF ExposureTime', 0)))
         self._metadata['width'] = width // 2
         self._metadata['height'] = height //2
-        self._metadata['iso'] = str(exif.get('EXIF ISO', None))
+        self._metadata['iso'] = str(exif.get('EXIF ISOSpeedRatings', None))
         self._metadata['camera'] = str(exif.get('Image Model', None)).strip()
         self._metadata['focal_length'] = fractions.Fraction(str(exif.get('EXIF FocalLength', 0)))
         self._metadata['f_number'] = fractions.Fraction(str(exif.get('EXIF FNumber', 0)))
