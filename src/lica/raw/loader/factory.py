@@ -40,7 +40,8 @@ class ImageLoaderFactory:
 		elif extension in DNG_EXTENSIONS:
 			image = DngImageLoader(path, n_roi, channels)
 		else:
-			image = ExifImageLoader(path, n_roi, channels)
+			image = DngImageLoader(path, n_roi, channels)
+			#image = ExifImageLoader(path, n_roi, channels)
 		return image
 
 
