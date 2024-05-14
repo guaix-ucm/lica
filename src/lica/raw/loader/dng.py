@@ -74,9 +74,8 @@ class DngImageLoader(AbstractImageLoader):
         self._cfa = None
         self._biases = None
         self._white_levels = None
-        self._raw() # read raw metadata
+        self._raw() # read raw metadata first to get image size
         self._exif() # read exif metadata
-
 
 
     def _raw_metadata(self, img):
@@ -102,15 +101,12 @@ class DngImageLoader(AbstractImageLoader):
             exif = exifread.process_file(f, details=True)
         if not exif:
             raise ValueError('Could not open EXIF metadata in DNG')
-
         # EXIF image size ias incorrectly reported and we have to read it from rawpy directly
         # width  = int(str(exif.get('Image ImageWidth')))
         # height = int(str(exif.get('Image ImageLength')))
         width = self._shape[1]
         height = self._shape[0]
-        log.info("Reported image size from EXIF is %d rows x %d cols", height, width)
         self._name = os.path.basename(self._path)
-       
         self._roi =  Roi.from_normalized_roi(width, height, self._n_roi, already_debayered=False)
         # General purpose metadata
         self._metadata['name'] = self._name
@@ -137,16 +133,10 @@ class DngImageLoader(AbstractImageLoader):
     # ----------
 
     def metadata(self):
-        if self._name is None:
-            self._exif()
-        if self._cfa is None:
-            self._raw()
         return self._metadata
 
     def cfa_pattern(self):
         '''Returns the Bayer pattern as RGGB, BGGR, GRBG, GBRG strings'''
-        if self._color_desc is None:
-            self._raw()
         if self._color_desc != 'RGBG':
             raise UnsupporteCFAError(self._color_desc)
         return self._cfa
@@ -154,21 +144,15 @@ class DngImageLoader(AbstractImageLoader):
     def saturation_levels(self):
         self._check_channels(err_msg="saturation_levels on G=(Gr+Gb)/2 channel not available")
         if self._white_levels is None:
-            self._raw()
-        if self._white_levels is None:
             raise NotImplementedError("saturation_levels for this image not available using LibRaw")
         return tuple(self._white_levels[CHANNELS.index(ch)] for ch in self._channels)
 
     def black_levels(self):
         self._check_channels(err_msg="black_levels on G=(Gr+Gb)/2 channel not available")
-        if self._biases is None:
-            self._raw()
         return tuple(self._biases[CHANNELS.index(ch)] for ch in self._channels)
 
     def load(self):
         '''Load a stack of Bayer colour planes selected by the channels sequence'''
-        if self._name is None:
-            self._exif()
         with rawpy.imread(self._path) as img:
             #log.info(" -----> LibRaw I/O [load] for %s", os.path.basename(self._path))
             self._raw_metadata(img)
@@ -184,12 +168,7 @@ class DngImageLoader(AbstractImageLoader):
     def statistics(self):
         '''In-place statistics calculation for RPi Zero'''
         self._check_channels(err_msg="In-place statistics on G=(Gr+Gb)/2 channel not available")
-        if self._name is None:
-            self._exif()
         with rawpy.imread(self._path) as img:
-            # very imporatnt to be under the image context manager
-            # when doing manipulations on img.raw_image
-            self._raw_metadata(img)
             stats_list = list()
             for channel in CHANNELS:
                 x = self.CFA_OFFSETS[self._cfa][channel]['x']

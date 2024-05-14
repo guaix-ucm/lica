@@ -74,9 +74,6 @@ class ExifImageLoader(AbstractImageLoader):
         self._cfa = None
         self._biases = None
         self._white_levels = None
-        #self._exif() # read exif metadata
-        #self._raw() # read raw metadata
-
 
     def _raw_metadata(self, img):
         '''To be used in teh context of an image context manager'''
@@ -90,9 +87,7 @@ class ExifImageLoader(AbstractImageLoader):
 
     def _raw(self):
         with rawpy.imread(self._path) as img:
-            #log.info(" -----> LibRaw I/O [init] for %s", os.path.basename(self._path))
             self._raw_metadata(img)
-
 
     def _exif(self):
         with open(self._path, 'rb') as f:
