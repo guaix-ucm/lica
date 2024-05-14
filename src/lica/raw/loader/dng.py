@@ -103,7 +103,7 @@ class DngImageLoader(AbstractImageLoader):
 
         log.info("%s", exif.keys())
         width  = int(str(exif.get('Image ImageWidth')))
-        height = int(str(exif.get('Image ImageHeight')))
+        height = int(str(exif.get('Image ImageLength')))
         self._name = os.path.basename(self._path)
         self._shape = (height//2, width//2)
         self._roi =  Roi.from_normalized_roi(width, height, self._n_roi, already_debayered=False)
