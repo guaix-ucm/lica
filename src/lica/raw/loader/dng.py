@@ -87,6 +87,8 @@ class DngImageLoader(AbstractImageLoader):
         self._metadata['pedestal'] = self.black_levels()
         self._metadata['bayerpat'] = self._cfa
         self._metadata['colordesc'] = self._color_desc
+        self._sizes = img.sizes
+        log.info("Named Tuples %s",self._sizes)
 
     def _raw(self):
         with rawpy.imread(self._path) as img:
