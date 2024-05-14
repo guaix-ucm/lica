@@ -18,6 +18,7 @@ import logging
 # Thrid-party libraries
 # ---------------------
 
+log = logging.getLogger(__name__)
 
 # -----------
 # Own package
