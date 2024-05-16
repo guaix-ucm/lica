@@ -42,8 +42,8 @@ class ImageStatistics:
         self._bias = None
         self._dark = None
         self._mean = None
-        self._min = None,
-        self._max = None,
+        self._min = None
+        self._max = None
         self._variance = None
         self._median = None
         self._factory =  ImageLoaderFactory()
