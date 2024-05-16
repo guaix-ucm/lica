@@ -96,13 +96,13 @@ class ExifImageLoader(AbstractImageLoader):
         print(exif.keys())
         if not exif:
             raise ValueError('Could not open EXIF metadata')
-        for key in ('EXIF ExifImageWidth', 'Image ExifImageWidth'):
+        for key in ('EXIF ExifImageWidth', 'Image ImageWidth'):
             width = exif.get(key)
             if width:
                 break
         if width is None:
             raise IOError("Could not find EXIF header for image width")
-        for key in ('EXIF ExifImageLength', 'Image ExifImageLength'):
+        for key in ('EXIF ExifImageLength', 'Image ImageLength'):
             height = exif.get(key)
             if height:
                 break
