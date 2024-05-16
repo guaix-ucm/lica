@@ -20,7 +20,7 @@
 
 from .factory import ImageLoaderFactory
 from .roi import Roi, NormRoi
-from .constants import LABELS, CHANNELS, FITS_EXTENSIONS
+from .constants import LABELS, CHANNELS
 from .simulation import SimulatedDarkImage
 
 # ---------

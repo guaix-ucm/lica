@@ -95,8 +95,21 @@ class ExifImageLoader(AbstractImageLoader):
             exif = exifread.process_file(f, details=True)
         if not exif:
             raise ValueError('Could not open EXIF metadata')
-        width  = int(str(exif.get('EXIF ExifImageWidth')))
-        height = int(str(exif.get('EXIF ExifImageLength')))
+        for key in ('EXIF ExifImageWidth', 'Image ExifImageWidth'):
+            width = exif.get(key)
+            if width:
+                break
+        if width is None:
+            raise IOError("Coudlnt find EXIF header for image width")
+        for key in ('EXIF ExifImageLength', 'Image ExifImageLength'):
+            height = exif.get(key)
+            if height:
+                break
+        if height is None:
+            raise IOError("Coudlnt find EXIF header for image height")
+
+        width  = int(str(width))
+        height = int(str(height))
         self._name = os.path.basename(self._path)
         self._shape = (height//2, width//2)
         self._roi =  Roi.from_normalized_roi(width, height, self._n_roi, already_debayered=False)

@@ -16,4 +16,6 @@ CHANNELS = ('R', 'Gr', 'Gb', 'B')
 
 FITS_EXTENSIONS = ('.fts', '.fit', '.fits')
 
-DNG_EXTENSIONS = ('.dng', '.DNG',)
+DNG_EXTENSIONS = ('.dng',)
+
+JPG_EXTENSIONS = ('.jpg','.jpeg')
