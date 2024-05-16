@@ -103,32 +103,32 @@ class ImageStatistics:
         return self._pixels
 
     def mean(self):
-        if not self._mean:
+        if self._mean is None:
             self._mean = np.mean(self._pixels,  axis=(1,2))
         return self._mean
 
     def variance(self):
-        if not self._variance:
+        if self._variance is None:
             self._variance = np.var(self._pixels, axis=(1,2), dtype=np.float64, ddof=1)
         return self._variance
 
     def std(self):
-        if not self._variance:
+        if self._variance is None:
             self._variance = np.var(self._pixels, axis=(1,2), dtype=np.float64, ddof=1)
         return np.sqrt(self._variance)
 
     def median(self):
-        if not self._median:
+        if self._median is None:
             self._median = np.median(self._pixels,  axis=(1,2))
         return self._median
 
     def min(self):
-        if not self._min:
+        if self._min is None:
             self._min = np.min(self._pixels,  axis=(1,2))
         return self._min
 
     def max(self):
-        if not self._max:
+        if self._max is None:
             self._max = np.max(self._pixels,  axis=(1,2))
         return self._max
 
