@@ -42,6 +42,8 @@ class ImageStatistics:
         self._bias = None
         self._dark = None
         self._mean = None
+        self._min = None,
+        self._max = None,
         self._variance = None
         self._median = None
         self._factory =  ImageLoaderFactory()
@@ -119,6 +121,16 @@ class ImageStatistics:
         if not self._median:
             self._median = np.median(self._pixels,  axis=(1,2))
         return self._median
+
+    def min(self):
+        if not self._min:
+            self._min = np.min(self._pixels,  axis=(1,2))
+        return self._min
+
+    def max(self):
+        if not self._max:
+            self._max = np.max(self._pixels,  axis=(1,2))
+        return self._max
 
 
 
