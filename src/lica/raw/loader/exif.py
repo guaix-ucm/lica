@@ -55,7 +55,7 @@ class UnsupportedCFAError(ValueError):
 # Auxiliar classes
 # ----------------
 
-class DngImageLoader(AbstractImageLoader):
+class ExifImageLoader(AbstractImageLoader):
 
     BAYER_LETTER = ['B','G','R','G']
     BAYER_PTN_LIST = ('RGGB', 'BGGR', 'GRBG', 'GBRG')
