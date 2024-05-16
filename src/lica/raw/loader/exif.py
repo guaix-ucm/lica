@@ -34,7 +34,7 @@ from .abstract import AbstractImageLoader
 # Constants
 # ---------
 
-#log = logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
 # ----------
 # Exceptions
@@ -55,7 +55,7 @@ class UnsupportedCFAError(ValueError):
 # Auxiliar classes
 # ----------------
 
-class ExifImageLoader(AbstractImageLoader):
+class DngImageLoader(AbstractImageLoader):
 
     BAYER_LETTER = ['B','G','R','G']
     BAYER_PTN_LIST = ('RGGB', 'BGGR', 'GRBG', 'GBRG')
@@ -70,10 +70,14 @@ class ExifImageLoader(AbstractImageLoader):
     def __init__(self, path, n_roi=None, channels=None):
         super().__init__(path, n_roi, channels)
         self._shape = None
+        self._raw_shape = None
         self._color_desc = None
         self._cfa = None
         self._biases = None
         self._white_levels = None
+        self._raw() # read raw metadata first to get image size
+        self._exif() # read exif metadata
+
 
     def _raw_metadata(self, img):
         '''To be used in teh context of an image context manager'''
@@ -84,35 +88,25 @@ class ExifImageLoader(AbstractImageLoader):
         self._metadata['pedestal'] = self.black_levels()
         self._metadata['bayerpat'] = self._cfa
         self._metadata['colordesc'] = self._color_desc
+        self._raw_shape = (img.sizes.raw_height, img.sizes.raw_width)
 
     def _raw(self):
         with rawpy.imread(self._path) as img:
+            #log.info(" -----> LibRaw I/O [init] for %s", os.path.basename(self._path))
             self._raw_metadata(img)
+
 
     def _exif(self):
         with open(self._path, 'rb') as f:
             #log.info(" -----> EXIF I/O [init] for %s", os.path.basename(self._path))
             exif = exifread.process_file(f, details=True)
-        print(exif.keys())
         if not exif:
             raise ValueError('Could not open EXIF metadata')
-        for key in ('EXIF ExifImageWidth', 'Image ImageWidth'):
-            width = exif.get(key)
-            if width:
-                break
-        if width is None:
-            raise IOError("Could not find EXIF header for image width")
-        for key in ('EXIF ExifImageLength', 'Image ImageLength'):
-            height = exif.get(key)
-            if height:
-                break
-        if height is None:
-            raise IOError("Could not find EXIF header for image height")
-
-        width  = int(str(width))
-        height = int(str(height))
-        self._name = os.path.basename(self._path)
+        # EXIF image size ias incorrectly reported and we have to read it from rawpy directly
+        width = self._raw_shape[1]
+        height = self._raw_shape[0]
         self._shape = (height//2, width//2)
+        self._name = os.path.basename(self._path)
         self._roi =  Roi.from_normalized_roi(width, height, self._n_roi, already_debayered=False)
         # General purpose metadata
         self._metadata['name'] = self._name
@@ -120,15 +114,15 @@ class ExifImageLoader(AbstractImageLoader):
         self._metadata['channels'] = ' '.join(self._channels)
         # Metadata coming from EXIF
         self._metadata['exposure'] = fractions.Fraction(str(exif.get('EXIF ExposureTime', 0)))
-        self._metadata['width'] = width // 2
-        self._metadata['height'] = height //2
-        self._metadata['iso'] = str(exif.get('EXIF ISOSpeedRatings', None))
-        self._metadata['camera'] = str(exif.get('Image Model', None)).strip()
+        self._metadata['width'] = self._shape[1]
+        self._metadata['height'] = self._shape[0]
+        self._metadata['iso'] = str(exif.get('EXIF ISOSpeedRatings'))
+        self._metadata['camera'] = str(exif.get('Image Model')).strip()
         self._metadata['focal_length'] = fractions.Fraction(str(exif.get('EXIF FocalLength', 0)))
         self._metadata['f_number'] = fractions.Fraction(str(exif.get('EXIF FNumber', 0)))
-        self._metadata['datetime'] = str(exif.get('Image DateTime', None))
-        self._metadata['maker'] = str(exif.get('Image Make', None))
-        self._metadata['note'] = str(exif.get('EXIF MakerNote', None)) # Useless fo far ...
+        self._metadata['datetime'] = str(exif.get('Image DateTime'))
+        self._metadata['maker'] = str(exif.get('Image Make'))
+        self._metadata['note'] = str(exif.get('EXIF MakerNote')) # Useless fo far ...
         self._metadata['log-gain'] = None  # Not known until load time
         self._metadata['xpixsize'] = None  # Not usually available in EXIF headers
         self._metadata['ypixsize'] = None  # Not usually available in EXIF headers
@@ -139,16 +133,10 @@ class ExifImageLoader(AbstractImageLoader):
     # ----------
 
     def metadata(self):
-        if self._name is None:
-            self._exif()
-        if self._cfa is None:
-            self._raw()
         return self._metadata
 
     def cfa_pattern(self):
         '''Returns the Bayer pattern as RGGB, BGGR, GRBG, GBRG strings'''
-        if self._color_desc is None:
-            self._raw()
         if self._color_desc != 'RGBG':
             raise UnsupporteCFAError(self._color_desc)
         return self._cfa
@@ -156,24 +144,16 @@ class ExifImageLoader(AbstractImageLoader):
     def saturation_levels(self):
         self._check_channels(err_msg="saturation_levels on G=(Gr+Gb)/2 channel not available")
         if self._white_levels is None:
-            self._raw()
-        if self._white_levels is None:
             raise NotImplementedError("saturation_levels for this image not available using LibRaw")
         return tuple(self._white_levels[CHANNELS.index(ch)] for ch in self._channels)
 
     def black_levels(self):
         self._check_channels(err_msg="black_levels on G=(Gr+Gb)/2 channel not available")
-        if self._biases is None:
-            self._raw()
         return tuple(self._biases[CHANNELS.index(ch)] for ch in self._channels)
 
     def load(self):
         '''Load a stack of Bayer colour planes selected by the channels sequence'''
-        if self._name is None:
-            self._exif()
         with rawpy.imread(self._path) as img:
-            #log.info(" -----> LibRaw I/O [load] for %s", os.path.basename(self._path))
-            self._raw_metadata(img)
             raw_pixels_list = list()
             for channel in CHANNELS:
                 x = self.CFA_OFFSETS[self._cfa][channel]['x']
@@ -186,12 +166,7 @@ class ExifImageLoader(AbstractImageLoader):
     def statistics(self):
         '''In-place statistics calculation for RPi Zero'''
         self._check_channels(err_msg="In-place statistics on G=(Gr+Gb)/2 channel not available")
-        if self._name is None:
-            self._exif()
         with rawpy.imread(self._path) as img:
-            # very imporatnt to be under the image context manager
-            # when doing manipulations on img.raw_image
-            self._raw_metadata(img)
             stats_list = list()
             for channel in CHANNELS:
                 x = self.CFA_OFFSETS[self._cfa][channel]['x']

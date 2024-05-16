@@ -29,7 +29,6 @@ EXIF_EXTENSIONS = ('.jpg','.jpeg', '.dng')
 
 from .fits import FitsImageLoader
 from .exif import ExifImageLoader
-from .dng import DngImageLoader
 from .simulation import SimulatedDarkImage
 from .constants import FITS_EXTENSIONS, DNG_EXTENSIONS, JPG_EXTENSIONS
 
