@@ -93,6 +93,7 @@ class ExifImageLoader(AbstractImageLoader):
         with open(self._path, 'rb') as f:
             #log.info(" -----> EXIF I/O [init] for %s", os.path.basename(self._path))
             exif = exifread.process_file(f, details=True)
+        print(exif.keys())
         if not exif:
             raise ValueError('Could not open EXIF metadata')
         for key in ('EXIF ExifImageWidth', 'Image ExifImageWidth'):
@@ -100,13 +101,13 @@ class ExifImageLoader(AbstractImageLoader):
             if width:
                 break
         if width is None:
-            raise IOError("Coudlnt find EXIF header for image width")
+            raise IOError("Could not find EXIF header for image width")
         for key in ('EXIF ExifImageLength', 'Image ExifImageLength'):
             height = exif.get(key)
             if height:
                 break
         if height is None:
-            raise IOError("Coudlnt find EXIF header for image height")
+            raise IOError("Could not find EXIF header for image height")
 
         width  = int(str(width))
         height = int(str(height))
