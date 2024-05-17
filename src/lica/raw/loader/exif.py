@@ -115,8 +115,8 @@ class ExifImageLoader(AbstractImageLoader):
         # Metadata coming from EXIF
         for key in ('Image DateTime', 'EXIF DateTimeOriginal'):
             datetime = exif.get(key)
-        if datetime:
-            break
+            if datetime:
+                break
         self._metadata['datetime'] = datetime
         self._metadata['exposure'] = fractions.Fraction(str(exif.get('EXIF ExposureTime', 0)))
         self._metadata['width'] = self._shape[1]
