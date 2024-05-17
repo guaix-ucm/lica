@@ -103,7 +103,6 @@ class ExifImageLoader(AbstractImageLoader):
         if not exif:
             raise ValueError('Could not open EXIF metadata')
         # EXIF image size ias incorrectly reported and we have to read it from rawpy directly
-        print(exif.keys())
         width = self._raw_shape[1]
         height = self._raw_shape[0]
         self._shape = (height//2, width//2)
@@ -114,6 +113,11 @@ class ExifImageLoader(AbstractImageLoader):
         self._metadata['roi'] = str(self._roi)
         self._metadata['channels'] = ' '.join(self._channels)
         # Metadata coming from EXIF
+        for key in ('Image DateTime', 'EXIF DateTimeOriginal'):
+            datetime = exif.get(key)
+        if datetime:
+            break
+        self._metadata['datetime'] = datetime
         self._metadata['exposure'] = fractions.Fraction(str(exif.get('EXIF ExposureTime', 0)))
         self._metadata['width'] = self._shape[1]
         self._metadata['height'] = self._shape[0]
@@ -121,7 +125,6 @@ class ExifImageLoader(AbstractImageLoader):
         self._metadata['camera'] = str(exif.get('Image Model')).strip()
         self._metadata['focal_length'] = fractions.Fraction(str(exif.get('EXIF FocalLength', 0)))
         self._metadata['f_number'] = fractions.Fraction(str(exif.get('EXIF FNumber', 0)))
-        self._metadata['datetime'] = str(exif.get('Image DateTime'))
         self._metadata['maker'] = str(exif.get('Image Make'))
         self._metadata['note'] = str(exif.get('EXIF MakerNote')) # Useless fo far ...
         self._metadata['log-gain'] = None  # Not known until load time
