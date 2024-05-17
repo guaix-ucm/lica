@@ -103,6 +103,7 @@ class ExifImageLoader(AbstractImageLoader):
         if not exif:
             raise ValueError('Could not open EXIF metadata')
         # EXIF image size ias incorrectly reported and we have to read it from rawpy directly
+        print(exif.keys())
         width = self._raw_shape[1]
         height = self._raw_shape[0]
         self._shape = (height//2, width//2)
