@@ -22,7 +22,7 @@ import textual.logging
 # Auxiliary functions
 # -------------------
 
-def configure(args):
+def configure_log(args):
     '''Configure the root logger'''
     if args.verbose:
         level = logging.DEBUG
