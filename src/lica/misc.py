@@ -12,6 +12,7 @@
 
 import os
 import glob
+import datetime
 
 # ---------
 # Constants
@@ -27,3 +28,17 @@ def file_paths(input_dir, files_filter):
     if not file_list:
         raise OSError("File list is empty, review the directory path or filter")
     return file_list
+
+
+def chop(string, sep=None):
+    '''Chop a list of strings, separated by sep and 
+    strips individual string items from leading and trailing blanks'''
+    chopped = tuple(elem.strip() for elem in string.split(sep) )
+    if len(chopped) == 1 and chopped[0] == '':
+    	chopped = tuple()
+    return chopped
+
+
+def measurements_session_id() -> int:
+	'''returns a unique session Id for meassurements'''
+	return int(datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%d%H%M%S'))
