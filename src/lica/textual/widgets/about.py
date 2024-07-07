@@ -4,20 +4,6 @@
 # See the LICENSE file for details
 # ----------------------------------------------------------------------
 
-
-#--------------------
-# System wide imports
-# -------------------
-import sys
-
-PKG = 'spectess.tui.widgets.about'
-if sys.version_info[1] < 11:
-    from pkg_resources import resource_string as resource_bytes
-    ack = resource_bytes(PKG, 'ack.md').decode('utf-8')
-else:
-    from importlib_resources import files
-    ack = files(PKG).joinpath('ack.md').read_text()
-
 # ---------------
 # Textual imports
 # ---------------
