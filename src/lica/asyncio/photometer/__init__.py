@@ -26,10 +26,17 @@ class Role(enum.IntEnum):
         return f"{self.name.lower()}"
 
     def __iter__(self):
-            return self
+        return self
 
     def __next__(self):
-            return Role.TEST if self is Role.REF else Role.REF
+        return Role.TEST if self is Role.REF else Role.REF
+
+    def other(self) -> Role:
+        return next(self)
+
+    def endpoint(self) -> str:
+        env_var = 'REF_ENDPOINT' if self is Role.REF else 'TEST_ENDPOINT'
+        return decouple.config(env_var)
 
 class Model(enum.Enum):
     # Photometer models
@@ -39,10 +46,6 @@ class Model(enum.Enum):
     TESS4C = "TESS4C"
 
 
-def other(role: Role) -> Role:
-    return next(role)
-
-def endpoint(role: Role) -> str:
-    env_var = 'REF_ENDPOINT' if role is Role.REF else 'TEST_ENDPOINT'
-    return decouple.config(env_var)
-
+class Sensor(enum.Enum):
+    TSL237    = "TSL237"
+    S970501DT = "S9705-01DT"

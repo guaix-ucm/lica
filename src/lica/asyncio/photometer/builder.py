@@ -21,7 +21,7 @@ from lica.misc import chop
 # Own packages
 # ------------
 
-from . import Role, Model, endpoint
+from . import Role, Model
 
 from .protocol.transport import UDPTransport, TCPTransport, SerialTransport
 from .protocol.payload   import JSONPayload, OldPayload
@@ -86,7 +86,7 @@ class PhotometerBuilder:
 
 
     def build(self, model: Model, role: Role) -> Photometer:
-        url = endpoint(role)
+        url = role.endpoint()
         transport, name, number = chop(url,sep=':')
         number = int(number) if number else 80
 
