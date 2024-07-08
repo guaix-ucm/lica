@@ -20,7 +20,7 @@ class Role(enum.IntEnum):
     TEST = 0
 
     def __str__(self):
-        return f"{self.name:4s}"
+        return f"{self.name:.<4s}"
 
     def __iter__(self):
             return self
