@@ -65,7 +65,7 @@ class OldPayload:
         self.log = parent.log
         self._prev_msg = None
         self._i = 1
-        parent.log.info("%6s: Using %s decoder", parent.label, self.__class__.__name__)
+        parent.log.info("Using %s decoder", self.__class__.__name__)
      
     # ----------
     # Public API
