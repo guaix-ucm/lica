@@ -16,7 +16,7 @@ import decouple
 # ---------
 
 class Role(enum.IntEnum):
-    R.REF = 1
+    REF = 1
     TEST = 0
 
     def __str__(self):
