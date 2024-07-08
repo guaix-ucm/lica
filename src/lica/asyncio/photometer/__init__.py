@@ -19,8 +19,11 @@ class Role(enum.IntEnum):
     REF = 1
     TEST = 0
 
-    def __str__(self):
+    def tag(self):
         return f"{self.name:.<4s}"
+
+    def __str__(self):
+        return f"{self.name.lower()}"
 
     def __iter__(self):
             return self
