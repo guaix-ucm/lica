@@ -18,8 +18,8 @@ import asyncio
 # Third Party imports
 # -------------------
 
+import decouple
 import aiohttp
-
 from sqlalchemy import text
 
 #--------------
