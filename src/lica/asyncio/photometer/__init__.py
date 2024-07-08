@@ -10,6 +10,7 @@
 
 import enum
 import decouple
+from typing import Self
 
 # ---------
 # Constants
@@ -31,7 +32,7 @@ class Role(enum.IntEnum):
     def __next__(self):
         return Role.TEST if self is Role.REF else Role.REF
 
-    def other(self) -> Role:
+    def other(self) -> Self:
         return next(self)
 
     def endpoint(self) -> str:
