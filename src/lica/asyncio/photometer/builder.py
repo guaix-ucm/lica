@@ -95,7 +95,7 @@ class PhotometerBuilder:
         if role == Role.REF:
             assert model is Model.TESSW, "Reference photometer model should be TESS-W"
             assert transport == "serial", "Reference photometer should use a serial transport" 
-            assert engine is not None, "Database engine is needed for the REF photometer"
+            assert self._engine is not None, "Database engine is needed for the REF photometer"
             info_obj = DBaseInfo(photometer, self._engine)
             transport_obj = SerialTransport(photometer, port=name, baudrate=number)
             decoder_obj = OldPayload(photometer)
