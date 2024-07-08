@@ -40,6 +40,6 @@ def other(role: Role) -> Role:
     return next(role)
 
 def endpoint(role: Role) -> str:
-    env_var = 'REF_ENDPOINT' if role is Role.R.REF else 'TEST_ENDPOINT'
+    env_var = 'REF_ENDPOINT' if role is Role.REF else 'TEST_ENDPOINT'
     return decouple.config(env_var)
 

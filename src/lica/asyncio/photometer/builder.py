@@ -30,7 +30,7 @@ from .protocol.photinfo  import HTMLInfo, DBaseInfo
 
 class Photometer:
 
-    def __init__(self, role: R):
+    def __init__(self, role: Role):
         self.role = role
         self.label = str(role)
         self.log = logging.getLogger(self.label)
@@ -82,7 +82,7 @@ class Photometer:
 class PhotometerBuilder:
 
 
-    def build(self, model, role):
+    def build(self, model: Model, role: Role) -> Photometer:
         url = endpoint(role)
         transport, name, number = chop(url,sep=':')
         number = int(number) if number else 80
