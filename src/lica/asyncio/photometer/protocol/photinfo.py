@@ -26,7 +26,7 @@ from sqlalchemy import text
 # local imports
 # -------------
 
-from .. import REF, TEST
+from .. import Role
 
 # ----------------
 # Module constants
@@ -75,7 +75,7 @@ class HTMLInfo:
         '''
         Get photometer information. 
         '''
-        label = self.parent.label
+        label = str(self.parent.role)
         result = {}
         result['tstamp'] = datetime.datetime.now(datetime.timezone.utc)
         url = self._make_state_url()
@@ -123,7 +123,7 @@ class HTMLInfo:
         '''
         Writes Zero Point to the device. 
         '''
-        label = self.parent.label
+        label = str(self.parent.role)
         result = {}
         result['tstamp'] = datetime.datetime.now(datetime.timezone.utc)
         url = self._make_save_url()
@@ -166,9 +166,9 @@ class DBaseInfo:
         '''
         Writes Zero Point to the device. 
         '''
-        if self.parent.role == TEST:
-            raise NotImplementedError("Can't save Zero Point on a database for the %s device", self.parent.label)
-        section = 'ref-device' if self.parent.role == REF else 'test-device'
+        if self.parent.role is Role.TEST:
+            raise NotImplementedError("Can't save Zero Point on a database for the %s device", str(self.parent.role))
+        section = 'ref-device' if self.parent.role is Role.REF else 'test-device'
         prop = 'zp'
         zero_point = str(zero_point)
         async with self.engine.begin() as conn:
@@ -186,7 +186,7 @@ class DBaseInfo:
         '''
         Get photometer information. 
         '''
-        section = 'ref-device' if self.parent.role == REF else 'test-device'
+        section = 'ref-device' if self.parent.role is Role.REF else 'test-device'
         async with self.engine.begin() as conn:
             result = await conn.execute(text("SELECT property, value FROM config_t WHERE section = :section"), 
                 {"section": section}
@@ -228,7 +228,6 @@ class CLInfo:
     def __init__(self, parent):
         self.parent = parent
         self.log = parent.log
-        self.label = self.parent.label
         self.log.info("Using %s Info", self.__class__.__name__)
 
         self.read_deferred = None
@@ -262,7 +261,8 @@ class CLInfo:
         Reads Info from the device.
         '''
         line = '?'
-        self.log.info("==> [{l:02d}] {line}", label=self.label, l=len(line), line=line)
+        label = str(self.parent.role)
+        self.log.info("==> [{l:02d}] {line}", label=label, l=len(line), line=line)
         await asyncio.sleep(1) 
         raise NotImplementedError("save_zero_point needs to be implemented")
 

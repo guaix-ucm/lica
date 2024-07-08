@@ -8,33 +8,38 @@
 # Third party libraries
 # ---------------------
 
+import enum
 import decouple
 
 # ---------
 # Constants
 # ---------
 
-# Photometer roles
-REF  = 1
-TEST = 0
+class Role(enum.IntEnum):
+    R.REF = 1
+    TEST = 0
 
-TEST_LABEL = 'TEST'
-REF_LABEL  = 'REF.'
+    def __str__(self):
+        return f"{self.name:4s}"
 
-# Photometer models
-TESSW = "TESS-W"
-TESSP = "TESS-P"
-TAS   = "TAS"
+    def __iter__(self):
+            return self
+
+    def __next__(self):
+            return Role.TEST if self is Role.REF else Role.REF
+
+class Model(enum.Enum):
+    # Photometer models
+    TESSW  = "TESS-W"
+    TESSP  = "TESS-P"
+    TAS    = "TAS"
+    TESS4C = "TESS4C"
 
 
-def label(role: int) -> str:
-    return REF_LABEL.upper() if role == REF else TEST_LABEL.upper()
+def other(role: Role) -> Role:
+    return next(role)
 
-# By exclusive OR
-def other(role: int) -> int:
-    return 1 ^ role
-
-def endpoint(role: int) -> str:
-    env_var = 'REF_ENDPOINT' if role == REF else 'TEST_ENDPOINT'
+def endpoint(role: Role) -> str:
+    env_var = 'REF_ENDPOINT' if role is Role.R.REF else 'TEST_ENDPOINT'
     return decouple.config(env_var)
 
