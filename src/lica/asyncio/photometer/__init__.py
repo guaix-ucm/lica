@@ -7,10 +7,14 @@
 # ---------------------
 # Third party libraries
 # ---------------------
-
+import sys
 import enum
 import decouple
-from typing import Self
+
+if sys.version_info[1] < 11:
+    from typing import Any as Myself # Self is not available until python 3.11
+else:
+    from typing import Self as Myself
 
 # ---------
 # Constants
@@ -32,7 +36,7 @@ class Role(enum.IntEnum):
     def __next__(self):
         return Role.TEST if self is Role.REF else Role.REF
 
-    def other(self) -> Self:
+    def other(self) -> Myself:
         return next(self)
 
     def endpoint(self) -> str:
