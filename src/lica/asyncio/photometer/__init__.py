@@ -12,9 +12,9 @@ import enum
 import decouple
 
 if sys.version_info[1] < 11:
-    from typing import Any as Myself # Self is not available until python 3.11
+    from typing_extensions import Self
 else:
-    from typing import Self as Myself
+    from typing import Self
 
 # ---------
 # Constants
@@ -36,7 +36,7 @@ class Role(enum.IntEnum):
     def __next__(self):
         return Role.TEST if self is Role.REF else Role.REF
 
-    def other(self) -> Myself:
+    def other(self) -> Self:
         return next(self)
 
     def endpoint(self) -> str:
