@@ -27,7 +27,7 @@ def configure_log(args):
     if args.verbose:
         level = logging.DEBUG
     elif args.quiet:
-        level = logging.ERROR
+        level = logging.WARNING
     else:
         level = logging.INFO
     # set the root logger level
