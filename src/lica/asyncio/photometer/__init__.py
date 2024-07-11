@@ -30,6 +30,9 @@ class Role(enum.IntEnum):
     def __str__(self):
         return f"{self.name.lower()}"
 
+    def __repr__(self):
+        return f"{self.name.upper()}"
+
     def __iter__(self):
         return self
 
