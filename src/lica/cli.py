@@ -49,7 +49,7 @@ def configure_logging(args):
 
     # Log formatter
     # fmt = logging.Formatter('%(asctime)s - %(name)s [%(levelname)s] %(message)s')
-    fmt = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s')
+    fmt = logging.Formatter('%(asctime)s [%(levelname)s] [%(name)s] %(message)s')
     # create console handler and set level to debug
     if args.console:
         ch = logging.StreamHandler()
