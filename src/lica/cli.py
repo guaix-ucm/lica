@@ -17,6 +17,7 @@ import logging
 import logging.handlers
 import argparse
 import traceback
+import asyncio
 
 # -------------
 # Local imports
@@ -102,6 +103,26 @@ def execute(main_func, add_args_func, name, version, description):
         configure_logging(args)
         log.info(f"============== {name} {version} ==============")
         main_func(args)
+    except KeyboardInterrupt:
+        log.critical("[%s] Interrupted by user ", name)
+    except Exception as e:
+        log.critical("[%s] Fatal error => %s", name, str(e))
+        traceback.print_exc()
+    finally:
+        pass
+
+
+def async_execute(main_func, add_args_func, name, version, description):
+    """
+    Utility entry point
+    """
+    try:
+        parser = arg_parser(name, version, description)
+        add_args_func(parser) # Adds more arguments
+        args = parser.parse_args(sys.argv[1:])
+        configure_logging(args)
+        log.info(f"============== {name} {version} ==============")
+        asyncio.run(main_func(args))
     except KeyboardInterrupt:
         log.critical("[%s] Interrupted by user ", name)
     except Exception as e:
