@@ -28,12 +28,12 @@ import asyncio
 # Module global variables
 # -----------------------
 
+# get the root logger
 log = logging.getLogger()
 
 # ------------------------
 # Module utility functions
 # ------------------------
-
 
 def configure_logging(args):
     '''Configure the root logger'''
@@ -43,11 +43,8 @@ def configure_logging(args):
         level = logging.WARNING
     else:
         level = logging.INFO
-
-    # get the root logger
-   
+    # set the root logger level
     log.setLevel(level)
-
     # Log formatter
     # fmt = logging.Formatter('%(asctime)s - %(name)s [%(levelname)s] %(message)s')
     fmt = logging.Formatter('%(asctime)s [%(levelname)s] [%(name)s] %(message)s')
@@ -65,31 +62,17 @@ def configure_logging(args):
         fh.setLevel(logging.DEBUG)
         log.addHandler(fh)
 
-    if args.modules:
-        modules = args.modules.split(',')
-        for module in modules:
-            logging.getLogger(module).setLevel(logging.DEBUG)
-
-
 def arg_parser(name, version, description):
     # create the top-level parser
     parser = argparse.ArgumentParser(prog=name, description=description)
-
-    # ----------------------------------------
     # Generic args common to every command
-    # ---------------------------------------
-
     parser.add_argument('--version', action='version', version='{0} {1}'.format(name, version))
     parser.add_argument('--console', action='store_true', help='Log to console.')
     parser.add_argument('--log-file', type=str, metavar="<FILE>", default=None, help='Log to file.')
     group0 = parser.add_mutually_exclusive_group()
     group0.add_argument('--verbose', action='store_true', help='Verbose output.')
     group0.add_argument('--quiet',   action='store_true', help='Quiet output.')
-    parser.add_argument('--modules', type=str, default=None, action='store', 
-        help='comma separated list of modules to activate debug level upon.')
-
     return parser
-
 
 
 def execute(main_func, add_args_func, name, version, description):
