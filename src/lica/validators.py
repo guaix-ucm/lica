@@ -10,10 +10,12 @@
 # System wide imports
 #  -------------------
 
-import datetime
 import os.path
 import fractions
 import functools
+
+from typing import Union
+from datetime import datetime
 
 # ------------------------
 # Module utility functions
@@ -40,21 +42,21 @@ def vbool(boolstr: str) -> bool:
         result = False
     return result
 
-def vdate(datestr: str) -> datetime.datetime:
+def vdate(datestr: str) -> datetime:
     """Date & time validator for the command line interface"""
     date = None
     for fmt in ['%Y-%m', '%Y-%m-%d', '%Y-%m-%dT%H:%M:%S', '%Y-%m-%dT%H:%M:%SZ']:
         try:
-            date = datetime.datetime.strptime(datestr, fmt)
+            date = datetime.strptime(datestr, fmt)
         except ValueError:
             pass
     return date
 
-def vmonth(datestr: str) -> datetime.datetime:
-    return datetime.datetime.strptime(datestr, '%Y-%m')
+def vmonth(datestr: str) -> datetime:
+    return datetime.strptime(datestr, '%Y-%m')
 
-def vyear(datestr: str) -> datetime.datetime:
-    return datetime.datetime.strptime(datestr, '%Y')
+def vyear(datestr: str) -> datetime:
+    return datetime.strptime(datestr, '%Y')
 
 def vfloat(num: str) -> float:
     '''Validator that admits fractions'''
@@ -100,7 +102,7 @@ def vevenint(L: int, H: int, num: str) -> int:
         raise ValueError(f"Value {num} out of bounds [{L}..{H}]")
     return num
 
-def vflopath(value: [float|str]) -> float:
+def vflopath(value: Union[float, str]) -> float:
     '''Validator that admits either a single number or a file (representing an image)'''
     try:
         n = float(fractions.Fraction(value))
