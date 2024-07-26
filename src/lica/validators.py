@@ -10,10 +10,14 @@
 # System wide imports
 #  -------------------
 
-import datetime
 import os.path
 import fractions
 import functools
+
+from datetime import datetime
+from typing import Union
+
+StrOrFloat = Union[str, float]
 
 # ------------------------
 # Module utility functions
@@ -100,7 +104,7 @@ def vevenint(L: int, H: int, num: str) -> int:
         raise ValueError(f"Value {num} out of bounds [{L}..{H}]")
     return num
 
-def vflopath(value: [float|str]) -> float:
+def vflopath(value: StrOrFloat) -> float:
     '''Validator that admits either a single number or a file (representing an image)'''
     try:
         n = float(fractions.Fraction(value))
