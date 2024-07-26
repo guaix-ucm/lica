@@ -16,6 +16,7 @@ import functools
 
 from datetime import datetime
 from typing import Union
+from collections.abc import Sequence
 
 StrOrFloat = Union[str, float]
 
@@ -44,21 +45,21 @@ def vbool(boolstr: str) -> bool:
         result = False
     return result
 
-def vdate(datestr: str) -> datetime.datetime:
+def vdate(datestr: str) -> datetime:
     """Date & time validator for the command line interface"""
     date = None
     for fmt in ['%Y-%m', '%Y-%m-%d', '%Y-%m-%dT%H:%M:%S', '%Y-%m-%dT%H:%M:%SZ']:
         try:
-            date = datetime.datetime.strptime(datestr, fmt)
+            date = datetime.strptime(datestr, fmt)
         except ValueError:
             pass
     return date
 
-def vmonth(datestr: str) -> datetime.datetime:
-    return datetime.datetime.strptime(datestr, '%Y-%m')
+def vmonth(datestr: str) -> datetime:
+    return datetime.strptime(datestr, '%Y-%m')
 
-def vyear(datestr: str) -> datetime.datetime:
-    return datetime.datetime.strptime(datestr, '%Y')
+def vyear(datestr: str) -> datetime:
+    return datetime.strptime(datestr, '%Y')
 
 def vfloat(num: str) -> float:
     '''Validator that admits fractions'''
@@ -136,7 +137,7 @@ _COLOR_PLANES_COMBINATIONS = {
     4: ( ['R','Gr','Gb','B'], )
 }
 
-def _channel_comparator(chan_a, chan_b):
+def _channel_comparator(chan_a: str, chan_b: str) -> int:
     '''Compares channels so that R < Gr < Gb < G < B'''
     if chan_a == chan_b:
         return 0
@@ -152,7 +153,7 @@ def _channel_comparator(chan_a, chan_b):
         return -11 if chan_b in ('B',) else 1
     raise ValueError(f'This case should not happen between {chan_a} and {chan_b}')
 
-def valid_channels(sequence):
+def valid_channels(sequence: Sequence[str]) -> Sequence[str]:
     l = len(sequence)
     if not (0 < l < 5):
         raise ValueError(f"Too many channels: {sequence}")
