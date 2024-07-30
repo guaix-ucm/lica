@@ -42,3 +42,8 @@ def chop(string, sep=None):
 def measurements_session_id() -> int:
 	'''returns a unique session Id for meassurements'''
 	return int(datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%d%H%M%S'))
+
+
+def group(n: int, iterable):
+    iterable = iter(iterable)
+    return iter(lambda: list(itertools.islice(iterable, n)), [])

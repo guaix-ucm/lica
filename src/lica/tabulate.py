@@ -11,20 +11,13 @@
 # --------------------
 
 import tabulate
+from .misc import group
 
-def paging(cursor, headers, size=10):
+def paging(cursor, headers, page_size=10):
     '''
     Pages query output and displays in tabular format
     '''
-    ONE_PAGE = 10
-    while True:
-        result = cursor.fetchmany(ONE_PAGE)
-        print(tabulate.tabulate(result, headers=headers, tablefmt='grid'))
-        if len(result) < ONE_PAGE:
-            break
-        size -= ONE_PAGE
-        if size > 0:
-            raw_input("Press Enter to continue [Ctrl-C to abort] ...")
-        else:
-            break
-
+    for rows in group(page_size, cursor):
+        print(tabulate.tabulate(rows, headers=headers, tablefmt='grid'))
+        if len(rows) == page_size:
+            input("Press Enter to continue [Ctrl-C to abort] ...")
