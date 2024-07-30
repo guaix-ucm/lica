@@ -14,8 +14,11 @@ import os.path
 import fractions
 import functools
 
-from typing import Union
 from datetime import datetime
+from typing import Union
+from collections.abc import Sequence
+
+StrOrFloat = Union[str, float]
 
 # ------------------------
 # Module utility functions
@@ -102,7 +105,7 @@ def vevenint(L: int, H: int, num: str) -> int:
         raise ValueError(f"Value {num} out of bounds [{L}..{H}]")
     return num
 
-def vflopath(value: Union[float, str]) -> float:
+def vflopath(value: StrOrFloat) -> float:
     '''Validator that admits either a single number or a file (representing an image)'''
     try:
         n = float(fractions.Fraction(value))
@@ -134,7 +137,7 @@ _COLOR_PLANES_COMBINATIONS = {
     4: ( ['R','Gr','Gb','B'], )
 }
 
-def _channel_comparator(chan_a, chan_b):
+def _channel_comparator(chan_a: str, chan_b: str) -> int:
     '''Compares channels so that R < Gr < Gb < G < B'''
     if chan_a == chan_b:
         return 0
@@ -150,7 +153,7 @@ def _channel_comparator(chan_a, chan_b):
         return -11 if chan_b in ('B',) else 1
     raise ValueError(f'This case should not happen between {chan_a} and {chan_b}')
 
-def valid_channels(sequence):
+def valid_channels(sequence: Sequence[str]) -> Sequence[str]:
     l = len(sequence)
     if not (0 < l < 5):
         raise ValueError(f"Too many channels: {sequence}")
