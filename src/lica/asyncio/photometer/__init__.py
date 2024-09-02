@@ -20,6 +20,7 @@ else:
 # Constants
 # ---------
 
+
 class Role(enum.IntEnum):
     REF = 1
     TEST = 0
@@ -46,14 +47,15 @@ class Role(enum.IntEnum):
         env_var = 'REF_ENDPOINT' if self is Role.REF else 'TEST_ENDPOINT'
         return decouple.config(env_var)
 
+
 class Model(enum.Enum):
     # Photometer models
-    TESSW  = "TESS-W"
-    TESSP  = "TESS-P"
-    TAS    = "TAS"
+    TESSW = "TESS-W"
+    TESSP = "TESS-P"
+    TAS = "TAS"
     TESS4C = "TESS4C"
 
 
 class Sensor(enum.Enum):
-    TSL237    = "TSL237"
+    TSL237 = "TSL237"
     S970501DT = "S9705-01DT"

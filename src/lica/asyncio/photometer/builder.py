@@ -4,7 +4,7 @@
 # See the LICENSE file for details
 # ----------------------------------------------------------------------
 
-#--------------------
+# --------------------
 # System wide imports
 # -------------------
 
@@ -24,8 +24,8 @@ from lica.misc import chop
 from . import Role, Model
 
 from .protocol.transport import UDPTransport, TCPTransport, SerialTransport
-from .protocol.payload   import JSONPayload, OldPayload
-from .protocol.photinfo  import HTMLInfo, DBaseInfo
+from .protocol.payload import JSONPayload, OldPayload
+from .protocol.photinfo import HTMLInfo, DBaseInfo
 
 
 class Photometer:
@@ -43,7 +43,7 @@ class Photometer:
         self.decoder = decoder
         self.transport = transport
         self.info = info
-        
+
     @property
     def queue(self):
         return self._queue
@@ -81,34 +81,36 @@ class Photometer:
 
 class PhotometerBuilder:
 
-    def __init__(self, engine = None):
+    def __init__(self, engine=None):
         self._engine = engine
-
 
     def build(self, model: Model, role: Role) -> Photometer:
         url = role.endpoint()
-        transport, name, number = chop(url,sep=':')
+        transport, name, number = chop(url, sep=':')
         number = int(number) if number else 80
 
         photometer = Photometer(role)
 
         if role == Role.REF:
             assert model is Model.TESSW, "Reference photometer model should be TESS-W"
-            assert transport == "serial", "Reference photometer should use a serial transport" 
+            assert transport == "serial", "Reference photometer should use a serial transport"
             assert self._engine is not None, "Database engine is needed for the REF photometer"
             info_obj = DBaseInfo(photometer, self._engine)
-            transport_obj = SerialTransport(photometer, port=name, baudrate=number)
+            transport_obj = SerialTransport(
+                photometer, port=name, baudrate=number)
             decoder_obj = OldPayload(photometer)
         else:
             if transport == 'serial':
                 assert model is Model.TESSP or model is Model.TAS, "Test photometer model on serial port should be TESS-P or TAS"
                 info_obj = CLInfo(photometer)
-                transport_obj = SerialTransport(photometer, port=name, baudrate=number)
+                transport_obj = SerialTransport(
+                    photometer, port=name, baudrate=number)
                 decoder_obj = JSONPayload(photometer)
             elif transport == 'tcp':
                 assert model is Model.TESSW, "Test photometer model using TCP should be TESS-W"
                 info_obj = HTMLInfo(photometer, addr=name)
-                transport_obj = TCPTransport(photometer, host=name, port=number)
+                transport_obj = TCPTransport(
+                    photometer, host=name, port=number)
                 decoder_obj = JSONPayload(photometer)
             elif transport == 'udp':
                 assert model is Model.TESSW, "Test photometer model using UDP should be TESS-W"
@@ -119,7 +121,3 @@ class PhotometerBuilder:
                 raise ValueError(f"Transport {transport} not known")
         photometer.attach(transport_obj, info_obj, decoder_obj)
         return photometer
-
-
-
-

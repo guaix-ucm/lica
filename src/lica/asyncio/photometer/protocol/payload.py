@@ -4,7 +4,7 @@
 # See the LICENSE file for details
 # ----------------------------------------------------------------------
 
-#--------------------
+# --------------------
 # System wide imports
 # -------------------
 
@@ -17,7 +17,7 @@ import datetime
 # Third party imports
 # -------------------
 
-#--------------
+# --------------
 # local imports
 # -------------
 
@@ -50,15 +50,16 @@ class OldPayload:
     """
     UNSOLICITED_RESPONSES = (
         {
-            'name'    : 'Hz message',
-            'pattern' : r'^<fH([ +]\d{5})><tA ([+-]\d{4})><tO ([+-]\d{4})><mZ ([+-]\d{4})>',       
+            'name': 'Hz message',
+            'pattern': r'^<fH([ +]\d{5})><tA ([+-]\d{4})><tO ([+-]\d{4})><mZ ([+-]\d{4})>',
         },
         {
-            'name'    : 'mHz message',
-            'pattern' : r'^<fm([ +]\d{5})><tA ([+-]\d{4})><tO ([+-]\d{4})><mZ ([+-]\d{4})>',       
+            'name': 'mHz message',
+            'pattern': r'^<fm([ +]\d{5})><tA ([+-]\d{4})><tO ([+-]\d{4})><mZ ([+-]\d{4})>',
         },
     )
-    UNSOLICITED_PATTERNS = [ re.compile(ur['pattern']) for ur in UNSOLICITED_RESPONSES ]
+    UNSOLICITED_PATTERNS = [re.compile(ur['pattern'])
+                            for ur in UNSOLICITED_RESPONSES]
 
     def __init__(self, parent):
         self.parent = parent
@@ -66,19 +67,19 @@ class OldPayload:
         self._prev_msg = None
         self._i = 1
         parent.log.info("Using %s decoder", self.__class__.__name__)
-     
+
     # ----------
     # Public API
     # ----------
 
     def clear(self):
-        self._prev_msg = None 
+        self._prev_msg = None
 
     def decode(self, data: bytes, tstamp: datetime.datetime) -> (bool, dict):
         data = data.decode()
         self.parent.log.info("<== [%02d] %s", len(data), data)
         return self._handle_unsolicited_response(data, tstamp)
-    
+
     # --------------
     # Helper methods
     # --------------
@@ -88,10 +89,10 @@ class OldPayload:
         for i, regexp in enumerate(self.UNSOLICITED_PATTERNS, 0):
             matchobj = regexp.search(line)
             if matchobj:
-                self.parent.log.debug("matched %s", self.UNSOLICITED_RESPONSES[i]['name'])
+                self.parent.log.debug(
+                    "matched %s", self.UNSOLICITED_RESPONSES[i]['name'])
                 return self.UNSOLICITED_RESPONSES[i], matchobj
         return None, None
-
 
     def _handle_unsolicited_response(self, line, tstamp):
         '''
@@ -102,14 +103,14 @@ class OldPayload:
         if not ur:
             return False, None
         message = {}
-        message['tamb']   = float(matchobj.group(2))/100.0
-        message['tsky']   = float(matchobj.group(3))/100.0
-        message['zp']     = float(matchobj.group(4))/100.0
+        message['tamb'] = float(matchobj.group(2))/100.0
+        message['tsky'] = float(matchobj.group(3))/100.0
+        message['zp'] = float(matchobj.group(4))/100.0
         message['tstamp'] = tstamp
         message['seq'] = self._i
         self._i += 1
         if ur['name'] == 'Hz message':
-            message['freq']   = float(matchobj.group(1))/1.0
+            message['freq'] = float(matchobj.group(1))/1.0
             self.parent.log.debug("Matched {name}", name=ur['name'])
         elif ur['name'] == 'mHz message':
             message['freq'] = float(matchobj.group(1))/1000.0
@@ -120,16 +121,15 @@ class OldPayload:
 
     def _deduplicate(self, message):
         if self._prev_msg is None:
-            self._prev_msg = message 
-            return  False, None
+            self._prev_msg = message
+            return False, None
         if message['tamb'] == self._prev_msg['tamb'] and message['tsky'] == self._prev_msg['tsky'] and message['freq'] == self._prev_msg['freq']:
             self.log.warn("Duplicate payload: %s", message)
             result = (False, None)
         else:
             result = (True, self._prev_msg)
-        self._prev_msg = message    
+        self._prev_msg = message
         return result
-
 
 
 class JSONPayload:
@@ -150,11 +150,12 @@ class JSONPayload:
     def _deduplicate(self, message):
         if self._prev_msg is None:
             self._prev_msg = message
-            return  False, None
-        result = (True, self._prev_msg) if self._prev_msg['seq'] != message['seq'] else (False, None)
+            return False, None
+        result = (True, self._prev_msg) if self._prev_msg['seq'] != message['seq'] else (
+            False, None)
         if not result[0]:
             self.log.warn("Duplicate payload: %s", message)
-        self._prev_msg = message    
+        self._prev_msg = message
         return result
 
     # ----------
@@ -162,7 +163,7 @@ class JSONPayload:
     # ----------
 
     def clear(self):
-        self._prev_msg = None 
+        self._prev_msg = None
 
     def decode(self, data: bytes, tstamp: datetime.datetime) -> (bool, dict):
         data = data.decode()
@@ -182,10 +183,9 @@ class JSONPayload:
                 return False, None
 
 
-#---------------------------------------------------------------------
+# ---------------------------------------------------------------------
 # --------------------------------------------------------------------
 # --------------------------------------------------------------------
-
 
 
 __all__ = [

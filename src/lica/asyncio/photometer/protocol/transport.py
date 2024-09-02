@@ -4,7 +4,7 @@
 # See the LICENSE file for details
 # ----------------------------------------------------------------------
 
-#--------------------
+# --------------------
 # System wide imports
 # -------------------
 
@@ -19,7 +19,7 @@ import asyncio
 
 import aioserial
 
-#--------------
+# --------------
 # local imports
 # -------------
 
@@ -52,7 +52,7 @@ class UDPTransport(asyncio.DatagramProtocol):
         self.parent.handle_readings(payload, now)
 
     def connection_lost(self, exc):
-        if not  self.on_conn_lost.cancelled():
+        if not self.on_conn_lost.cancelled():
             self.on_conn_lost.set_result(True)
 
     async def readings(self):
@@ -66,7 +66,6 @@ class UDPTransport(asyncio.DatagramProtocol):
             await self.on_conn_lost
         finally:
             self.transport.close()
-        
 
 
 class TCPTransport(asyncio.Protocol):
@@ -86,7 +85,7 @@ class TCPTransport(asyncio.Protocol):
         self.parent.handle_readings(payload, now)
 
     def connection_lost(self, exc):
-        if not  self.on_conn_lost.cancelled():
+        if not self.on_conn_lost.cancelled():
             self.on_conn_lost.set_result(True)
 
     async def readings(self):
@@ -102,28 +101,26 @@ class TCPTransport(asyncio.Protocol):
             self.transport.close()
 
 
-
 class SerialTransport:
-    
+
     def __init__(self, parent, port="/dev/ttyUSB0", baudrate=9600):
         self.parent = parent
         self.log = parent.log
         self.port = port
         self.baudrate = baudrate
         self.serial = None
- 
+
     async def readings(self):
         '''This is meant to be a task'''
-        self.serial = aioserial.AioSerial(port=self.port, baudrate=self.baudrate)
+        self.serial = aioserial.AioSerial(
+            port=self.port, baudrate=self.baudrate)
         while self.serial is not None:
             try:
                 payload = await self.serial.readline_async()
                 now = datetime.datetime.now(datetime.timezone.utc)
-                payload = payload[:-2] # Strips \r\n
+                payload = payload[:-2]  # Strips \r\n
                 if len(payload):
                     self.parent.handle_readings(payload, now)
             except:
                 self.serial.close()
                 self.serial = None
-
-                    

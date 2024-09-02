@@ -4,7 +4,7 @@
 # See the LICENSE file for details
 # ----------------------------------------------------------------------
 
-#--------------------
+# --------------------
 # System wide imports
 # -------------------
 
@@ -22,6 +22,7 @@ import textual.logging
 # Auxiliary functions
 # -------------------
 
+
 def configure_logging(args):
     '''Configure the root logger'''
     if args.verbose:
@@ -34,7 +35,8 @@ def configure_logging(args):
     log = logging.getLogger()
     log.setLevel(level)
     # Log formatter
-    fmt = logging.Formatter('%(asctime)s [%(levelname)s] [%(name)-4s] %(message)s')
+    fmt = logging.Formatter(
+        '%(asctime)s [%(levelname)s] [%(name)-4s] %(message)s')
     # create console handler and set level to debug
     if args.console:
         ch = logging.StreamHandler()

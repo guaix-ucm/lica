@@ -20,12 +20,15 @@ import csv
 # Auxiliar functions
 # ------------------
 
+
 def write_csv(path, header, sequence, delimiter=';'):
     with open(path, 'w', newline='') as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=header, delimiter=delimiter)
+        writer = csv.DictWriter(
+            csvfile, fieldnames=header, delimiter=delimiter)
         writer.writeheader()
         for row in sequence:
             writer.writerow(row)
+
 
 def read_csv(path, delimiter=';'):
     with open(path, newline='') as csvfile:

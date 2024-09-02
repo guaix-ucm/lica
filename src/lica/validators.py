@@ -24,17 +24,20 @@ StrOrFloat = Union[str, float]
 # Module utility functions
 # ------------------------
 
+
 def vfile(path: str) -> str:
     """File validator for the command line interface"""
     if not os.path.isfile(path):
         raise IOError(f"Not valid or existing file: {path}")
     return path
 
+
 def vdir(path: str) -> str:
     """Directory validator for the command line interface"""
     if not os.path.isdir(path):
         raise IOError(f"Not valid or existing directory: {path}")
     return path
+
 
 def vbool(boolstr: str) -> bool:
     """Boolean text validator for the command line interface"""
@@ -44,6 +47,7 @@ def vbool(boolstr: str) -> bool:
     elif boolstr == 'False':
         result = False
     return result
+
 
 def vdate(datestr: str) -> datetime:
     """Date & time validator for the command line interface"""
@@ -55,15 +59,19 @@ def vdate(datestr: str) -> datetime:
             pass
     return date
 
+
 def vmonth(datestr: str) -> datetime:
     return datetime.strptime(datestr, '%Y-%m')
+
 
 def vyear(datestr: str) -> datetime:
     return datetime.strptime(datestr, '%Y')
 
+
 def vfloat(num: str) -> float:
     '''Validator that admits fractions'''
     return float(fractions.Fraction(num))
+
 
 def vfloat01(num: str) -> float:
     '''Validator between [0..1] that admits fractions'''
@@ -72,12 +80,14 @@ def vfloat01(num: str) -> float:
         raise ValueError(f"Value {num} out of bounds [0..1]")
     return num
 
+
 def vint(L: int, H: int, num: str) -> int:
     '''Integer validator between [L..H]'''
     num = int(num)
     if not (L <= num <= H):
         raise ValueError(f"Value {num} out of bounds [{L}..{H}]")
     return num
+
 
 def voddint(L: int, H: int, num: str) -> int:
     '''Odd integer validator between [L..H]'''
@@ -92,6 +102,7 @@ def voddint(L: int, H: int, num: str) -> int:
         raise ValueError(f"Value {num} out of bounds [{L}..{H}]")
     return num
 
+
 def vevenint(L: int, H: int, num: str) -> int:
     '''Even integer validator between [L..H]'''
     num = int(num)
@@ -105,6 +116,7 @@ def vevenint(L: int, H: int, num: str) -> int:
         raise ValueError(f"Value {num} out of bounds [{L}..{H}]")
     return num
 
+
 def vflopath(value: StrOrFloat) -> float:
     '''Validator that admits either a single number or a file (representing an image)'''
     try:
@@ -114,6 +126,7 @@ def vflopath(value: StrOrFloat) -> float:
             raise IOError(f"Not valid or existing file: {value}")
         return value
     return n
+
 
 def vmac(mac: str) -> str:
     ''''Valid input MAC strings'''
@@ -131,11 +144,12 @@ def vmac(mac: str) -> str:
 
 
 _COLOR_PLANES_COMBINATIONS = {
-    1: ( ['R',], ['Gr',], ['Gb'], ['G',], ['B',]),
-    2: ( ['R','Gr'], ['R','Gb'], ['R','G'], ['R','B'], ['Gr','Gb'], ['Gr','B'], ['Gb', 'B'], ['G', 'B']),
-    3: ( ['R','Gr','Gb'], ['R', 'Gr', 'B'],  ['R', 'Gb', 'B'], ['R', 'G', 'B'], ['Gr', 'Gb', 'B'], ),
-    4: ( ['R','Gr','Gb','B'], )
+    1: (['R', ], ['Gr', ], ['Gb'], ['G', ], ['B', ]),
+    2: (['R', 'Gr'], ['R', 'Gb'], ['R', 'G'], ['R', 'B'], ['Gr', 'Gb'], ['Gr', 'B'], ['Gb', 'B'], ['G', 'B']),
+    3: (['R', 'Gr', 'Gb'], ['R', 'Gr', 'B'],  ['R', 'Gb', 'B'], ['R', 'G', 'B'], ['Gr', 'Gb', 'B'], ),
+    4: (['R', 'Gr', 'Gb', 'B'], )
 }
+
 
 def _channel_comparator(chan_a: str, chan_b: str) -> int:
     '''Compares channels so that R < Gr < Gb < G < B'''
@@ -152,6 +166,7 @@ def _channel_comparator(chan_a: str, chan_b: str) -> int:
     if chan_a == 'G':
         return -11 if chan_b in ('B',) else 1
     raise ValueError(f'This case should not happen between {chan_a} and {chan_b}')
+
 
 def valid_channels(sequence: Sequence[str]) -> Sequence[str]:
     l = len(sequence)

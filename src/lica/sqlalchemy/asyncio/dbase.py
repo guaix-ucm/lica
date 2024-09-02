@@ -4,7 +4,7 @@
 # See the LICENSE file for details
 # ----------------------------------------------------------------------
 
-#--------------------
+# --------------------
 # System wide imports
 # -------------------
 
@@ -19,12 +19,12 @@ from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncAttrs
 
 url = decouple.config('DATABASE_URL')
- 
+
 engine = create_async_engine(url)
 
 metadata = MetaData(
-	# For the different artifacts (indexes, constraints, etc.)
-    naming_convention = {
+    # For the different artifacts (indexes, constraints, etc.)
+    naming_convention={
         'ix': "ix_%(column_0_label)s",
         'uq': "uq_%(table_name)s_%(column_0_name)s",
         'ck': "ck_%(table_name)s_%(constraint_name)s",
@@ -33,6 +33,7 @@ metadata = MetaData(
     }
 )
 
+
 class Model(AsyncAttrs, DeclarativeBase):
     metadata = metadata
 
@@ -40,9 +41,9 @@ class Model(AsyncAttrs, DeclarativeBase):
 AsyncSession = async_sessionmaker(engine, expire_on_commit=False)
 
 __all__ = [
-	'url',
-	'engine',
-	'metadata',
-	'Model'
-	'AsyncSession'
+    'url',
+    'engine',
+    'metadata',
+    'Model'
+    'AsyncSession'
 ]

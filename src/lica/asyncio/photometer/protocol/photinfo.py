@@ -4,7 +4,7 @@
 # See the LICENSE file for details
 # ----------------------------------------------------------------------
 
-#--------------------
+# --------------------
 # System wide imports
 # -------------------
 
@@ -22,7 +22,7 @@ import decouple
 import aiohttp
 from sqlalchemy import text
 
-#--------------
+# --------------
 # local imports
 # -------------
 
@@ -35,6 +35,7 @@ from .. import Role
 # -----------------------
 # Module global variables
 # -----------------------
+
 
 def formatted_mac(mac):
     ''''Corrects TESS-W MAC strings to be properly formatted'''
@@ -50,15 +51,16 @@ class HTMLInfo:
 
     GET_INFO = {
         # These apply to the /config page
-        'model' : re.compile(r"([-0-9A-Z]+)\s+Settings\."),
-        'name'  : re.compile(r"(stars\d+)"),       
-        'mac'   : re.compile(r"MAC: ([0-9A-Fa-f]{1,2}:[0-9A-Fa-f]{1,2}:[0-9A-Fa-f]{1,2}:[0-9A-Fa-f]{1,2}:[0-9A-Fa-f]{1,2}:[0-9A-Fa-f]{1,2})"),       
-        'zp'    : re.compile(r"(ZP|CI): (\d{1,2}\.\d{1,2})"),
-         #'zp'    : re.compile(r"Const\.: (\d{1,2}\.\d{1,2})"),
+        'model': re.compile(r"([-0-9A-Z]+)\s+Settings\."),
+        'name': re.compile(r"(stars\d+)"),
+        'mac': re.compile(r"MAC: ([0-9A-Fa-f]{1,2}:[0-9A-Fa-f]{1,2}:[0-9A-Fa-f]{1,2}:[0-9A-Fa-f]{1,2}:[0-9A-Fa-f]{1,2}:[0-9A-Fa-f]{1,2})"),
+        'zp': re.compile(r"(ZP|CI): (\d{1,2}\.\d{1,2})"),
+        # 'zp'    : re.compile(r"Const\.: (\d{1,2}\.\d{1,2})"),
         'freq_offset': re.compile(r"Offset mHz: (\d{1,2}\.\d{1,2})"),
-        'firmware' : re.compile(r"Compiled: (.+?)<br>"),  # Non-greedy matching until <br>
+        # Non-greedy matching until <br>
+        'firmware': re.compile(r"Compiled: (.+?)<br>"),
         # This applies to the /setconst?cons=nn.nn page
-        'flash' : re.compile(r"New Zero Point (\d{1,2}\.\d{1,2})"),
+        'flash': re.compile(r"New Zero Point (\d{1,2}\.\d{1,2})"),
     }
 
     def __init__(self, parent, addr):
@@ -94,7 +96,8 @@ class HTMLInfo:
         matchobj = self.GET_INFO['zp'].search(text)
         if not matchobj:
             self.log.error("ZP not found!")
-        result['zp'] = float(matchobj.groups(1)[1]) # Beware the seq index, it is not 0 as usual. See the regexp!
+        # Beware the seq index, it is not 0 as usual. See the regexp!
+        result['zp'] = float(matchobj.groups(1)[1])
         matchobj = self.GET_INFO['firmware'].search(text)
         if not matchobj:
             self.log.error("Firmware not found!")
@@ -117,7 +120,6 @@ class HTMLInfo:
         result['sensor'] = 'TSL237'
         self.log.warn("Sensor model is set to %s by default", result['sensor'])
         return result
-
 
     async def save_zero_point(self, zero_point, timeout=4):
         '''
@@ -167,20 +169,21 @@ class DBaseInfo:
         Writes Zero Point to the device. 
         '''
         if self.parent.role is Role.TEST:
-            raise NotImplementedError("Can't save Zero Point on a database for the %s device", str(self.parent.role))
+            raise NotImplementedError(
+                "Can't save Zero Point on a database for the %s device", str(self.parent.role))
         section = 'ref-device' if self.parent.role is Role.REF else 'test-device'
         prop = 'zp'
         zero_point = str(zero_point)
         async with self.engine.begin() as conn:
             try:
-                await conn.execute(text("UPDATE config_t SET value = :value WHERE section = :section AND property = :property"), 
-                    {"section": section, "property": "zp" , "value": zero_point}
-                )
+                await conn.execute(text("UPDATE config_t SET value = :value WHERE section = :section AND property = :property"),
+                                   {"section": section, "property": "zp",
+                                       "value": zero_point}
+                                   )
             except:
                 await conn.rollback()
             else:
                 await conn.commit()
-
 
     async def get_info(self, timeout):
         '''
@@ -188,12 +191,11 @@ class DBaseInfo:
         '''
         section = 'ref-device' if self.parent.role is Role.REF else 'test-device'
         async with self.engine.begin() as conn:
-            result = await conn.execute(text("SELECT property, value FROM config_t WHERE section = :section"), 
-                {"section": section}
-            )
-            result = { row[0]: row[1] for row in result}
+            result = await conn.execute(text("SELECT property, value FROM config_t WHERE section = :section"),
+                                        {"section": section}
+                                        )
+            result = {row[0]: row[1] for row in result}
         return result
-
 
 
 class CLInfo:
@@ -205,25 +207,25 @@ class CLInfo:
 
     SOLICITED_RESPONSES = [
         {
-            'name'    : 'firmware',
-            'pattern' : r'^Compiled (.+)',       
+            'name': 'firmware',
+            'pattern': r'^Compiled (.+)',
         },
         {
-            'name'    : 'mac',
-            'pattern' : r'^MAC: ([0-9A-Za-z]{12})',       
+            'name': 'mac',
+            'pattern': r'^MAC: ([0-9A-Za-z]{12})',
         },
         {
-            'name'    : 'zp',
-            'pattern' : r'^Actual CI: (\d{1,2}.\d{1,2})',       
+            'name': 'zp',
+            'pattern': r'^Actual CI: (\d{1,2}.\d{1,2})',
         },
         {
-            'name'    : 'written_zp',
-            'pattern' : r'^New CI: (\d{1,2}.\d{1,2})',       
+            'name': 'written_zp',
+            'pattern': r'^New CI: (\d{1,2}.\d{1,2})',
         },
     ]
 
-    SOLICITED_PATTERNS = [ re.compile(sr['pattern']) for sr in SOLICITED_RESPONSES ]
-
+    SOLICITED_PATTERNS = [re.compile(sr['pattern'])
+                          for sr in SOLICITED_RESPONSES]
 
     def __init__(self, parent):
         self.parent = parent
@@ -232,8 +234,6 @@ class CLInfo:
 
         self.read_deferred = None
         self.write_deferred = None
-     
-
 
     # ---------------------
     # IPhotometerControl interface
@@ -244,11 +244,11 @@ class CLInfo:
         Writes Zero Point to the device. 
         Returns a Deferred
         '''
-        line = 'CI{0:04d}'.format(int(round(zero_point*100,2)))
+        line = 'CI{0:04d}'.format(int(round(zero_point*100, 2)))
         self.log.info("==> [{l:02d}] {line}", l=len(line), line=line)
-        await asyncio.sleep(1) 
+        await asyncio.sleep(1)
         raise NotImplementedError("save_zero_point needs to be implemented")
-        
+
         # We need to implement serial por writting in the transport object !!!!!
         self.parent.sendLine(line.encode('ascii'))
         self.write_deferred = defer.Deferred()
@@ -262,8 +262,9 @@ class CLInfo:
         '''
         line = '?'
         label = str(self.parent.role)
-        self.log.info("==> [{l:02d}] {line}", label=label, l=len(line), line=line)
-        await asyncio.sleep(1) 
+        self.log.info("==> [{l:02d}] {line}",
+                      label=label, l=len(line), line=line)
+        await asyncio.sleep(1)
         raise NotImplementedError("save_zero_point needs to be implemented")
 
         self.parent.sendLine(line.encode('ascii'))
@@ -273,7 +274,6 @@ class CLInfo:
         self.read_response = {}
         return self.read_deferred
 
-
     def on_photometer_info_response(self, line, tstamp):
         '''
         Handle solicted responses from photometer.
@@ -282,7 +282,8 @@ class CLInfo:
         sr, matchobj = self._match_solicited(line)
         if not sr:
             return False
-        self.read_response['freq_offset'] = 0 # This is hardwired until we can query this on the CLI
+        # This is hardwired until we can query this on the CLI
+        self.read_response['freq_offset'] = 0
         if sr['name'] == 'name':
             self.read_response['tstamp'] = tstamp
             self.read_response['name'] = str(matchobj.group(1))
@@ -313,12 +314,12 @@ class CLInfo:
 
     def _maybeTriggerCallbacks(self):
         # trigger pending callbacks
-        if self.read_deferred and self.cnt == 4: 
+        if self.read_deferred and self.cnt == 4:
             self.read_deferred.callback(self.read_response)
             self.read_deferred = None
             self.cnt = 0
 
-        if self.write_deferred and 'zp' in self.write_response: 
+        if self.write_deferred and 'zp' in self.write_response:
             self.write_deferred.callback(self.write_response)
             self.write_deferred = None
 
@@ -327,6 +328,7 @@ class CLInfo:
         for i, regexp in enumerate(self.SOLICITED_PATTERNS, 0):
             matchobj = regexp.search(line)
             if matchobj:
-                self.log.debug("matched {pattern}", pattern=self.SOLICITED_RESPONSES[i]['name'])
+                self.log.debug(
+                    "matched {pattern}", pattern=self.SOLICITED_RESPONSES[i]['name'])
                 return self.SOLICITED_RESPONSES[i], matchobj
         return None, None

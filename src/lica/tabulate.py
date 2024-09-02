@@ -13,6 +13,7 @@
 import tabulate
 from .misc import group
 
+
 def paging(cursor, headers, page_size=10):
     '''
     Pages query output and displays in tabular format

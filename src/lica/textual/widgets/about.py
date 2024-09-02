@@ -12,9 +12,9 @@ from textual import on
 from textual.app import ComposeResult
 from textual.screen import ModalScreen
 from textual.containers import Container
-from textual.widgets import  Label, Button, Rule, Markdown
+from textual.widgets import Label, Button, Rule, Markdown
 
-#--------------
+# --------------
 # local imports
 # -------------
 
@@ -53,7 +53,7 @@ class About(ModalScreen):
         with Container():
             yield Label(f"Version: {self._version}")
             yield Markdown(self._descripition)
-            yield Button('Dismiss',variant="success")
+            yield Button('Dismiss', variant="success")
 
     def on_mount(self) -> None:
         self.query_one(Container).border_title = self._title

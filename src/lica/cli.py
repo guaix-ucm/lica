@@ -35,6 +35,7 @@ log = logging.getLogger()
 # Module utility functions
 # ------------------------
 
+
 def configure_logging(args):
     '''Configure the root logger'''
     if args.verbose:
@@ -47,7 +48,8 @@ def configure_logging(args):
     log.setLevel(level)
     # Log formatter
     # fmt = logging.Formatter('%(asctime)s - %(name)s [%(levelname)s] %(message)s')
-    fmt = logging.Formatter('%(asctime)s [%(levelname)s] [%(name)s] %(message)s')
+    fmt = logging.Formatter(
+        '%(asctime)s [%(levelname)s] [%(name)s] %(message)s')
     # create console handler and set level to debug
     if args.console:
         ch = logging.StreamHandler()
@@ -62,15 +64,20 @@ def configure_logging(args):
         fh.setLevel(logging.DEBUG)
         log.addHandler(fh)
 
+
 def arg_parser(name, version, description):
     # create the top-level parser
     parser = argparse.ArgumentParser(prog=name, description=description)
     # Generic args common to every command
-    parser.add_argument('--version', action='version', version='{0} {1}'.format(name, version))
-    parser.add_argument('--console', action='store_true', help='Log to console.')
-    parser.add_argument('--log-file', type=str, metavar="<FILE>", default=None, help='Log to file.')
+    parser.add_argument('--version', action='version',
+                        version='{0} {1}'.format(name, version))
+    parser.add_argument('--console', action='store_true',
+                        help='Log to console.')
+    parser.add_argument('--log-file', type=str,
+                        metavar="<FILE>", default=None, help='Log to file.')
     group0 = parser.add_mutually_exclusive_group()
-    group0.add_argument('--verbose', action='store_true', help='Verbose output.')
+    group0.add_argument('--verbose', action='store_true',
+                        help='Verbose output.')
     group0.add_argument('--quiet',   action='store_true', help='Quiet output.')
     return parser
 
@@ -81,7 +88,7 @@ def execute(main_func, add_args_func, name, version, description):
     """
     try:
         parser = arg_parser(name, version, description)
-        add_args_func(parser) # Adds more arguments
+        add_args_func(parser)  # Adds more arguments
         args = parser.parse_args(sys.argv[1:])
         configure_logging(args)
         log.info(f"============== {name} {version} ==============")
@@ -101,7 +108,7 @@ def async_execute(main_func, add_args_func, name, version, description):
     """
     try:
         parser = arg_parser(name, version, description)
-        add_args_func(parser) # Adds more arguments
+        add_args_func(parser)  # Adds more arguments
         args = parser.parse_args(sys.argv[1:])
         configure_logging(args)
         log.info(f"============== {name} {version} ==============")
