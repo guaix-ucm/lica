@@ -59,7 +59,7 @@ class HTMLInfo:
         'freq_offset': re.compile(r"Offset mHz: (\d{1,2}\.\d{1,2})"),
         # Non-greedy matching until <br>
         'firmware': re.compile(r"Compiled: (.+?)<br>"),
-        'firmware_ext': re.compile(r"Firmware v:.+(\w+)<br>"),
+        'firmware_ext': re.compile(r"Firmware v: (\d+\.\d+)<br>"),
         # This applies to the /setconst?cons=nn.nn page
         'flash': re.compile(r"New Zero Point (\d{1,2}\.\d{1,2})"),
     }
