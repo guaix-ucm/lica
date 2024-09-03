@@ -59,6 +59,7 @@ class HTMLInfo:
         'freq_offset': re.compile(r"Offset mHz: (\d{1,2}\.\d{1,2})"),
         # Non-greedy matching until <br>
         'firmware': re.compile(r"Compiled: (.+?)<br>"),
+        'firmware_ext': re.compile(r"Firmware v: (\w+)<br>"),
         # This applies to the /setconst?cons=nn.nn page
         'flash': re.compile(r"New Zero Point (\d{1,2}\.\d{1,2})"),
     }
@@ -98,13 +99,16 @@ class HTMLInfo:
             self.log.error("ZP not found!")
         # Beware the seq index, it is not 0 as usual. See the regexp!
         result['zp'] = float(matchobj.groups(1)[1])
+        
         matchobj = self.GET_INFO['firmware'].search(text)
         if not matchobj:
             self.log.error("Firmware not found!")
         result['firmware'] = matchobj.groups(1)[0]
-        firmware = result['firmware']
-        if firmware in self.CONFLICTIVE_FIRMWARE:
-            pub.sendMessage('phot_firmware', role='test', firmware=firmware)
+        matchobj = self.GET_INFO['firmware_ext'].search(text)
+        if matchobj:
+            result['firmware'] = result['firmware'] + ' v' + matchobj.groups(1)[0]
+        if result['firmware'] in self.CONFLICTIVE_FIRMWARE:
+            self.log.error("Conflictive firmware: %s", result['firmware'])        
         matchobj = self.GET_INFO['freq_offset'].search(text)
         if not matchobj:
             self.log.warn("Frequency offset not found, defaults to 0.0 mHz")
