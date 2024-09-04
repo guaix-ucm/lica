@@ -26,7 +26,7 @@ from sqlalchemy import text
 # local imports
 # -------------
 
-from .. import Role
+from .. import Role, Sensor
 
 # ----------------
 # Module constants
@@ -118,10 +118,11 @@ class HTMLInfo:
         matchobj = self.GET_INFO['model'].search(text)
         if not matchobj:
             self.log.warn("Model not found, defaults to TESS-W")
-            result['model'] = "TESS-WAY"
+            result['model'] = "TESS-W"
         else:
             result['model'] = matchobj.groups(1)[0]
-        result['sensor'] = 'TSL237'
+        # This must be agreed with Cristobal ...
+        result['sensor'] = Sensor.TSL237.value
         self.log.warn("Sensor model is set to %s by default", result['sensor'])
         return result
 
