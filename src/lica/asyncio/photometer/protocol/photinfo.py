@@ -83,8 +83,9 @@ class HTMLInfo:
         result['tstamp'] = datetime.datetime.now(datetime.timezone.utc)
         url = self._make_state_url()
         self.log.info("Get info from %s", url)
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url, timeout=timeout) as response:
+        timeout = aiohttp.ClientTimeout(total=timeout)
+        async with aiohttp.ClientSession(timeout=timeout) as session:
+            async with session.get(url) as response:
                 text = await response.text()
         matchobj = self.GET_INFO['name'].search(text)
         if not matchobj:
@@ -133,10 +134,11 @@ class HTMLInfo:
         result['tstamp'] = datetime.datetime.now(datetime.timezone.utc)
         url = self._make_save_url()
         params = [('cons', '{0:0.2f}'.format(zero_point))]
-        # Paradoxically, the photometer uses an HTTP GET method tow wrte a ZP ....
-        async with httpx.AsyncClient() as client:
-            response = await client.get(url, params=params, timeout=timeout)
-            text = response.text
+        # Paradoxically, the photometer uses an HTTP GET method to write a ZP ....
+        timeout = aiohttp.ClientTimeout(total=timeout)
+        async with aiohttp.ClientSession(timeout=timeout) as session:
+            async with session.get(url,) as response:
+                text = await response.text()
         matchobj = self.GET_INFO['flash'].search(text)
         if not matchobj:
             raise IOError("{:6s} ZP not written!".format(label))
