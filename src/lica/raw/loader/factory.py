@@ -21,7 +21,7 @@ import os
 # ----------------
 
 FITS_EXTENSIONS = ('.fts', '.fit', '.fits')
-EXIF_EXTENSIONS = ('.jpg', '.jpeg', '.dng')
+EXIF_EXTENSIONS = ('.jpg', '.jpeg', '.dng', '.cr2')
 
 # ---------------------
 # Thrid-party libraries
