@@ -1,10 +1,6 @@
-[build-system]
-requires = ["setuptools >= 45", "wheel", "setuptools_scm[toml]>=6.2"]
-build-backend = "setuptools.build_meta"
-
 [project]
 name = "lica"
-dynamic = ["version"]
+version = "0.1.0"
 description = "Assorte collection of utilities (functions, classes, etc.) used in other projects at LICA, UCM"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -26,40 +22,13 @@ classifiers = [
     'Topic :: Scientific/Engineering :: Atmospheric Science',
 ]
 
-dependencies = [
-    # 'rawpy',
-    # 'exifread',
-    # 'numpy',
-    # 'tabulate',
-    # 'jinja2',
-    # 'python-decouple',
-]
+# Since this is a collection of source code:
+# 1) nWe do not need a build system
+# 2) We do not need dependencies
+# 
+dependencies = []
 
-
-# To run with pip install -e .[dev] or pip install -e .[test]
-[project.optional-dependencies]
-test = [
-    "pytest>=6",
-]
-dev = [
-   "pytest>=6",
-   "tox",
-]
 
 [project.urls]
 Homepage = "https://github.com/guaix-ucm/lica"
 Repository = "https://github.com/guaix-ucm/lica.git"
-
-[project.scripts]
-
-[tool.setuptools]
-
-# pyproject.toml
-[tool.setuptools_scm]
-write_to = "src/lica/_version.py"
-
-[tool.setuptools.packages.find]
-# scanning for namespace packages is true by default in pyproject.toml, so
-# you do NOT need to include the following line.
-namespaces = true
-where = ["src"]
