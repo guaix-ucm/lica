@@ -5,12 +5,14 @@
 
 ## Installation
 
-No need to install, just declare it as a dependency in the `dependencies` section of client package's
-`pyproject.toml` as `"lica@git+https://github.com/guaix-ucm#main or <tag>"`
+### Stable version
 
+```bash
+pip install lica
+```
 
-### Using UV 
-This must be hanled a source code in your client package with one of the two commands below.
+### Development version using UV 
+This must be handed a source code in your client package with one of the two commands below.
 
 ```bash
 uv add git+https://github.com/guaix-ucm/lica --branch main
