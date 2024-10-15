@@ -26,8 +26,8 @@ import numpy as np
 # Own package
 # -----------
 
-from .constants import CHANNELS, LABELS
-from .roi import Roi, NormRoi
+from .constants import CHANNELS
+from .roi import Roi
 from .abstract import AbstractImageLoader
 
 # ---------
@@ -150,7 +150,7 @@ class ExifImageLoader(AbstractImageLoader):
     def cfa_pattern(self):
         '''Returns the Bayer pattern as RGGB, BGGR, GRBG, GBRG strings'''
         if self._color_desc != 'RGBG':
-            raise UnsupporteCFAError(self._color_desc)
+            raise UnsupportedCFAError(self._color_desc)
         return self._cfa
 
     def saturation_levels(self):

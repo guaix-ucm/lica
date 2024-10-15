@@ -8,14 +8,16 @@
 
 
 # ------------------
-# ^Package Constants
+# Package Constants
 # ------------------
 
-LABELS = (('Red', 'R'), ('Green r', 'Gr'), ('Green b', 'Gb'), ('Blue', 'B'))
-CHANNELS = ('R', 'Gr', 'Gb', 'B')
+LABELS = (("Red", "R"), ("Green r", "Gr"), ("Green b", "Gb"), ("Blue", "B"))
+CHANNELS = ("R", "Gr", "Gb", "B")
 
-FITS_EXTENSIONS = ('.fts', '.fit', '.fits')
+FITS_EXTENSIONS = (".fts", ".fit", ".fits")
 
-DNG_EXTENSIONS = ('.dng',)
+EXIF_EXTENSIONS = ('.jpg', '.jpeg', '.dng', '.cr2')
 
-JPG_EXTENSIONS = ('.jpg', '.jpeg')
+DNG_EXTENSIONS = (".dng",)
+
+JPG_EXTENSIONS = (".jpg", ".jpeg")

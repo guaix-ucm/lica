@@ -22,7 +22,39 @@ classifiers = [
     'Topic :: Scientific/Engineering :: Atmospheric Science',
 ]
 
-dependencies = []
+dependencies = [
+    "python-decouple",
+]
+
+[project.optional-dependencies]
+
+# jinja2 module need this
+jinja = [
+    "jinja2",
+]
+
+# tabulate module need this
+tabular = [
+    "tabulate",
+]
+
+# raw subpackage need this
+raw = [
+  "numpy",
+  "exifread",
+  "rawpy",
+]
+
+# sqlalchemy subpackage need this
+sqlalch = [
+    "sqlalchemy",
+]
+
+# sqlalchemy.asyncio subpackage need this
+aiosqlalch = [
+    "sqlalchemy[asyncio]",
+]
+
 
 [project.urls]
 Homepage = "https://github.com/guaix-ucm/lica"

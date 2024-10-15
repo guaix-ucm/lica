@@ -10,10 +10,12 @@
 # System wide imports
 # --------------------
 
-import jinja2
+from jinja2 import Environment, PackageLoader
 
 
-def render_from(package, template, context):
-    return jinja2.Environment(
-        loader=jinja2.PackageLoader(package, package_path='templates')
-    ).get_template(template).render(context)
+def render_from(package, template: str, context: dict) -> str:
+    return (
+        Environment(loader=PackageLoader(package, package_path="templates"))
+        .get_template(template)
+        .render(context)
+    )

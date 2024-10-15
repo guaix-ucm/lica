@@ -10,7 +10,7 @@
 # System wide imports
 # -------------------
 
-from .constants import FITS_EXTENSIONS, DNG_EXTENSIONS, JPG_EXTENSIONS
+from .constants import FITS_EXTENSIONS, EXIF_EXTENSIONS
 from .simulation import SimulatedDarkImage
 from .exif import ExifImageLoader
 from .fits import FitsImageLoader
@@ -20,8 +20,7 @@ import os
 # Module Constants
 # ----------------
 
-FITS_EXTENSIONS = ('.fts', '.fit', '.fits')
-EXIF_EXTENSIONS = ('.jpg', '.jpeg', '.dng', '.cr2')
+
 
 # ---------------------
 # Thrid-party libraries

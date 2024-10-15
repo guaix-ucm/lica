@@ -42,9 +42,9 @@ def vdir(path: str) -> str:
 def vbool(boolstr: str) -> bool:
     """Boolean text validator for the command line interface"""
     result = None
-    if boolstr == 'True':
+    if boolstr == "True":
         result = True
-    elif boolstr == 'False':
+    elif boolstr == "False":
         result = False
     return result
 
@@ -52,7 +52,7 @@ def vbool(boolstr: str) -> bool:
 def vdate(datestr: str) -> datetime:
     """Date & time validator for the command line interface"""
     date = None
-    for fmt in ['%Y-%m', '%Y-%m-%d', '%Y-%m-%dT%H:%M:%S', '%Y-%m-%dT%H:%M:%SZ']:
+    for fmt in ["%Y-%m", "%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M:%SZ"]:
         try:
             date = datetime.strptime(datestr, fmt)
         except ValueError:
@@ -61,20 +61,20 @@ def vdate(datestr: str) -> datetime:
 
 
 def vmonth(datestr: str) -> datetime:
-    return datetime.strptime(datestr, '%Y-%m')
+    return datetime.strptime(datestr, "%Y-%m")
 
 
 def vyear(datestr: str) -> datetime:
-    return datetime.strptime(datestr, '%Y')
+    return datetime.strptime(datestr, "%Y")
 
 
 def vfloat(num: str) -> float:
-    '''Validator that admits fractions'''
+    """Validator that admits fractions"""
     return float(fractions.Fraction(num))
 
 
 def vfloat01(num: str) -> float:
-    '''Validator between [0..1] that admits fractions'''
+    """Validator between [0..1] that admits fractions"""
     num = float(fractions.Fraction(num))
     if not (0.0 <= num <= 1.0):
         raise ValueError(f"Value {num} out of bounds [0..1]")
@@ -82,7 +82,7 @@ def vfloat01(num: str) -> float:
 
 
 def vint(L: int, H: int, num: str) -> int:
-    '''Integer validator between [L..H]'''
+    """Integer validator between [L..H]"""
     num = int(num)
     if not (L <= num <= H):
         raise ValueError(f"Value {num} out of bounds [{L}..{H}]")
@@ -90,7 +90,7 @@ def vint(L: int, H: int, num: str) -> int:
 
 
 def voddint(L: int, H: int, num: str) -> int:
-    '''Odd integer validator between [L..H]'''
+    """Odd integer validator between [L..H]"""
     num = int(num)
     if (L % 2) == 0:
         raise ValueError(f"Low bound value {L} is not an odd number")
@@ -104,7 +104,7 @@ def voddint(L: int, H: int, num: str) -> int:
 
 
 def vevenint(L: int, H: int, num: str) -> int:
-    '''Even integer validator between [L..H]'''
+    """Even integer validator between [L..H]"""
     num = int(num)
     if (L % 2) == 1:
         raise ValueError(f"Low bound value {L} is not an even number")
@@ -118,7 +118,7 @@ def vevenint(L: int, H: int, num: str) -> int:
 
 
 def vflopath(value: StrOrFloat) -> float:
-    '''Validator that admits either a single number or a file (representing an image)'''
+    """Validator that admits either a single number or a file (representing an image)"""
     try:
         n = float(fractions.Fraction(value))
     except ValueError:
@@ -129,14 +129,15 @@ def vflopath(value: StrOrFloat) -> float:
 
 
 def vmac(mac: str) -> str:
-    ''''Valid input MAC strings'''
+    """'Valid input MAC strings"""
     try:
-        corrected_mac = ':'.join(f"{int(x,16):02X}" for x in mac.split(':'))
+        corrected_mac = ":".join(f"{int(x,16):02X}" for x in mac.split(":"))
     except ValueError:
         raise ValueError("Invalid MAC: %s" % mac)
     except AttributeError:
         raise ValueError("Invalid MAC: %s" % mac)
     return corrected_mac
+
 
 # ---------------------------------------------------------------------
 # This section validates combination of color channels to show in plots
@@ -144,35 +145,64 @@ def vmac(mac: str) -> str:
 
 
 _COLOR_PLANES_COMBINATIONS = {
-    1: (['R', ], ['Gr', ], ['Gb'], ['G', ], ['B', ]),
-    2: (['R', 'Gr'], ['R', 'Gb'], ['R', 'G'], ['R', 'B'], ['Gr', 'Gb'], ['Gr', 'B'], ['Gb', 'B'], ['G', 'B']),
-    3: (['R', 'Gr', 'Gb'], ['R', 'Gr', 'B'],  ['R', 'Gb', 'B'], ['R', 'G', 'B'], ['Gr', 'Gb', 'B'], ),
-    4: (['R', 'Gr', 'Gb', 'B'], )
+    1: (
+        [
+            "R",
+        ],
+        [
+            "Gr",
+        ],
+        ["Gb"],
+        [
+            "G",
+        ],
+        [
+            "B",
+        ],
+    ),
+    2: (
+        ["R", "Gr"],
+        ["R", "Gb"],
+        ["R", "G"],
+        ["R", "B"],
+        ["Gr", "Gb"],
+        ["Gr", "B"],
+        ["Gb", "B"],
+        ["G", "B"],
+    ),
+    3: (
+        ["R", "Gr", "Gb"],
+        ["R", "Gr", "B"],
+        ["R", "Gb", "B"],
+        ["R", "G", "B"],
+        ["Gr", "Gb", "B"],
+    ),
+    4: (["R", "Gr", "Gb", "B"],),
 }
 
 
 def _channel_comparator(chan_a: str, chan_b: str) -> int:
-    '''Compares channels so that R < Gr < Gb < G < B'''
+    """Compares channels so that R < Gr < Gb < G < B"""
     if chan_a == chan_b:
         return 0
-    if chan_a == 'R':
+    if chan_a == "R":
         return -1
-    if chan_a == 'B':
+    if chan_a == "B":
         return 1
-    if chan_a == 'Gr':
-        return -11 if chan_b in ('Gb', 'G', 'B') else 1
-    if chan_a == 'Gb':
-        return -1 if chan_b in ('G', 'B') else 1
-    if chan_a == 'G':
-        return -11 if chan_b in ('B',) else 1
-    raise ValueError(f'This case should not happen between {chan_a} and {chan_b}')
+    if chan_a == "Gr":
+        return -11 if chan_b in ("Gb", "G", "B") else 1
+    if chan_a == "Gb":
+        return -1 if chan_b in ("G", "B") else 1
+    if chan_a == "G":
+        return -11 if chan_b in ("B",) else 1
+    raise ValueError(f"This case should not happen between {chan_a} and {chan_b}")
 
 
 def valid_channels(sequence: Sequence[str]) -> Sequence[str]:
-    l = len(sequence)
-    if not (0 < l < 5):
+    seqlen = len(sequence)
+    if not (0 < seqlen < 5):
         raise ValueError(f"Too many channels: {sequence}")
     sequence = sorted(sequence, key=functools.cmp_to_key(_channel_comparator))
-    if sequence not in _COLOR_PLANES_COMBINATIONS[l]:
+    if sequence not in _COLOR_PLANES_COMBINATIONS[seqlen]:
         raise ValueError(f"channel sequence not supported: {sequence}")
     return sequence

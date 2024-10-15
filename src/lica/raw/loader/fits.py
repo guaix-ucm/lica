@@ -24,8 +24,8 @@ from astropy.io import fits
 # Own package
 # -----------
 
-from .constants import CHANNELS, LABELS
-from .roi import Roi, NormRoi
+from .constants import CHANNELS
+from .roi import Roi
 from .abstract import AbstractImageLoader
 
 # ----------------
@@ -66,10 +66,9 @@ class FitsImageLoader(AbstractImageLoader):
             self._shape = (height // 2, width // 2)
         else:
             assert self._dim == 3
-            Z = header['NAXIS3']
+            Z = header['NAXIS3']  # noqa: F841
             height = header['NAXIS2']
             width = header['NAXIS1']
-            already_debayered = True
             self._roi = Roi.from_normalized_roi(
                 width, height, self._n_roi, already_debayered=True)
             self._shape = (height, width)
