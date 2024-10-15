@@ -46,12 +46,12 @@ raw = [
 ]
 
 # sqlalchemy subpackage need this
-sqlalch = [
+sqlalchemy = [
     "sqlalchemy",
 ]
 
 # sqlalchemy.asyncio subpackage need this
-aiosqlalch = [
+aiosqlalchemy = [
     "sqlalchemy[asyncio]",
 ]
 

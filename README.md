@@ -20,13 +20,9 @@ uv add git+https://github.com/guaix-ucm/lica --tag x.y.z
 ```
 
 *** Note: ***
-lica library uses different modules in its subpackages
-In order not to install them all, your client code should declare
-dpendencies to tehse packages, as needed:
-
-1. 'rawpy',
-2. 'exifread',
-3. 'numpy',
-4. 'tabulate',
-5. 'jinja2',
-6. 'python-decouple'
+lica library uses different modules in its subpackages, so you must use one or more the following extras:
+* lica[jinja]
+* lica[tabular]
+* lica[raw]
+* lica[sqlalchemy]
+* lica[aiosqlalchemy]
