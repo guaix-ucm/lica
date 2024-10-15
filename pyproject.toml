@@ -1,7 +1,3 @@
-[build-system]
-requires = ["setuptools >= 45", "wheel", "setuptools_scm[toml]>=6.2"]
-build-backend = "setuptools.build_meta"
-
 [project]
 name = "lica"
 dynamic = ["version"]
@@ -17,7 +13,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Environment :: Console",
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: GNU General Public License (GPL)",
@@ -26,25 +22,7 @@ classifiers = [
     'Topic :: Scientific/Engineering :: Atmospheric Science',
 ]
 
-dependencies = [
-    # 'rawpy',
-    # 'exifread',
-    # 'numpy',
-    # 'tabulate',
-    # 'jinja2',
-    # 'python-decouple',
-]
-
-
-# To run with pip install -e .[dev] or pip install -e .[test]
-[project.optional-dependencies]
-test = [
-    "pytest>=6",
-]
-dev = [
-   "pytest>=6",
-   "tox",
-]
+dependencies = []
 
 [project.urls]
 Homepage = "https://github.com/guaix-ucm/lica"
@@ -52,11 +30,21 @@ Repository = "https://github.com/guaix-ucm/lica.git"
 
 [project.scripts]
 
+[build-system]
+requires = ["setuptools >= 45", "wheel", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
 [tool.setuptools]
+script-files = []
 
 # pyproject.toml
 [tool.setuptools_scm]
 write_to = "src/lica/_version.py"
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=8.3.3",
+]
 
 [tool.setuptools.packages.find]
 # scanning for namespace packages is true by default in pyproject.toml, so
