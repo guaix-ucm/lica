@@ -28,8 +28,6 @@ dependencies = []
 Homepage = "https://github.com/guaix-ucm/lica"
 Repository = "https://github.com/guaix-ucm/lica.git"
 
-[project.scripts]
-
 [build-system]
 requires = ["setuptools >= 45", "wheel", "setuptools_scm[toml]>=6.2"]
 build-backend = "setuptools.build_meta"
