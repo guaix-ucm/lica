@@ -81,8 +81,8 @@ def arg_parser(name: str, version: str, description: str) -> ArgumentParser:
 
 
 def execute(
-    main_func: Callable[Namespace],
-    add_args_func: Callable[ArgumentParser],
+    main_func: Callable[[Namespace], None],
+    add_args_func: Callable[[ArgumentParser], None],
     name: str,
     version: str,
     description: str,
@@ -104,8 +104,8 @@ def execute(
 
 
 def async_execute(
-    main_func: Callable[Namespace],
-    add_args_func: Callable[ArgumentParser],
+    main_func: Callable[[Namespace], None],
+    add_args_func: Callable[[ArgumentParser], None],
     name: str,
     version: str,
     description: str,
