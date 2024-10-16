@@ -21,10 +21,15 @@ build:
     rm -fr dist/*
     uv build
 
-# Publish the package in (pypi|testpypi)
-publish repo="pypi" : build
-    twine upload --verbose -r {{ repo }} dist/*
+# Publish the package in PyPi
+publish: build
+    twine upload --verbose -r pypi dist/*
 
-# install version from Test PyPi server
+# Publish the package in Test PyPi
+test-publish: build
+    twine upload --verbose -r testpypi dist/*
+
+# test installed version from Test PyPi server
 test-install pkg="lica":
-    uv run --with {{pkg}} --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ --no-project -- python -c "import {{pkg}}" install 
+    uv run --with {{pkg}} --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ \
+        --no-project -- python -c "import {{pkg}}" install 
