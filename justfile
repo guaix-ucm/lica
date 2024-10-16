@@ -23,11 +23,11 @@ build:
 
 # Publish the package in PyPi
 publish: build
-    twine upload --verbose -r pypi dist/*
+    twine upload -r pypi dist/*
 
 # Publish the package in Test PyPi
 test-publish: build
-    twine upload --verbose -r testpypi dist/*
+    twine upload -r testpypi dist/*
 
 # test installed version from Test PyPi server
 test-install pkg="lica": test-publish
