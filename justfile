@@ -26,5 +26,5 @@ publish repo="pypi" : build
     twine upload --verbose -r {{ repo }} dist/*
 
 # install version from Test PyPi server
-tinstall pkg="lica":
-    uv pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ {{pkg}}
+test-install pkg="lica":
+    uv run --with {{pkg}} --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ --no-project -- python -c "import {{pkg}}" install 
