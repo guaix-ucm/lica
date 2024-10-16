@@ -25,6 +25,11 @@ build:
 publish: build
     twine upload -r pypi dist/*
 
+# test installed version from PyPi server
+install pkg="tess-ida-tools":
+    uv run  --no-project --with {{pkg}} --refresh-package {{pkg}} \
+        -- python -c "from lica import __version__; print(__version__)"
+
 # Publish the package in Test PyPi
 test-publish: build
     twine upload -r testpypi dist/*
