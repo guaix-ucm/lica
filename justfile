@@ -30,6 +30,8 @@ test-publish: build
     twine upload -r testpypi dist/*
 
 # test installed version from Test PyPi server
-test-install pkg="lica": test-publish
-    uv run --with {{pkg}} --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ \
-        --no-project -- python -c "import {{pkg}}"
+test-install pkg="lica":
+    uv run --with {{pkg}} --refresh-package {{pkg}} \
+        --index-url https://test.pypi.org/simple/ \
+        --extra-index-url https://pypi.org/simple/ \
+        --no-project  -- python -c "from lica import __version__; print(__version__)"
