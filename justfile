@@ -32,4 +32,4 @@ test-publish: build
 # test installed version from Test PyPi server
 test-install pkg="lica": test-publish
     uv run --with {{pkg}} --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ \
-        --no-project -- python -c "import {{pkg}}" install 
+        --no-project -- python -c "import {{pkg}}"
