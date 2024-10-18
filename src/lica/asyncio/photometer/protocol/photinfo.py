@@ -9,16 +9,13 @@
 # -------------------
 
 import re
-import sys
 import datetime
-import logging
 import asyncio
 
 # -----------------
 # Third Party imports
 # -------------------
 
-import decouple
 import aiohttp
 from sqlalchemy import text
 
@@ -78,7 +75,7 @@ class HTMLInfo:
         '''
         Get photometer information. 
         '''
-        label = str(self.parent.role)
+        # label = str(self.parent.role)
         result = {}
         result['tstamp'] = datetime.datetime.now(datetime.timezone.utc)
         url = self._make_state_url()
@@ -134,7 +131,7 @@ class HTMLInfo:
         result = {}
         result['tstamp'] = datetime.datetime.now(datetime.timezone.utc)
         url = self._make_save_url()
-        params = [('cons', '{0:0.2f}'.format(zero_point))]
+        # params = [('cons', '{0:0.2f}'.format(zero_point))]
         # Paradoxically, the photometer uses an HTTP GET method to write a ZP ....
         timeout = aiohttp.ClientTimeout(total=timeout)
         async with aiohttp.ClientSession(timeout=timeout) as session:
@@ -163,7 +160,6 @@ class DBaseInfo:
         self.parent = parent
         self.log = parent.log
         self.log.info("Using %s Info", self.__class__.__name__)
-        url = decouple.config('DATABASE_URL')
         self.engine = engine
 
     # ----------------------------
@@ -178,7 +174,6 @@ class DBaseInfo:
             raise NotImplementedError(
                 "Can't save Zero Point on a database for the %s device", str(self.parent.role))
         section = 'ref-device' if self.parent.role is Role.REF else 'test-device'
-        prop = 'zp'
         zero_point = str(zero_point)
         async with self.engine.begin() as conn:
             try:
@@ -186,7 +181,7 @@ class DBaseInfo:
                                    {"section": section, "property": "zp",
                                        "value": zero_point}
                                    )
-            except:
+            except Exception:
                 await conn.rollback()
             else:
                 await conn.commit()
@@ -204,6 +199,10 @@ class DBaseInfo:
         return result
 
 
+# ===========================================================
+# THIS CLASS MUST BE RE-WRITTEN AND DEBUGGED IT IS STILL TWISTED-BASED.
+# DO NOT USET !!!!
+# ===========================================================
 class CLInfo:
 
     """

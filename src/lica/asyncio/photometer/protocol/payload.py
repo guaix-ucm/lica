@@ -10,7 +10,6 @@
 
 import re
 import json
-import logging
 import datetime
 
 # -------------------
@@ -170,10 +169,10 @@ class JSONPayload:
         self.log.info("<== [%02d] %s", len(data), data)
         try:
             message = json.loads(data)
-        except Exception as e:
+        except Exception:
             return False, None
         else:
-            if type(message) == dict:
+            if type(message) is dict:
                 message['tstamp'] = tstamp
                 message['seq'] = message['udp']
                 del message['udp']

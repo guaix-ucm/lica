@@ -25,7 +25,7 @@ from . import Role, Model
 
 from .protocol.transport import UDPTransport, TCPTransport, SerialTransport
 from .protocol.payload import JSONPayload, OldPayload
-from .protocol.photinfo import HTMLInfo, DBaseInfo
+from .protocol.photinfo import HTMLInfo, DBaseInfo, CLInfo
 
 
 class Photometer:

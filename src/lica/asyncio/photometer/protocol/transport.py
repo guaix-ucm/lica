@@ -8,8 +8,6 @@
 # System wide imports
 # -------------------
 
-import socket
-import logging
 import datetime
 import asyncio
 
@@ -75,14 +73,13 @@ class TCPTransport(asyncio.Protocol):
         self.log = parent.log
         self.host = host
         self.port = port
-        self.task_status = task_status
 
     def connection_made(self, transport):
         self.transport = transport
 
     def data_received(self, data):
         now = datetime.datetime.now(datetime.timezone.utc)
-        self.parent.handle_readings(payload, now)
+        self.parent.handle_readings(data, now)
 
     def connection_lost(self, exc):
         if not self.on_conn_lost.cancelled():
@@ -121,6 +118,6 @@ class SerialTransport:
                 payload = payload[:-2]  # Strips \r\n
                 if len(payload):
                     self.parent.handle_readings(payload, now)
-            except:
+            except Exception:
                 self.serial.close()
                 self.serial = None

@@ -73,12 +73,12 @@ class ImageStatistics:
                 bias = self._image.black_levels()
                 self._bias = np.array(
                     self._image.black_levels()).reshape(N, 1, 1)
-            except:
+            except Exception:
                 log.warn("No luck using embedded image black levels as bias")
                 self._bias = np.full((N, 1, 1), 0)
-        elif type(bias) == str:
+        elif type(bias) is str:
             self._bias = self._factory.image_from(bias, n_roi, channels).load()
-        elif type(bias) == float:
+        elif type(bias) is float:
             self._bias = np.full((N, 1, 1), bias)
         if dark is not None:
             self._dark = dark * self._image.exptime()

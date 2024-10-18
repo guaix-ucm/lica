@@ -8,7 +8,6 @@
 # System wide imports
 # -------------------
 
-import sys
 import logging
 import logging.handlers
 

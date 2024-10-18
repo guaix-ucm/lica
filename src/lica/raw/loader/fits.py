@@ -11,6 +11,7 @@
 # -------------------
 
 import os
+import math
 import logging
 
 # ---------------------
@@ -153,18 +154,18 @@ class FitsImageLoader(AbstractImageLoader):
             average = pixels.mean(axis=0)
             variance = pixels.var(axis=0, dtype=np.float64, ddof=1)
             output_list = list()
-            if channels is None or len(channels) == 4:
+            if self._channels is None or len(self._channels) == 4:
                 output_list = list(zip(average.tolist(), variance.tolist()))
             else:
-                for ch in channels:
+                for ch in self._channels:
                     if ch == 'G':
                         # This assumes that initial list is a pixel array list
                         aver_green = (average[1] + average[2]) / 2
-                        std_green = math.sqrt(stdev[1]**2 + stdev[2]**2)
+                        std_green = math.sqrt(variance[1] + variance[2])
                         output_list.append([aver_green, std_green])
                     else:
                         i = CHANNELS.index(ch)
-                        output_list.append([average[i], stdev[i]])
+                        output_list.append([average[i], math.sqrt(variance[i])])
                 return np.stack(output_list)
 
 
