@@ -10,7 +10,6 @@
 # System wide imports
 # -------------------
 
-import os
 import logging
 
 # ---------------------
@@ -23,7 +22,7 @@ import numpy as np
 # Own modules and packages
 # ------------------------
 
-from ..loader import ImageLoaderFactory, SimulatedDarkImage, NormRoi
+from ..loader import ImageLoaderFactory
 
 # -----------------------
 # Module global variables
