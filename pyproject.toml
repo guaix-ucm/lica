@@ -24,6 +24,7 @@ classifiers = [
 
 dependencies = [
     "python-decouple",
+    "typing-extensions",
 ]
 
 [project.optional-dependencies]
@@ -55,6 +56,10 @@ aiosqlalchemy = [
     "sqlalchemy[asyncio]",
 ]
 
+photometer = [
+    "sqlalchemy[asyncio]",
+    "aiohttp",
+]
 
 [project.urls]
 Homepage = "https://github.com/guaix-ucm/lica"
