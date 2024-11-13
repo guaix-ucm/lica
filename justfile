@@ -23,7 +23,7 @@ build:
 
 # Publish the package in PyPi
 publish: build
-    twine upload -r pypi dist/*
+    twine upload --verbose -r pypi dist/*
 
 # test installed version from PyPi server
 install pkg="tess-ida-tools":
@@ -32,7 +32,7 @@ install pkg="tess-ida-tools":
 
 # Publish the package in Test PyPi
 test-publish: build
-    twine upload -r testpypi dist/*
+    twine upload --verbose -r testpypi dist/*
 
 # test installed version from Test PyPi server
 test-install pkg="lica":
