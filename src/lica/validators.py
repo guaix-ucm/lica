@@ -10,6 +10,7 @@
 # System wide imports
 #  -------------------
 
+import math
 import os.path
 import fractions
 import functools
@@ -138,6 +139,17 @@ def vmac(mac: str) -> str:
         raise ValueError("Invalid MAC: %s" % mac)
     return corrected_mac
 
+
+def vsexa(value: str) -> float:
+    """Validates HH:MM:SS.SSS and converts to floating point"""
+    ang = value.split(':')
+    if len(ang) != 3:
+        raise ValueError(f"{value} is not a valid sexagesimal number")
+    try:
+        result = math.copysign(math.fabs(float(ang[0])) + float(ang[1])/60.0 + float(ang[2])/3600.00, float(ang[0]))
+    except Exception:
+        raise ValueError(f"{value} could not be converted from sexagesimal to float")
+    return result
 
 # ---------------------------------------------------------------------
 # This section validates combination of color channels to show in plots
