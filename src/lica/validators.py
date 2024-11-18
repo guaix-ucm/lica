@@ -140,15 +140,18 @@ def vmac(mac: str) -> str:
     return corrected_mac
 
 
-def vsexa(value: str) -> float:
-    """Validates HH:MM:SS.SSS and converts to floating point"""
-    ang = value.split(':')
-    if len(ang) != 3:
-        raise ValueError(f"{value} is not a valid sexagesimal number")
+def vsexa(value: str) -> float: 
+    """Validates HH.HHHH or HH:MM:SS.SSS and converts to floating point"""
     try:
-        result = math.copysign(math.fabs(float(ang[0])) + float(ang[1])/60.0 + float(ang[2])/3600.00, float(ang[0]))
-    except Exception:
-        raise ValueError(f"{value} could not be converted from sexagesimal to float")
+        result = float(value)
+    except ValueError:
+        ang = value.split(':')
+        if len(ang) != 3:
+            raise ValueError(f"{value} is not a valid sexagesimal number")
+        try:
+            result = math.copysign(math.fabs(float(ang[0])) + float(ang[1])/60.0 + float(ang[2])/3600.00, float(ang[0]))
+        except Exception:
+            raise ValueError(f"{value} could not be converted from sexagesimal to float")
     return result
 
 # ---------------------------------------------------------------------
