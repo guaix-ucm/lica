@@ -19,7 +19,8 @@ from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
 url = decouple.config("DATABASE_URL")
 
-engine = create_engine(url)
+# 'check_same_thread' is only needed in SQLite ....
+engine = create_engine(url, connect_args={"check_same_thread": False})
 
 metadata = MetaData(
     # For the different artifacts (indexes, constraints, etc.)
