@@ -61,6 +61,13 @@ photometer = [
     "aiohttp",
 ]
 
+# LICA subpackages need this
+lica = [
+    "StrEnum",
+    "numpy",
+    "astropy",
+]
+
 [project.urls]
 Homepage = "https://github.com/guaix-ucm/lica"
 Repository = "https://github.com/guaix-ucm/lica.git"
