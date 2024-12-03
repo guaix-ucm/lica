@@ -23,6 +23,7 @@ classifiers = [
 ]
 
 dependencies = [
+    "StrEnum",
     "python-decouple",
     "typing-extensions",
 ]
@@ -63,7 +64,6 @@ photometer = [
 
 # LICA subpackages need this
 lica = [
-    "StrEnum",
     "numpy",
     "astropy",
 ]
