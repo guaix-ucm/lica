@@ -134,7 +134,7 @@ def _load(
     end_wave: float,
 ) -> Table:
     name = f"{model}-Responsivity-Interpolated@1nm.ecsv"
-    in_path = files("licaplot.photodiode").joinpath(name)
+    in_path = files("lica.photodiode").joinpath(name)
     table = astropy.io.ascii.read(in_path, format="ecsv")
     if (beg_wave > BENCH.WAVE_START) and (end_wave < BENCH.WAVE_END):
         history = {
