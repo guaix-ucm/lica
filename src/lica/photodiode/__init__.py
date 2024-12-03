@@ -10,7 +10,6 @@
 # System wide imports
 # -------------------
 
-import logging
 from enum import IntEnum
 from importlib.resources import files
 
@@ -120,8 +119,6 @@ class PhotodiodeModel(StrEnum):
 # Module global variables
 # -----------------------
 
-log = logging.getLogger(__name__)
-
 # ------------------
 # Auxiliary fnctions
 # ------------------
@@ -181,26 +178,10 @@ def export(
     end_wave: float,
 ) -> None:
     """Make a copy of the proper ECSV Astropy Table"""
-    log.info(
-        "Exporting model %s, resolution %d nm to file %s [%dnm-%dnm]",
-        model,
-        resolution,
-        path,
-        beg_wave,
-        end_wave,
-    )
     table = _load(model, resolution, beg_wave, end_wave)
     table.write(path, delimiter=",", overwrite=True)
 
 
 def load(model: PhotodiodeModel, resolution: int, beg_wave: float, end_wave: float) -> Table:
     """Return a ECSV as as Astropy Table"""
-    log.info("Reading LICA photodiode model %s, resolution %d nm", model, resolution)
-    log.info(
-        "Reading LICA photodiode model %s, resolution %d [%dnm-%dnm]",
-        model,
-        resolution,
-        beg_wave,
-        end_wave,
-    )
     return _load(model, resolution, beg_wave, end_wave)
