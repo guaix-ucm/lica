@@ -96,3 +96,6 @@ dev-dependencies = [
 # you do NOT need to include the following line.
 namespaces = true
 where = ["src"]
+
+[tool.setuptools.package-data]
+"lica.photodiode" = ["*.csv"]
