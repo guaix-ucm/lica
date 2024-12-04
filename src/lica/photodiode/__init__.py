@@ -10,6 +10,7 @@
 # System wide imports
 # -------------------
 
+import logging
 from enum import IntEnum
 from importlib.resources import files
 
@@ -119,6 +120,8 @@ class PhotodiodeModel(StrEnum):
 # Module global variables
 # -----------------------
 
+log = logging.getLogger(__name__)
+
 # ------------------
 # Auxiliary fnctions
 # ------------------
@@ -129,8 +132,13 @@ def _load(
     resolution: int,
     beg_wave: float,
     end_wave: float,
+    cross_calibrated: bool,
 ) -> Table:
-    name = f"{model}-Responsivity-Interpolated@1nm.ecsv"
+    if model == PhotodiodeModel.OSI.value and cross_calibrated:
+        name = f"{model}-Responsivity-Cross-Calibrated@1nm.ecsv"
+    else:
+        name = f"{model}-Responsivity-Interpolated@1nm.ecsv"
+    log.info("Loading Responsivity & QE data from %s", name)
     in_path = files("lica.photodiode").joinpath(name)
     table = astropy.io.ascii.read(in_path, format="ecsv")
     if (beg_wave > BENCH.WAVE_START) and (end_wave < BENCH.WAVE_END):
@@ -182,6 +190,12 @@ def export(
     table.write(path, delimiter=",", overwrite=True)
 
 
-def load(model: PhotodiodeModel, resolution: int, beg_wave: float, end_wave: float) -> Table:
+def load(
+    model: PhotodiodeModel,
+    resolution: int,
+    beg_wave: float,
+    end_wave: float,
+    cross_calibrated: bool = True,
+) -> Table:
     """Return a ECSV as as Astropy Table"""
-    return _load(model, resolution, beg_wave, end_wave)
+    return _load(model, resolution, beg_wave, end_wave, cross_calibrated)
