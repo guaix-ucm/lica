@@ -134,7 +134,7 @@ def _load(
     end_wave: float,
     cross_calibrated: bool,
 ) -> Table:
-    if model == PhotodiodeModel.OSI.value and cross_calibrated:
+    if model == PhotodiodeModel.OSI and cross_calibrated:
         name = f"{model}-Responsivity-Cross-Calibrated@1nm.ecsv"
     else:
         name = f"{model}-Responsivity-Interpolated@1nm.ecsv"
