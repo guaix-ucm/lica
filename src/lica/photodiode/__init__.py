@@ -182,8 +182,8 @@ def export(
     path: str,
     model: PhotodiodeModel,
     resolution: int,
-    beg_wave: float,
-    end_wave: float,
+    beg_wave: float = BENCH.WAVE_START,
+    end_wave: float = BENCH.WAVE_END,
 ) -> None:
     """Make a copy of the proper ECSV Astropy Table"""
     table = _load(model, resolution, beg_wave, end_wave)
@@ -193,8 +193,8 @@ def export(
 def load(
     model: PhotodiodeModel,
     resolution: int,
-    beg_wave: float,
-    end_wave: float,
+    beg_wave: float = BENCH.WAVE_START,
+    end_wave: float = BENCH.WAVE_END,
     cross_calibrated: bool = True,
 ) -> Table:
     """Return a ECSV as as Astropy Table"""
