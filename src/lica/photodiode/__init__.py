@@ -104,11 +104,13 @@ class COL(StrEnum):
     QE = "QE"
 
 
+# Unfortunately, the 1050 nm data point is not reached by the
+# Scan.exe program, so we set wave end limit to 1049
 class BENCH(IntEnum):
     """LICA Optical bench Wavelength range"""
 
     WAVE_START = 350
-    WAVE_END = 1050
+    WAVE_END = 1049
 
 
 class PhotodiodeModel(StrEnum):
@@ -164,8 +166,7 @@ def _load(
         table.meta["History"].append(history)
     else:
         pass
-    table = table[table[COL.WAVE] >= beg_wave]
-    table = table[table[COL.WAVE] <= end_wave]
+    table = table[(table[COL.WAVE] >= beg_wave) & table[COL.WAVE] <= end_wave]
     if resolution > 1:
         table = table[::resolution]
         history = {
