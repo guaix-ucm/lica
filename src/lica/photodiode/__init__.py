@@ -166,7 +166,7 @@ def _load(
         table.meta["History"].append(history)
     else:
         pass
-    table = table[(table[COL.WAVE] >= beg_wave) & table[COL.WAVE] <= end_wave]
+    table = table[(table[COL.WAVE] >= beg_wave) & (table[COL.WAVE] <= end_wave)]
     if resolution > 1:
         table = table[::resolution]
         history = {
