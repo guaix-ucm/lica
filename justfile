@@ -21,10 +21,6 @@ build:
     rm -fr dist/*
     uv build
 
-# Publish the package in PyPi
-publish: build
-    twine upload --verbose -r pypi dist/*
-
 # test installed version from PyPi server
 install pkg="tess-ida-tools":
     uv run  --no-project --with {{pkg}} --refresh-package {{pkg}} \
