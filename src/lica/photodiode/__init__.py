@@ -201,3 +201,5 @@ def load(
 ) -> Table:
     """Return a ECSV as as Astropy Table"""
     return _load(model, resolution, beg_wave, end_wave, cross_calibrated)
+
+__all__ = ["load", "export"]
