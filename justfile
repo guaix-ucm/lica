@@ -22,7 +22,7 @@ build:
     uv build
 
 # test installed version from PyPi server
-install pkg="tess-ida-tools":
+install pkg="lica":
     uv run  --no-project --with {{pkg}} --refresh-package {{pkg}} \
         -- python -c "from lica import __version__; print(__version__)"
 
