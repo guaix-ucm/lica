@@ -1,4 +1,4 @@
-from ._version import __version__
+from ._version import __version__ as __version__
 
 try:
 	from enum import StrEnum as StrEnum
