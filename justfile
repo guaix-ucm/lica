@@ -30,13 +30,16 @@ install pkg="tess-ida-tools":
     uv run  --no-project --with {{pkg}} --refresh-package {{pkg}} \
         -- python -c "from lica import __version__; print(__version__)"
 
-# Publish the package in Test PyPi
-test-publish: build
-    twine upload --verbose -r testpypi dist/*
+# Publish the package to PyPi
+publish pkg="lica": build
+    twine upload -r pypi dist/*
+    uv run --no-project --with {{pkg}} --refresh-package {{pkg}} \
+        -- python -c "from {{pkg}} import __version__; print(__version__)"
 
-# test installed version from Test PyPi server
-test-install pkg="lica":
-    uv run --with {{pkg}} --refresh-package {{pkg}} \
+# Publish to Test PyPi server
+test-publish pkg="lica": build
+    twine upload --verbose -r testpypi dist/*
+    uv run --no-project  --with {{pkg}} --refresh-package {{pkg}} \
         --index-url https://test.pypi.org/simple/ \
         --extra-index-url https://pypi.org/simple/ \
-        --no-project  -- python -c "from lica import __version__; print(__version__)"
+        -- python -c "from {{pkg}} import __version__; print(__version__)"
