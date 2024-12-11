@@ -185,9 +185,10 @@ def export(
     resolution: int,
     beg_wave: float = BENCH.WAVE_START,
     end_wave: float = BENCH.WAVE_END,
+    cross_calibrated: bool = True,
 ) -> None:
     """Make a copy of the proper ECSV Astropy Table"""
-    table = _load(model, resolution, beg_wave, end_wave)
+    table = _load(model, resolution, beg_wave, end_wave, cross_calibrated)
     table.write(path, delimiter=",", overwrite=True)
 
 
