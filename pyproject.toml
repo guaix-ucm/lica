@@ -60,6 +60,7 @@ aiosqlalchemy = [
 photometer = [
     "sqlalchemy[asyncio]",
     "aiohttp",
+    "aioserial",
 ]
 
 # LICA subpackages need this
