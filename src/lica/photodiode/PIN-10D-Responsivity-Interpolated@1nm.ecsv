@@ -44,7 +44,7 @@
 #   - Description: Resampled calibration data at regular intervals
 #     End wavelength: !astropy.units.Quantity
 #       unit: *id004
-#       value: 1050.0
+#       value: 1049.0
 #     Method: Akima piecewise cubic polynomials
 #     Resolution: !astropy.units.Quantity
 #       unit: *id004
@@ -81,6 +81,7 @@
 #   Photosensitive size diameter: !astropy.units.Quantity
 #     unit: *id003
 #     value: 11.28
+#   Revision: 2024-12
 #   Serial: OSI-11-01-004-10D
 #   Window: Quartz Glass
 # schema: astropy-2.0
@@ -785,4 +786,3 @@ Wavelength,Responsivity,QE
 1047.0,0.331,0.39197
 1048.0,0.32512,0.38463
 1049.0,0.31858,0.37654
-1050.0,0.31324,0.36987

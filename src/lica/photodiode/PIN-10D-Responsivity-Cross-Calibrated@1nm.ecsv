@@ -61,6 +61,7 @@
 #   Photosensitive size diameter: !astropy.units.Quantity
 #     unit: !astropy.units.Unit {unit: mm}
 #     value: 11.28
+#   Revision: 2024-12
 #   Serial: OSI-11-01-004-10D
 #   Window: Quartz Glass
 # schema: astropy-2.0

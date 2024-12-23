@@ -74,7 +74,7 @@
 #   - Description: Resampled calibration data at regular intervals
 #     End wavelength: !astropy.units.Quantity
 #       unit: *id003
-#       value: 1050.0
+#       value: 1049.0
 #     Method: Akima piecewise cubic polynomials
 #     Resolution: !astropy.units.Quantity
 #       unit: *id003
@@ -82,6 +82,7 @@
 #     Start wavelength: !astropy.units.Quantity
 #       unit: *id003
 #       value: 350.0
+# - {Revision: 2024-12}
 # schema: astropy-2.0
 Wavelength,Responsivity,QE
 350.0,0.1506,0.53349
@@ -784,4 +785,3 @@ Wavelength,Responsivity,QE
 1047.0,0.35628,0.4219
 1048.0,0.35239,0.4169
 1049.0,0.3485,0.4119
-1050.0,0.34281,0.40479
