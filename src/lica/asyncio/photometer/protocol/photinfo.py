@@ -119,17 +119,18 @@ class HTMLInfo:
             self.log.error("Conflictive firmware: %s", result["firmware"])
         matchobj = self.GET_INFO["freq_offset"].search(text)
         if not matchobj:
-            self.log.warn("Frequency offset not found, defaults to 0.0 mHz")
+            self.log.warn("Frequency offset not found, defaults to None")
             result["freq_offset"] = None
         else:
             result["freq_offset"] = float(matchobj.groups(1)[0]) / 1000.0
         matchobj = self.GET_INFO["model"].search(text)
         if not matchobj:
-            self.log.warn("Model not found, defaults to TESS-W")
+            self.log.warn("Model not found, defaults to None")
             result["model"] = None
         else:
             result["model"] = matchobj.groups(1)[0]
-        result["sensor"] = None  # Up to npow, we don't know what the sensor model is.
+        # Up to now, we don't know what the sensor model is.
+        result["sensor"] = None 
         self.log.warn("Sensor model is set to %s by default", result["sensor"])
         return result
 
