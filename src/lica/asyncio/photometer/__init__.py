@@ -44,7 +44,7 @@ class Role(enum.IntEnum):
         return next(self)
 
     def endpoint(self) -> str:
-        env_var = 'REF_ENDPOINT' if self is Role.REF else 'TEST_ENDPOINT'
+        env_var = "REF_ENDPOINT" if self is Role.REF else "TEST_ENDPOINT"
         return decouple.config(env_var)
 
 

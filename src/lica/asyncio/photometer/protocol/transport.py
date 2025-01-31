@@ -35,11 +35,10 @@ import aioserial
 
 
 class UDPTransport(asyncio.DatagramProtocol):
-
     def __init__(self, parent, port=2255):
         self.parent = parent
         self.log = parent.log
-        self.local_host = '0.0.0.0'
+        self.local_host = "0.0.0.0"
         self.local_port = port
 
     def connection_made(self, transport):
@@ -57,8 +56,7 @@ class UDPTransport(asyncio.DatagramProtocol):
         loop = asyncio.get_running_loop()
         self.on_conn_lost = loop.create_future()
         transport, self.protocol = await loop.create_datagram_endpoint(
-            lambda: self,
-            local_addr=(self.local_host, self.local_port)
+            lambda: self, local_addr=(self.local_host, self.local_port)
         )
         try:
             await self.on_conn_lost
@@ -67,7 +65,6 @@ class UDPTransport(asyncio.DatagramProtocol):
 
 
 class TCPTransport(asyncio.Protocol):
-
     def __init__(self, parent, host="192.168.4.1", port=23):
         self.parent = parent
         self.log = parent.log
@@ -88,10 +85,7 @@ class TCPTransport(asyncio.Protocol):
     async def readings(self):
         loop = asyncio.get_running_loop()
         self.on_conn_lost = loop.create_future()
-        transport, self.protocol = await loop.create_connection(
-            lambda: self,
-            self.host, self.port
-        )
+        transport, self.protocol = await loop.create_connection(lambda: self, self.host, self.port)
         try:
             await self.on_conn_lost
         finally:
@@ -99,7 +93,6 @@ class TCPTransport(asyncio.Protocol):
 
 
 class SerialTransport:
-
     def __init__(self, parent, port="/dev/ttyUSB0", baudrate=9600):
         self.parent = parent
         self.log = parent.log
@@ -108,9 +101,8 @@ class SerialTransport:
         self.serial = None
 
     async def readings(self):
-        '''This is meant to be a task'''
-        self.serial = aioserial.AioSerial(
-            port=self.port, baudrate=self.baudrate)
+        """This is meant to be a task"""
+        self.serial = aioserial.AioSerial(port=self.port, baudrate=self.baudrate)
         while self.serial is not None:
             try:
                 payload = await self.serial.readline_async()
