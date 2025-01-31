@@ -131,7 +131,7 @@ class HTMLInfo:
             result["model"] = matchobj.groups(1)[0]
         # Up to now, we don't know what the sensor model is.
         result["sensor"] = None 
-        self.log.warn("Sensor model is set to %s by default", result["sensor"])
+        self.log.warn("Sensor model set to %s by default", result["sensor"])
         return result
 
     async def save_zero_point(self, zero_point, timeout=4):
