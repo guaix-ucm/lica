@@ -78,9 +78,7 @@ class HTMLInfo:
         """
         Get photometer information.
         """
-        # label = str(self.parent.role)
         result = {}
-        result["tstamp"] = datetime.datetime.now(datetime.timezone.utc)
         url = self._make_state_url()
         self.log.info("Get info from %s", url)
         timeout = aiohttp.ClientTimeout(total=timeout)
