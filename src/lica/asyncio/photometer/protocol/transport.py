@@ -46,7 +46,7 @@ class UDPTransport(asyncio.DatagramProtocol):
 
     def datagram_received(self, payload, addr):
         now = datetime.datetime.now(datetime.timezone.utc)
-        self.parent.handle_readings(payload, now)
+        self.parent.handle_readings(payload.rstrip(), now)
 
     def connection_lost(self, exc):
         if not self.on_conn_lost.cancelled():
@@ -107,7 +107,8 @@ class SerialTransport:
             try:
                 payload = await self.serial.readline_async()
                 now = datetime.datetime.now(datetime.timezone.utc)
-                payload = payload[:-2]  # Strips \r\n
+                #payload = payload[:-2]  # Strips \r\n
+                payload = payload.rstrip()
                 if len(payload):
                     self.parent.handle_readings(payload, now)
             except Exception:
