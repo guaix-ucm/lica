@@ -107,7 +107,6 @@ class SerialTransport:
             try:
                 payload = await self.serial.readline_async()
                 now = datetime.datetime.now(datetime.timezone.utc)
-                #payload = payload[:-2]  # Strips \r\n
                 payload = payload.rstrip()
                 if len(payload):
                     self.parent.handle_readings(payload, now)
