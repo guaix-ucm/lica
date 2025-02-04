@@ -142,10 +142,12 @@ class HTMLInfo:
         url = self._make_save_url()
         # params = [('cons', '{0:0.2f}'.format(zero_point))]
         # Paradoxically, the photometer uses an HTTP GET method to write a ZP ....
+        params={'cons': "%0.2f" % (zero_point,)}
         timeout = aiohttp.ClientTimeout(total=timeout)
         async with aiohttp.ClientSession(timeout=timeout) as session:
             async with session.get(
                 url,
+                params=params
             ) as response:
                 text = await response.text()
         matchobj = self.GET_INFO["flash"].search(text)
