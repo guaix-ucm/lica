@@ -152,7 +152,7 @@ class HTMLInfo:
                     text = await response.text()
                 matchobj = self.GET_INFO["flash"].search(text)
                 if matchobj:
-                    self.log.info("==> [HTTP GET] {url} {params}", url=url, params=param)
+                    self.log.info("==> [HTTP GET] %s %s", url, param)
                     result["zp"] = float(matchobj.groups(1)[0]) if i == 1 else zero_point
                     written_zp = True
                     break
