@@ -56,7 +56,7 @@ class Role(enum.IntEnum):
         return decouple.config(env_var)
 
 
-class Model(enum.Enum):
+class Model(StrEnum):
     # Photometer models
     TESSW = "TESS-W"
     TESSP = "TESS-P"
@@ -64,6 +64,6 @@ class Model(enum.Enum):
     TESS4C = "TESS4C"
 
 
-class Sensor(enum.Enum):
+class Sensor(StrEnum):
     TSL237 = "TSL237"
     S970501DT = "S9705-01DT"
