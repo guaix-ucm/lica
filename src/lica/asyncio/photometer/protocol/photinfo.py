@@ -61,7 +61,7 @@ class HTMLInfo:
         "firmware": re.compile(r"Compiled: (.+?)<br>"),
         "firmware_ext": re.compile(r"Firmware v: (\d+\.\d+)<br>"),
         # This applies to the /setconst?cons=nn.nn or /SetZP?nZP1=nn.nn pages
-        'flash' : re.compile(r"New Zero Point (\d{1,2}\.\d{1,2})|CI 4 chanels:"),  
+        "flash": re.compile(r"New Zero Point (\d{1,2}\.\d{1,2})|CI 4 chanels:"),
     }
 
     def __init__(self, parent, addr):
@@ -128,7 +128,7 @@ class HTMLInfo:
         else:
             result["model"] = matchobj.groups(1)[0]
         # Up to now, we don't know what the sensor model is.
-        result["sensor"] = None 
+        result["sensor"] = None
         self.log.warn("Sensor model set to %s by default", result["sensor"])
         return result
 
@@ -142,21 +142,18 @@ class HTMLInfo:
         url = self._make_save_url()
         # params = [('cons', '{0:0.2f}'.format(zero_point))]
         # Paradoxically, the photometer uses an HTTP GET method to write a ZP ....
-        params=({'cons': "%0.2f" % (zero_point)}, {"nZP1": "%0.2f" % (zero_point)}) 
+        params = ({"cons": "%0.2f" % (zero_point)}, {"nZP1": "%0.2f" % (zero_point)})
         urls = (self._make_save_url(), self._make_save_url2())
         written_zp = False
         timeout = aiohttp.ClientTimeout(total=timeout)
         async with aiohttp.ClientSession(timeout=timeout) as session:
-            for i, url, param in enumerate(zip(urls, params), start=1):
-                async with session.get(
-                    url,
-                    params=params
-                ) as response:
+            for i, (url, param) in enumerate(zip(urls, params), start=1):
+                async with session.get(url, params=param) as response:
                     text = await response.text()
-                matchobj = self.GET_INFO['flash'].search(text)
+                matchobj = self.GET_INFO["flash"].search(text)
                 if matchobj:
-                    self.log.info("==> [HTTP GET] {url} {params}", url=url,  params=param)
-                    result['zp'] = float(matchobj.groups(1)[0]) if i == 1 else zero_point
+                    self.log.info("==> [HTTP GET] {url} {params}", url=url, params=param)
+                    result["zp"] = float(matchobj.groups(1)[0]) if i == 1 else zero_point
                     written_zp = True
                     break
         if not written_zp:
@@ -175,9 +172,8 @@ class HTMLInfo:
         return f"http://{self.addr}/setconst"
 
     def _make_save_url2(self):
-        '''New Write ZP URL from firmware version starting on 16 June 2023'''
+        """New Write ZP URL from firmware version starting on 16 June 2023"""
         return f"http://{self.addr}/SetZP"
-
 
 
 class DBaseInfo:
