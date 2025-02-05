@@ -13,8 +13,10 @@
 import sys
 import logging
 from logging import StreamHandler
-from logging.handlers import WatchedFileHandler
+from logging.handlers import WatchedFileHandler, QueueHandler, QueueListener
 import traceback
+import queue
+import asyncio
 from argparse import ArgumentParser, Namespace
 from typing import Callable
 
@@ -22,22 +24,20 @@ from typing import Callable
 # Local imports
 # -------------
 
-
 # -----------------------
 # Module global variables
 # -----------------------
 
-# get the root logger
 log = logging.getLogger()
+listener = None
 
 # ------------------------
 # Module utility functions
 # ------------------------
 
 
-def configure_logging(args: Namespace):
+def configure_logging(args: Namespace) -> QueueListener:
     """Configure the root logger"""
-    global log
     if args.verbose:
         level = logging.DEBUG
     elif args.quiet:
@@ -50,35 +50,44 @@ def configure_logging(args: Namespace):
     # fmt = logging.Formatter('%(asctime)s - %(name)s [%(levelname)s] %(message)s')
     fmt = logging.Formatter("%(asctime)s [%(levelname)s] [%(name)s] %(message)s")
     # create console handler and set level to debug
+    q = queue.Queue()
+    log.addHandler(QueueHandler(q))
+    handlers = list()
     if args.console:
         ch = StreamHandler()
         ch.setFormatter(fmt)
         ch.setLevel(logging.DEBUG)
-        log.addHandler(ch)
+        handlers.append(ch)
     # Create a file handler suitable for logrotate usage
     if args.log_file:
         fh = WatchedFileHandler(args.log_file)
-        # fh = logging.handlers.TimedRotatingFileHandler(args.log_file, when='midnight', interval=1, backupCount=365)
+        # fh = TimedRotatingFileHandler(args.log_file, when='midnight', interval=1, backupCount=365)
         fh.setFormatter(fmt)
         fh.setLevel(logging.DEBUG)
-        log.addHandler(fh)
+        handlers.append(fh)
+    listener = QueueListener(q, *handlers)
+    return listener
 
 
 def arg_parser(name: str, version: str, description: str) -> ArgumentParser:
     # create the top-level parser
     parser = ArgumentParser(prog=name, description=description)
     # Generic args common to every command
-    parser.add_argument(
-        "--version", action="version", version="{0} {1}".format(name, version)
-    )
+    parser.add_argument("--version", action="version", version="{0} {1}".format(name, version))
     parser.add_argument("--console", action="store_true", help="Log to console.")
-    parser.add_argument(
-        "--log-file", type=str, metavar="<FILE>", default=None, help="Log to file."
-    )
+    parser.add_argument("--log-file", type=str, metavar="<FILE>", default=None, help="Log to file.")
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--verbose", action="store_true", help="Verbose output.")
     group.add_argument("--quiet", action="store_true", help="Quiet output.")
     return parser
+
+
+async def _wrapped_main(main_func: Callable[[Namespace], None], args: Namespace) -> None:
+    """Internal coroutine that starts logging thread and the main coroutine"""
+    global listener
+    listener = configure_logging(args)
+    listener.start()
+    await main_func(args)
 
 
 def execute(
@@ -88,17 +97,21 @@ def execute(
     version: str,
     description: str,
 ) -> None:
+    """
+    Utility entry point
+    """
     try:
         parser = arg_parser(name, version, description)
         add_args_func(parser)  # Adds more arguments
         args = parser.parse_args(sys.argv[1:])
-        configure_logging(args)
-        log.info(f"============== {name} {version} ==============")
-        main_func(args)
+        log.info("============== %s %s ==============", name, version)
+        asyncio.run(_wrapped_main(main_func, args))
     except KeyboardInterrupt:
         log.critical("[%s] Interrupted by user ", name)
     except Exception as e:
         log.critical("[%s] Fatal error => %s", name, str(e))
         traceback.print_exc()
     finally:
-        pass
+        if listener:
+            log.warn("Stopping log listener thread")
+            listener.stop()
