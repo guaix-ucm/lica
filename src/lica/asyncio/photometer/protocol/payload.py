@@ -76,9 +76,12 @@ class OldPayload:
         self._prev_msg = None
 
     def decode(self, data: bytes, tstamp: datetime.datetime) -> (bool, dict):
-        data = data.decode()
+        data = data.decode().strip()
         self.parent.log.info("<== [%02d] %s", len(data), data)
-        return self._handle_unsolicited_response(data, tstamp)
+        if len(data):
+            return self._handle_unsolicited_response(data, tstamp)
+        else:
+            return False, None
 
     # --------------
     # Helper methods
@@ -170,7 +173,7 @@ class JSONPayload:
         self._prev_msg = None
 
     def decode(self, data: bytes, tstamp: datetime.datetime) -> (bool, dict):
-        data = data.decode()
+        data = data.decode().strip()
         self.log.info("<== [%02d] %s", len(data), data)
         try:
             message = json.loads(data)
