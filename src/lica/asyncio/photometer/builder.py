@@ -111,7 +111,7 @@ class PhotometerBuilder:
                 info_obj = HTMLInfo(photometer, addr=name)
                 transport_obj = TCPTransport(
                     photometer, host=name, port=number)
-                decoder_obj = JSONPayload(photometer)
+                decoder_obj = OldPayload(photometer)
             elif transport == 'udp':
                 assert model is Model.TESSW, "Test photometer model using UDP should be TESS-W"
                 info_obj = HTMLInfo(photometer, addr=name)
