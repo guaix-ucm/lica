@@ -16,6 +16,12 @@ if sys.version_info[1] < 11:
 else:
     from typing import Self
 
+from typing import Dict, Union
+from datetime import datetime
+
+# Typing the message received by photometers
+Message = Dict[str,Union[str,int,float,datetime]]
+
 # ---------
 # Constants
 # ---------
