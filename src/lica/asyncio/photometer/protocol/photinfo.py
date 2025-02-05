@@ -147,7 +147,7 @@ class HTMLInfo:
         written_zp = False
         timeout = aiohttp.ClientTimeout(total=timeout)
         async with aiohttp.ClientSession(timeout=timeout) as session:
-            for i, (url, param) in enumerate(zip(urls, params), start=1):
+            for i, url, param in enumerate(zip(urls, params), start=1):
                 async with session.get(
                     url,
                     params=params
