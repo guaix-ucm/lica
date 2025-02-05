@@ -29,7 +29,6 @@ from .protocol.photinfo import HTMLInfo, DBaseInfo, CLInfo
 
 
 class Photometer:
-
     def __init__(self, role: Role):
         self.role = role
         self.label = str(role)
@@ -80,13 +79,12 @@ class Photometer:
 
 
 class PhotometerBuilder:
-
     def __init__(self, engine=None):
         self._engine = engine
 
-    def build(self, model: Model, role: Role) -> Photometer:
-        url = role.endpoint()
-        transport, name, number = chop(url, sep=':')
+    def build(self, model: Model, role: Role, endpoint: str | None = None) -> Photometer:
+        url = role.endpoint() if endpoint is None else endpoint
+        transport, name, number = chop(url, sep=":")
         number = int(number) if number else 80
 
         photometer = Photometer(role)
@@ -96,23 +94,22 @@ class PhotometerBuilder:
             assert transport == "serial", "Reference photometer should use a serial transport"
             assert self._engine is not None, "Database engine is needed for the REF photometer"
             info_obj = DBaseInfo(photometer, self._engine)
-            transport_obj = SerialTransport(
-                photometer, port=name, baudrate=number)
+            transport_obj = SerialTransport(photometer, port=name, baudrate=number)
             decoder_obj = OldPayload(photometer)
         else:
-            if transport == 'serial':
-                assert model is Model.TESSP or model is Model.TAS, "Test photometer model on serial port should be TESS-P or TAS"
+            if transport == "serial":
+                assert model is Model.TESSP or model is Model.TAS, (
+                    "Test photometer model on serial port should be TESS-P or TAS"
+                )
                 info_obj = CLInfo(photometer)
-                transport_obj = SerialTransport(
-                    photometer, port=name, baudrate=number)
+                transport_obj = SerialTransport(photometer, port=name, baudrate=number)
                 decoder_obj = JSONPayload(photometer)
-            elif transport == 'tcp':
+            elif transport == "tcp":
                 assert model is Model.TESSW, "Test photometer model using TCP should be TESS-W"
                 info_obj = HTMLInfo(photometer, addr=name)
-                transport_obj = TCPTransport(
-                    photometer, host=name, port=number)
+                transport_obj = TCPTransport(photometer, host=name, port=number)
                 decoder_obj = OldPayload(photometer)
-            elif transport == 'udp':
+            elif transport == "udp":
                 assert model is Model.TESSW, "Test photometer model using UDP should be TESS-W"
                 info_obj = HTMLInfo(photometer, addr=name)
                 transport_obj = UDPTransport(photometer, port=number)
