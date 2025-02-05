@@ -107,6 +107,8 @@ class PhotometerBuilder:
                     photometer, port=name, baudrate=number)
                 decoder_obj = JSONPayload(photometer)
             elif transport == 'tcp':
+                log = logging.getLogger(role.tag())
+                log.info("TCP TRANSPORT CHOSEN")
                 assert model is Model.TESSW, "Test photometer model using TCP should be TESS-W"
                 info_obj = HTMLInfo(photometer, addr=name)
                 transport_obj = TCPTransport(
