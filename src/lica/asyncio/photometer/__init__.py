@@ -19,6 +19,8 @@ else:
 from typing import Dict, Union
 from datetime import datetime
 
+from ... import StrEnum
+
 # Typing the message received by photometers
 Message = Dict[str,Union[str,int,float,datetime]]
 
