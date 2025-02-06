@@ -113,5 +113,4 @@ def execute(
         traceback.print_exc()
     finally:
         if listener:
-            log.warn("Stopping log listener thread")
             listener.stop()
