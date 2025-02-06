@@ -82,7 +82,7 @@ def arg_parser(name: str, version: str, description: str) -> ArgumentParser:
     return parser
 
 
-async def _wrapped_main(main_func: Callable[[Namespace], None], args: Namespace, name: str, versiom: str) -> None:
+async def _wrapped_main(main_func: Callable[[Namespace], None], args: Namespace, name: str, version: str) -> None:
     """Internal coroutine that starts logging thread and the main coroutine"""
     global listener
     listener = configure_logging(args)
