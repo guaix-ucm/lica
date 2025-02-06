@@ -82,11 +82,12 @@ def arg_parser(name: str, version: str, description: str) -> ArgumentParser:
     return parser
 
 
-async def _wrapped_main(main_func: Callable[[Namespace], None], args: Namespace) -> None:
+async def _wrapped_main(main_func: Callable[[Namespace], None], args: Namespace, name: str, versiom: str) -> None:
     """Internal coroutine that starts logging thread and the main coroutine"""
     global listener
     listener = configure_logging(args)
     listener.start()
+    log.info("============== %s %s ==============", name, version)
     await main_func(args)
 
 
@@ -104,8 +105,7 @@ def execute(
         parser = arg_parser(name, version, description)
         add_args_func(parser)  # Adds more arguments
         args = parser.parse_args(sys.argv[1:])
-        log.info("============== %s %s ==============", name, version)
-        asyncio.run(_wrapped_main(main_func, args))
+        asyncio.run(_wrapped_main(main_func, args, name, version))
     except KeyboardInterrupt:
         log.critical("[%s] Interrupted by user ", name)
     except Exception as e:
