@@ -130,7 +130,7 @@ class OldPayload:
             and message["tsky"] == self._prev_msg["tsky"]
             and message["freq"] == self._prev_msg["freq"]
         ):
-            self.log.warn("Duplicate payload: %s", message)
+            self.log.info("Duplicate payload: %s", message)
             result = (False, None)
         else:
             result = (True, self._prev_msg)
@@ -161,7 +161,7 @@ class JSONPayload:
             (True, self._prev_msg) if self._prev_msg["seq"] != message["seq"] else (False, None)
         )
         if not result[0]:
-            self.log.warn("Duplicate payload: %s", message)
+            self.log.info("Duplicate payload: %s", message)
         self._prev_msg = message
         return result
 
