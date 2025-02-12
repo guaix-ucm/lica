@@ -40,6 +40,7 @@ class UDPTransport(asyncio.DatagramProtocol):
         self.log = parent.log
         self.local_host = "0.0.0.0"
         self.local_port = port
+        self.log.info("Using %s Transport", self.__class__.__name__)
 
     def connection_made(self, transport):
         self.transport = transport
@@ -70,6 +71,7 @@ class TCPTransport(asyncio.Protocol):
         self.log = parent.log
         self.host = host
         self.port = port
+        self.log.info("Using %s Transport", self.__class__.__name__)
 
     def connection_made(self, transport):
         self.transport = transport
@@ -99,6 +101,7 @@ class SerialTransport:
         self.port = port
         self.baudrate = baudrate
         self.serial = None
+        self.log.info("Using %s Transport", self.__class__.__name__)
 
     async def readings(self):
         """This is meant to be a task"""
