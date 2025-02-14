@@ -1,5 +1,6 @@
 # --------------------------------------------------------------------
 # View recipe from https://github.com/sqlalchemy/sqlalchemy/wiki/Views
+# (updated for 2.0.38)
 # --------------------------------------------------------------------
 
 import sqlalchemy

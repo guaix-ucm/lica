@@ -49,16 +49,16 @@ raw = [
 
 # sqlalchemy subpackage need this
 sqlalchemy = [
-    "sqlalchemy",
+    "sqlalchemy >= 2.0",
 ]
 
 # sqlalchemy.asyncio subpackage need this
 aiosqlalchemy = [
-    "sqlalchemy[asyncio]",
+    "sqlalchemy[asyncio] >= 2.0",
 ]
 
 photometer = [
-    "sqlalchemy[asyncio]",
+    "sqlalchemy[asyncio] >= 2.0",
     "aiohttp",
     "aioserial",
 ]
