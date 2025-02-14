@@ -42,11 +42,14 @@ def view_doesnt_exist(ddl, target, connection, **kw):
 
 
 def view(name, metadata, selectable):
-    t = table(name)
-
-    t._columns._populate_separate_keys(
-        col._make_proxy(t) for col in selectable.selected_columns
+    t = sqlalchemy.table(
+        name,
+        *(
+            sqlalchemy.Column(c.name, c.type, primary_key=c.primary_key)
+            for c in selectable.selected_columns
+        ),
     )
+    t.primary_key.update(c for c in t.c if c.primary_key)
 
     sqlalchemy.event.listen(
         metadata,
