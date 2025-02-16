@@ -79,6 +79,7 @@ def arg_parser(name: str, version: str, description: str) -> ArgumentParser:
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--verbose", action="store_true", help="Verbose output.")
     group.add_argument("--quiet", action="store_true", help="Quiet output.")
+    parser.add_argument("--trace", action="store_true", help="Show exception stack trace.")
     return parser
 
 
@@ -102,15 +103,19 @@ def execute(
     Utility entry point
     """
     try:
+        return_code = 1
         parser = arg_parser(name, version, description)
         add_args_func(parser)  # Adds more arguments
         args = parser.parse_args(sys.argv[1:])
         asyncio.run(_wrapped_main(main_func, args, name, version))
+        return_code = 0
     except KeyboardInterrupt:
         log.critical("[%s] Interrupted by user ", name)
     except Exception as e:
         log.critical("[%s] Fatal error => %s", name, str(e))
-        traceback.print_exc()
+        if args.trace:
+            traceback.print_exc()
     finally:
         if listener:
             listener.stop()
+        sys.exit(return_code)
