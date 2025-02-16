@@ -113,8 +113,8 @@ class SerialTransport(asyncio.Protocol):
             self.serial = serial_asyncio.create_serial_connection(
                 loop, SerialTransport, self.port, baudrate=self.baudrate
             )
-            asyncio.create_task(self.serial)
             self.on_conn_lost = loop.create_future()
+            loop.run_until_complete(self.serial)
 
     def connection_made(self, transport):
         log.info("Connection made!")
