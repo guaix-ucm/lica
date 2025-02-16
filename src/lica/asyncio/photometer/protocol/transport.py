@@ -109,6 +109,7 @@ class SerialTransport(asyncio.Protocol):
 
     async def maybe_init(self):
         if self.on_conn_lost is None:
+            log.info("maybe_init()")
             loop = asyncio.get_running_loop()
             transport, protocol= await serial_asyncio.create_serial_connection(
                 loop, SerialTransport, self.port, baudrate=self.baudrate
