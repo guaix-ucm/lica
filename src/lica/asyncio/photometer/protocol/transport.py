@@ -10,6 +10,7 @@
 
 import datetime
 import asyncio
+import logging
 
 # -----------------
 # Third Party imports
@@ -28,6 +29,8 @@ import serial_asyncio
 # -----------------------
 # Module global variables
 # -----------------------
+
+log = logging.getLogger(__name__.split(".")[-1])
 
 # -------------------
 # Auxiliary functions
@@ -94,9 +97,7 @@ class TCPTransport(asyncio.Protocol):
             self.transport.close()
 
 
-import logging
 
-log = logging.getLogger(__name__.split(".")[-1])
 
 
 class SerialTransport(asyncio.Protocol):
