@@ -95,7 +95,9 @@ class TCPTransport(asyncio.Protocol):
 
 
 import logging
+
 log = logging.getLogger(__name__.split(".")[-1])
+
 
 class SerialTransport(asyncio.Protocol):
     def __init__(self, parent, port="/dev/ttyUSB0", baudrate=9600):
@@ -106,16 +108,6 @@ class SerialTransport(asyncio.Protocol):
         self.on_conn_lost = None
         self.transport = None
         self.log.info("Using %s Transport", self.__class__.__name__)
-
-    async def maybe_init(self):
-        if self.on_conn_lost is None:
-            log.info("maybe_init()")
-            loop = asyncio.get_running_loop()
-            transport, protocol= await serial_asyncio.create_serial_connection(
-                loop, SerialTransport, self.port, baudrate=self.baudrate
-            )
-            self.on_conn_lost = loop.create_future()
-            
 
     def connection_made(self, transport):
         log.info("Connection made!")
@@ -132,15 +124,17 @@ class SerialTransport(asyncio.Protocol):
         if not self.on_conn_lost.cancelled():
             self.on_conn_lost.set_result(True)
 
-    async def write(self, data: bytes):
-        await self.maybe_init()
+    def write(self, data: bytes):
         self.transport.write(data)
 
     async def readings(self):
         """This is meant to be a task"""
-        await self.maybe_init()
+        loop = asyncio.get_running_loop()
+        self.on_conn_lost = loop.create_future()
+        transport, self.protocol = await serial_asyncio.create_serial_connection(
+            lambda: self, self.port, self.baudrate
+        )
         try:
             await self.on_conn_lost
         finally:
             self.transport.close()
-            self.serial = None
