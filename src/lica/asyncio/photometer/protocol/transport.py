@@ -94,28 +94,8 @@ class TCPTransport(asyncio.Protocol):
             self.transport.close()
 
 
-# class SerialTransport:
-#     def __init__(self, parent, port="/dev/ttyUSB0", baudrate=9600):
-#         self.parent = parent
-#         self.log = parent.log
-#         self.port = port
-#         self.baudrate = baudrate
-#         self.serial = None
-#         self.log.info("Using %s Transport", self.__class__.__name__)
-
-#     async def readings(self):
-#         """This is meant to be a task"""
-#         self.serial = aioserial.AioSerial(port=self.port, baudrate=self.baudrate)
-#         while self.serial is not None:
-#             try:
-#                 payload = await self.serial.readline_async()
-#                 now = datetime.datetime.now(datetime.timezone.utc)
-#                 if len(payload):
-#                     self.parent.handle_readings(payload, now)
-#             except Exception:
-#                 self.serial.close()
-#                 self.serial = None
-
+import logging
+log = logging.getLogger(__name__.split(".")[-1])
 
 class SerialTransport(asyncio.Protocol):
     def __init__(self, parent, port="/dev/ttyUSB0", baudrate=9600):
@@ -133,9 +113,11 @@ class SerialTransport(asyncio.Protocol):
             self.serial = serial_asyncio.create_serial_connection(
                 loop, SerialTransport, self.port, baudrate=self.baudrate
             )
+            asyncio.create_task(self.serial)
             self.on_conn_lost = loop.create_future()
 
     def connection_made(self, transport):
+        log.info("Connection made!")
         self.transport = transport
         # You can manipulate Serial object via transport
         # transport.serial.rts = False  # You can manipulate Serial object via transport
@@ -145,6 +127,7 @@ class SerialTransport(asyncio.Protocol):
         self.parent.handle_readings(data, now)
 
     def connection_lost(self, exc):
+        log.info("Connection lost!")
         if not self.on_conn_lost.cancelled():
             self.on_conn_lost.set_result(True)
 
