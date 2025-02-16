@@ -121,7 +121,7 @@ class SerialTransport(asyncio.Protocol):
             self.on_conn_lost.set_result(True)
 
     def data_received(self, data: bytes):
-        log.info('data received', repr(data))
+        #log.info('data received', repr(data))
         now = datetime.datetime.now(datetime.timezone.utc)
         self.parent.handle_readings(data, now)
 
