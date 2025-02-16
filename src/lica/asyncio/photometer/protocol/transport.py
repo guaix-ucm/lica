@@ -103,18 +103,18 @@ class SerialTransport(asyncio.Protocol):
         self.log = parent.log
         self.port = port
         self.baudrate = baudrate
-        self.serial = None
+        self.on_conn_lost = None
         self.transport = None
         self.log.info("Using %s Transport", self.__class__.__name__)
 
-    def maybe_init(self):
-        if self.serial is None:
+    async def maybe_init(self):
+        if self.on_conn_lost is None:
             loop = asyncio.get_running_loop()
-            self.serial = serial_asyncio.create_serial_connection(
+            transport, protocol= await serial_asyncio.create_serial_connection(
                 loop, SerialTransport, self.port, baudrate=self.baudrate
             )
             self.on_conn_lost = loop.create_future()
-            loop.run_until_complete(self.serial)
+            
 
     def connection_made(self, transport):
         log.info("Connection made!")
@@ -131,13 +131,13 @@ class SerialTransport(asyncio.Protocol):
         if not self.on_conn_lost.cancelled():
             self.on_conn_lost.set_result(True)
 
-    def write(self, data: bytes):
-        self.maybe_init()
+    async def write(self, data: bytes):
+        await self.maybe_init()
         self.transport.write(data)
 
     async def readings(self):
         """This is meant to be a task"""
-        self.maybe_init()
+        await self.maybe_init()
         try:
             await self.on_conn_lost
         finally:
