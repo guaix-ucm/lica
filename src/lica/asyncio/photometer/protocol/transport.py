@@ -103,9 +103,17 @@ class SerialTransport:
         self.serial = None
         self.log.info("Using %s Transport", self.__class__.__name__)
 
+    def maybe_init(self):
+        if self.serial is None:
+            self.serial = aioserial.AioSerial(port=self.port, baudrate=self.baudrate)
+
+    async def write(self, data: bytes):
+        self.maybe_init()
+        await self.serial.write_async(data)
+
     async def readings(self):
         """This is meant to be a task"""
-        self.serial = aioserial.AioSerial(port=self.port, baudrate=self.baudrate)
+        self.maybe_init()
         while self.serial is not None:
             try:
                 payload = await self.serial.readline_async()
