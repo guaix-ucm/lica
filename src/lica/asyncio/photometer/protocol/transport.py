@@ -115,14 +115,26 @@ class SerialTransport(asyncio.Protocol):
         # You can manipulate Serial object via transport
         # transport.serial.rts = False  # You can manipulate Serial object via transport
 
-    def data_received(self, data: bytes):
-        now = datetime.datetime.now(datetime.timezone.utc)
-        self.parent.handle_readings(data, now)
-
     def connection_lost(self, exc):
         log.info("Connection lost!")
         if not self.on_conn_lost.cancelled():
             self.on_conn_lost.set_result(True)
+
+    def data_received(self, data: bytes):
+        log.info("data_received")
+        now = datetime.datetime.now(datetime.timezone.utc)
+        self.parent.handle_readings(data, now)
+
+    def pause_reading(self):
+        log.info("pause_reading()")
+        # This will stop the callbacks to data_received
+        #self.transport.pause_reading()
+
+    def resume_reading(self):
+        log.info("resume_reading()")
+        # This will start the callbacks to data_received again with all data that has been received in the meantime.
+        #self.transport.resume_reading()
+
 
     def write(self, data: bytes):
         self.transport.write(data)
