@@ -131,7 +131,7 @@ class SerialTransport(asyncio.Protocol):
         if self.serial is None:
             loop = asyncio.get_running_loop()
             self.serial = serial_asyncio.create_serial_connection(
-                loop, SerialTransport, self.port, baudrate=self.baud
+                loop, SerialTransport, self.port, baudrate=self.baudrate
             )
             self.on_conn_lost = loop.create_future()
 
