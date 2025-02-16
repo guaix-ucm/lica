@@ -132,7 +132,7 @@ class SerialTransport(asyncio.Protocol):
         loop = asyncio.get_running_loop()
         self.on_conn_lost = loop.create_future()
         transport, self.protocol = await serial_asyncio.create_serial_connection(
-            lambda: self, self.port, self.baudrate
+            loop, lambda: self, self.port, self.baudrate
         )
         try:
             await self.on_conn_lost
