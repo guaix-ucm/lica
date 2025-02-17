@@ -19,6 +19,6 @@ def paging(cursor, headers, page_size=10):
     Pages query output and displays in tabular format
     """
     for rows in group(page_size, cursor):
-        print(tabulate.tabulate(rows, headers=headers, tablefmt="grid"))
+        print(tabulate.tabulate(rows, headers=headers, tablefmt="simple"))
         if len(rows) == page_size:
             input("Press Enter to continue [Ctrl-C to abort] ...")
