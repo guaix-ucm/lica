@@ -1,5 +1,5 @@
 from enum import IntEnum
-from ... import StrEnum
+from .. import StrEnum
 
 class COL(StrEnum):
     """Calibration Table Columns"""
