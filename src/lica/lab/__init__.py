@@ -1,6 +1,6 @@
 from enum import IntEnum
-import photodiode as photodiode
-import ndfilters as ndfilters
+from . import photodiode as photodiode
+from . import ndfilters as ndfilters
 
 class COL(StrEnum):
     """Calibration Table Columns"""
