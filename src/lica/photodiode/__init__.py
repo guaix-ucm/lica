@@ -27,7 +27,7 @@ from astropy.table import Table
 # Own modules and packages
 # ------------------------
 
-from .. import BENCH, COL
+from .types import BENCH, COL
 from ... import StrEnum
 
 # ----------------
