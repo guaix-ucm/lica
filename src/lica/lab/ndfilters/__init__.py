@@ -11,7 +11,6 @@
 # -------------------
 
 import logging
-
 from importlib.resources import files
 
 # ---------------------
@@ -35,71 +34,11 @@ from ... import StrEnum
 # ----------------
 
 
-# Photodiode record
-class Hamamatsu:
-    MANUF = "Hamamatsu"
-    MODEL = "S2281-01"
-    SERIAL = "01097"
-    WINDOW = "Quartz Glass"
-    PHS_SIZE = 11.3 * u.mm  # Photosensitive size (diameter)
-    PHS_AREA = 100 * (u.mm**2)  # Photosensitive area
-    DARK = {
-        "typ": {
-            "Value": 50 * (u.pA),
-            "Temp": 25 * u.deg_C,
-        },
-        "max": {  # Dark current at given room Temp
-            "Value": 500 * (u.pA),
-            "Temp": 25 * u.deg_C,
-        },
-    }
-    # responsivity peak
-    PEAK = {
-        "typ": {
-            "Wave": 960 * (u.nm),
-            "Resp": 0.5 * (u.A / u.W),
-            "Temp": 25 * u.deg_C,
-        }
-    }
-
-
-# Photodiode record
-class OSI:
-    MANUF = "OSI"
-    MODEL = "PIN-10D"
-    SERIAL = "OSI-11-01-004-10D"
-    WINDOW = "Quartz Glass"
-    PHS_SIZE = 11.28 * u.mm  # Photosensitive size (diameter)
-    PHS_AREA = 100 * (u.mm**2)  # Photosensitive area
-    DARK = {
-        "typ": {
-            "Value": 2 * (u.nA),
-            "Temp": 23 * u.deg_C,
-        },
-        "max": {  # Dark current at given room Temp
-            "Value": 25 * (u.nA),
-            "Temp": 23 * u.deg_C,
-        },
-    }
-    # responsivity peak
-    PEAK = {
-        "typ": {
-            "Wave": 970 * (u.nm),
-            "Resp": 0.6 * (u.A / u.W),
-            "Temp": 25 * u.deg_C,
-        },
-        "max": {
-            "Wave": 970 * (u.nm),
-            "Resp": 0.65 * (u.A / u.W),
-            "Temp": 25 * u.deg_C,
-        },
-    }
-
-
-
-class PhotodiodeModel(StrEnum):
-    HAMAMATSU = f"{Hamamatsu.MODEL}"
-    OSI = f"{OSI.MODEL}"
+class NDFilter(StrEnum):
+    """Neutral Density filter labels"""
+    ND05 = "ND-0.5"
+    ND1 = "ND-1"
+    ND2 = "ND-2"
 
 
 # -----------------------
@@ -114,18 +53,14 @@ log = logging.getLogger(__name__)
 
 
 def _load(
-    model: PhotodiodeModel,
+    model: NDFilter,
     resolution: int,
     beg_wave: float,
     end_wave: float,
-    cross_calibrated: bool,
 ) -> Table:
-    if model == PhotodiodeModel.OSI and cross_calibrated:
-        name = f"{model}-Responsivity-Cross-Calibrated@1nm.ecsv"
-    else:
-        name = f"{model}-Responsivity-Interpolated@1nm.ecsv"
-    log.info("Loading Responsivity & QE data from %s", name)
-    in_path = files("lica.lab.photodiode").joinpath(name)
+    name = f"{model}-Transmmission@1nm.ecsv"
+    log.info("Loading Transmmission from %s", name)
+    in_path = files("lica.lab.ndfilters").joinpath(name)
     table = astropy.io.ascii.read(in_path, format="ecsv")
     if (beg_wave > BENCH.WAVE_START) and (end_wave < BENCH.WAVE_END):
         history = {
@@ -165,26 +100,24 @@ def _load(
 
 def export(
     path: str,
-    model: PhotodiodeModel,
+    model: NDFilter,
     resolution: int,
     beg_wave: float = BENCH.WAVE_START,
     end_wave: float = BENCH.WAVE_END,
-    cross_calibrated: bool = True,
 ) -> None:
     """Make a copy of the proper ECSV Astropy Table"""
-    table = _load(model, resolution, beg_wave, end_wave, cross_calibrated)
+    table = _load(model, resolution, beg_wave, end_wave)
     table.write(path, delimiter=",", overwrite=True)
 
 
 def load(
-    model: PhotodiodeModel,
+    model: NDFilter,
     resolution: int,
     beg_wave: float = BENCH.WAVE_START,
     end_wave: float = BENCH.WAVE_END,
-    cross_calibrated: bool = True,
 ) -> Table:
     """Return a ECSV as as Astropy Table"""
-    return _load(model, resolution, beg_wave, end_wave, cross_calibrated)
+    return _load(model, resolution, beg_wave, end_wave)
 
 
 __all__ = ["load", "export"]

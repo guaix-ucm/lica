@@ -63,8 +63,8 @@ photometer = [
     "aioserial",
 ]
 
-# LICA subpackages need this
-lica = [
+# LICA lab subpackages need this
+lab = [
     "numpy",
     "astropy",
 ]
