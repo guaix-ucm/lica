@@ -42,7 +42,7 @@ tabular = [
 
 # raw subpackage need this
 raw = [
-  "numpy >= 2.0",
+  "numpy >= 1.26",
   "exifread >= 3.0",
   "rawpy >= 0.24",
 ]
@@ -65,7 +65,7 @@ photometer = [
 
 # LICA lab subpackages need this
 lab = [
-    "numpy >= 2.0",
+    "numpy >= 1.26",
     "astropy >= 6.0",
 ]
 
