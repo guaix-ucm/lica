@@ -1,7 +1,5 @@
 from ._version import __version__ as __version__
 
-# reimports some sub-packages for convenience
-from . import lab as lab
 
 try:
     from enum import StrEnum as StrEnum
