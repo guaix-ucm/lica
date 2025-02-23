@@ -82,6 +82,14 @@ def vfloat01(num: str) -> float:
     return num
 
 
+def vnat(num: str) -> int:
+    """Natural nambrs validator"""
+    num = int(num)
+    if not (num > 0):
+        raise ValueError(f"Value {num} <= 0]")
+    return num
+
+
 def vint(L: int, H: int, num: str) -> int:
     """Integer validator between [L..H]"""
     num = int(num)
@@ -132,7 +140,7 @@ def vflopath(value: StrOrFloat) -> float:
 def vmac(mac: str) -> str:
     """'Valid input MAC strings"""
     try:
-        corrected_mac = ":".join(f"{int(x,16):02X}" for x in mac.split(":"))
+        corrected_mac = ":".join(f"{int(x, 16):02X}" for x in mac.split(":"))
     except ValueError:
         raise ValueError("Invalid MAC: %s" % mac)
     except AttributeError:
@@ -140,19 +148,23 @@ def vmac(mac: str) -> str:
     return corrected_mac
 
 
-def vsexa(value: str) -> float: 
+def vsexa(value: str) -> float:
     """Validates HH.HHHH or HH:MM:SS.SSS and converts to floating point"""
     try:
         result = float(value)
     except ValueError:
-        ang = value.split(':')
+        ang = value.split(":")
         if len(ang) != 3:
             raise ValueError(f"{value} is not a valid sexagesimal number")
         try:
-            result = math.copysign(math.fabs(float(ang[0])) + float(ang[1])/60.0 + float(ang[2])/3600.00, float(ang[0]))
+            result = math.copysign(
+                math.fabs(float(ang[0])) + float(ang[1]) / 60.0 + float(ang[2]) / 3600.00,
+                float(ang[0]),
+            )
         except Exception:
             raise ValueError(f"{value} could not be converted from sexagesimal to float")
     return result
+
 
 # ---------------------------------------------------------------------
 # This section validates combination of color channels to show in plots
