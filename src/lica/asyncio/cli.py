@@ -48,7 +48,7 @@ def configure_logging(args: Namespace) -> QueueListener:
     log.setLevel(level)
     # Log formatter
     # fmt = logging.Formatter('%(asctime)s - %(name)s [%(levelname)s] %(message)s')
-    fmt = logging.Formatter("%(asctime)s [%(levelname)s] [%(name)s] %(message)s")
+    fmt = logging.Formatter("%(asctime)s [%(levelname)8s] [%(name)s] %(message)s")
     # create console handler and set level to debug
     q = queue.Queue()
     log.addHandler(QueueHandler(q))
