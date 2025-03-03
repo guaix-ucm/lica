@@ -2,7 +2,7 @@
 # ---
 # datatype:
 # - {name: Wavelength, unit: nm, datatype: float64}
-# - {name: Transmission, unit: '', datatype: float64}
+# - {name: Transmittance, unit: '', datatype: float64}
 # delimiter: ','
 # meta: !!omap
 # - History: [Scaled readings wrt photodiode readings, Master ND-0.5 transmission file, Test file]
