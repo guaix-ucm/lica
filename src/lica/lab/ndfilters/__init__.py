@@ -58,8 +58,8 @@ def _load(
     beg_wave: float,
     end_wave: float,
 ) -> Table:
-    name = f"{model}-Transmission@1nm.ecsv"
-    log.info("Loading Transmission from %s", name)
+    name = f"{model}-{COL.TRANS}@1nm.ecsv"
+    log.info("Loading Transmittance from %s", name)
     in_path = files("lica.lab.ndfilters").joinpath(name)
     table = astropy.io.ascii.read(in_path, format="ecsv")
     if (beg_wave > BENCH.WAVE_START) and (end_wave < BENCH.WAVE_END):
