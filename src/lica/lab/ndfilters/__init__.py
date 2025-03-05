@@ -36,9 +36,13 @@ from ... import StrEnum
 
 class NDFilter(StrEnum):
     """Neutral Density filter labels"""
-    ND05 = "ND-0.5"
-    ND1 = "ND-1"
-    ND2 = "ND-2"
+
+    ND05 = "ND-0.5"  # 30% Transmittance
+    ND1 = "ND-1.0"  # 10% Transmittance
+    ND15 = "ND-1.5"  # 3% Transmittance
+    ND2 = "ND-2.0"  # 1% Transmittance
+    ND25 = "ND-2.5"  # 0.3% Transmittance
+    ND3 = "ND-3.0"  # 0.1% Transmittance
 
 
 # -----------------------
