@@ -19,10 +19,12 @@ uv add git+https://github.com/guaix-ucm/lica --branch main
 uv add git+https://github.com/guaix-ucm/lica --tag x.y.z
 ```
 
-*** Note: ***
+***Note:***
 lica library uses different modules in its subpackages, so you must use one or more the following extras:
 * lica[jinja]
 * lica[tabular]
 * lica[raw]
 * lica[sqlalchemy]
 * lica[aiosqlalchemy]
+* lica[photometer]
+* lica[lab]
