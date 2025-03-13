@@ -53,11 +53,14 @@ def vbool(boolstr: str) -> bool:
 def vdate(datestr: str) -> datetime:
     """Date & time validator for the command line interface"""
     date = None
-    for fmt in ["%Y-%m", "%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M:%SZ"]:
+    formats = ("%Y-%m", "%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M:%SZ")
+    for fmt in formats:
         try:
             date = datetime.strptime(datestr, fmt)
         except ValueError:
             pass
+    if date is None:
+        raise ValueError(f"{datestr} is not a valid date format ({formats})")
     return date
 
 
