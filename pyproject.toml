@@ -99,4 +99,5 @@ namespaces = true
 where = ["src"]
 
 [tool.setuptools.package-data]
-"lica.photodiode" = ["*.csv"]
+"lica.lab.photodiode" = ["*.ecsv"]
+"lica.lab.ndfilters" = ["*.ecsv"]
