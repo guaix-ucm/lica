@@ -62,6 +62,7 @@ class Model(StrEnum):
     TESSP = "TESS-P"
     TAS = "TAS"
     TESS4C = "TESS4C"
+    TESSWDL = "TESS-WDL"
 
 
 class Sensor(StrEnum):
