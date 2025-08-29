@@ -11,9 +11,6 @@
 import logging
 from argparse import Namespace
 
-# ---------------------
-# Third party libraries
-# ---------------------
 
 def sqa_logging(args: Namespace) -> None:
     if args.verbose:
