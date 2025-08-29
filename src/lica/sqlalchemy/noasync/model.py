@@ -18,7 +18,7 @@ from sqlalchemy.orm import DeclarativeBase
 # local imports
 # -------------
 
-from .metadata import metadata
+from ..metadata import metadata
 
 
 class Model(DeclarativeBase):

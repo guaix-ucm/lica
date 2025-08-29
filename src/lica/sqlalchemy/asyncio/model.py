@@ -19,7 +19,7 @@ from sqlalchemy.ext.asyncio import AsyncAttrs
 # local imports
 # -------------
 
-from .metadata import metadata
+from ..metadata import metadata
 
 class Model(AsyncAttrs, DeclarativeBase):
     metadata = metadata
