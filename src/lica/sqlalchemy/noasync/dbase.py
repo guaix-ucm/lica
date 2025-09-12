@@ -27,7 +27,7 @@ def create_engine_sessionclass(env_var: str = "DATABASE_URL", tag: str = None) -
 		engine = create_engine(url, logging_name=tag, connect_args={"check_same_thread": False})
 	else:
 		engine = create_engine(url, connect_args={"check_same_thread": False})
-	Session = sessionmaker(engine, expire_on_commit=True)
+	Session = sessionmaker(engine, expire_on_commit=False)
 	return engine, Session
 
 __all__ = ["create_engine_sessionclass"]
