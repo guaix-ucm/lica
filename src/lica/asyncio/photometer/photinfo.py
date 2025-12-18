@@ -10,7 +10,8 @@
 
 import re
 import datetime
-import asyncio
+from logging import Logger
+from typing import Union
 
 # -----------------
 # Third Party imports
@@ -19,24 +20,22 @@ import asyncio
 import aiohttp
 from sqlalchemy import text
 
-# --------------
-# local imports
-# -------------
 
-from .. import Role
+from . import Role
 
-# ----------------
-# Module constants
-# ----------------
-
-# -----------------------
-# Module global variables
-# -----------------------
+# ------------------
+# Auxiliar functions
+# ------------------
 
 
 def formatted_mac(mac):
     """'Corrects TESS-W MAC strings to be properly formatted"""
     return ":".join(f"{int(x, 16):02X}" for x in mac.split(":"))
+
+
+# -------
+# Classes
+# -------
 
 
 class HTMLInfo:
@@ -64,17 +63,17 @@ class HTMLInfo:
         "flash": re.compile(r"New Zero Point (\d{1,2}\.\d{1,2})|CI 4 chanels:"),
     }
 
-    def __init__(self, parent, addr):
-        self.parent = parent
-        self.log = parent.log
+    def __init__(self, logger: Logger, addr: str, role: Role = Role.TEST):
+        self.log = logger
         self.addr = addr
-        self.log.info("Using %s Info", self.__class__.__name__)
+        self.role = role
+        self.log.info("Using %s", self.__class__.__name__)
 
     # ----------------------------
     # Photometer Control interface
     # ----------------------------
 
-    async def get_info(self, timeout):
+    async def get_info(self, timeout: int = 4):
         """
         Get photometer information.
         """
@@ -136,7 +135,7 @@ class HTMLInfo:
         """
         Writes Zero Point to the device.
         """
-        label = str(self.parent.role)
+        label = str(self.role)
         result = {}
         result["tstamp"] = datetime.datetime.now(datetime.timezone.utc)
         url = self._make_save_url()
@@ -177,25 +176,20 @@ class HTMLInfo:
 
 
 class DBaseInfo:
-    def __init__(self, parent, engine):
-        self.parent = parent
-        self.log = parent.log
-        self.log.info("Using %s Info", self.__class__.__name__)
+    def __init__(self, logger: Logger, engine, role: Role = Role.REF):
+        self.log = logger
+        self.log.info("Using %s", self.__class__.__name__)
         self.engine = engine
+        self.role = role
 
     # ----------------------------
     # Photometer Control interface
     # ----------------------------
 
-    async def save_zero_point(self, zero_point, timeout=4):
+    async def save_zero_point(self, zero_point: float, timeout=4):
         """
-        Writes Zero Point to the device.
+        Writes Zero Point to the REF device.
         """
-        if self.parent.role is Role.TEST:
-            raise NotImplementedError(
-                "Can't save Zero Point on a database for the %s device", str(self.parent.role)
-            )
-        section = "ref-device" if self.parent.role is Role.REF else "test-device"
         zero_point = str(zero_point)
         async with self.engine.begin() as conn:
             try:
@@ -203,7 +197,7 @@ class DBaseInfo:
                     text(
                         "UPDATE config_t SET value = :value WHERE section = :section AND property = :property"
                     ),
-                    {"section": section, "property": "zp", "value": zero_point},
+                    {"section": "ref-device", "property": "zp", "value": zero_point},
                 )
             except Exception:
                 await conn.rollback()
@@ -212,149 +206,17 @@ class DBaseInfo:
 
     async def get_info(self, timeout):
         """
-        Get photometer information.
+        Get REF photometer information from the database.
         """
-        section = "ref-device" if self.parent.role is Role.REF else "test-device"
         async with self.engine.begin() as conn:
             result = await conn.execute(
                 text("SELECT property, value FROM config_t WHERE section = :section"),
-                {"section": section},
+                {"section": "ref-device"},
             )
             result = {row[0]: row[1] for row in result}
         return result
 
 
-# ===========================================================
-# THIS CLASS MUST BE RE-WRITTEN AND DEBUGGED IT IS STILL TWISTED-BASED.
-# DO NOT USET !!!!
-# ===========================================================
-class CLInfo:
-    """
-    Get the photometer by sending commands through a line oriented interface (i.e a serial port).
-    Set the new ZP by sending commands through a line oriented interface (i.e a serial port)
-    """
+TessInfo = Union[HTMLInfo, DBaseInfo]
 
-    SOLICITED_RESPONSES = [
-        {
-            "name": "firmware",
-            "pattern": r"^Compiled (.+)",
-        },
-        {
-            "name": "mac",
-            "pattern": r"^MAC: ([0-9A-Za-z]{12})",
-        },
-        {
-            "name": "zp",
-            "pattern": r"^Actual CI: (\d{1,2}.\d{1,2})",
-        },
-        {
-            "name": "written_zp",
-            "pattern": r"^New CI: (\d{1,2}.\d{1,2})",
-        },
-    ]
-
-    SOLICITED_PATTERNS = [re.compile(sr["pattern"]) for sr in SOLICITED_RESPONSES]
-
-    def __init__(self, parent):
-        self.parent = parent
-        self.log = parent.log
-        self.log.info("Using %s Info", self.__class__.__name__)
-
-        self.read_deferred = None
-        self.write_deferred = None
-
-    # ---------------------
-    # IPhotometerControl interface
-    # ---------------------
-
-    async def save_zero_point(self, zero_point, timeout=4):
-        """
-        Writes Zero Point to the device.
-        Returns a Deferred
-        """
-        line = "CI{0:04d}".format(int(round(zero_point * 100, 2)))
-        self.log.info("==> [{l:02d}] {line}", l=len(line), line=line)
-        await asyncio.sleep(1)
-        raise NotImplementedError("save_zero_point needs to be implemented")
-
-        # We need to implement serial por writting in the transport object !!!!!
-        self.parent.sendLine(line.encode("ascii"))
-        self.write_deferred = defer.Deferred()
-        self.write_deferred.addTimeout(timeout, reactor)
-        self.write_response = {}
-        return self.write_deferred
-
-    async def get_info(self, timeout):
-        """
-        Reads Info from the device.
-        """
-        line = "?"
-        label = str(self.parent.role)
-        self.log.info("==> [{l:02d}] {line}", label=label, l=len(line), line=line)
-        await asyncio.sleep(1)
-        raise NotImplementedError("save_zero_point needs to be implemented")
-
-        self.parent.sendLine(line.encode("ascii"))
-        self.read_deferred = defer.Deferred()
-        self.read_deferred.addTimeout(timeout, reactor)
-        self.cnt = 0
-        self.read_response = {}
-        return self.read_deferred
-
-    def on_photometer_info_response(self, line, tstamp):
-        """
-        Handle solicted responses from photometer.
-        Returns True if handled, False otherwise
-        """
-        sr, matchobj = self._match_solicited(line)
-        if not sr:
-            return False
-        # This is hardwired until we can query this on the CLI
-        self.read_response["freq_offset"] = 0
-        if sr["name"] == "name":
-            self.read_response["tstamp"] = tstamp
-            self.read_response["name"] = str(matchobj.group(1))
-            self.cnt += 1
-        elif sr["name"] == "mac":
-            self.read_response["tstamp"] = tstamp
-            self.read_response["mac"] = formatted_mac(matchobj.group(1))
-            self.cnt += 1
-        elif sr["name"] == "firmware":
-            self.read_response["tstamp"] = tstamp
-            self.read_response["firmware"] = str(matchobj.group(1))
-            self.cnt += 1
-        elif sr["name"] == "zp":
-            self.read_response["tstamp"] = tstamp
-            self.read_response["zp"] = float(matchobj.group(1))
-            self.cnt += 1
-        elif sr["name"] == "written_zp":
-            self.write_response["tstamp"] = tstamp
-            self.write_response["zp"] = float(matchobj.group(1))
-        else:
-            return False
-        self._maybeTriggerCallbacks()
-        return True
-
-    # --------------
-    # Helper methods
-    # --------------
-
-    def _maybeTriggerCallbacks(self):
-        # trigger pending callbacks
-        if self.read_deferred and self.cnt == 4:
-            self.read_deferred.callback(self.read_response)
-            self.read_deferred = None
-            self.cnt = 0
-
-        if self.write_deferred and "zp" in self.write_response:
-            self.write_deferred.callback(self.write_response)
-            self.write_deferred = None
-
-    def _match_solicited(self, line):
-        """Returns matched command descriptor or None"""
-        for i, regexp in enumerate(self.SOLICITED_PATTERNS, 0):
-            matchobj = regexp.search(line)
-            if matchobj:
-                self.log.debug("matched {pattern}", pattern=self.SOLICITED_RESPONSES[i]["name"])
-                return self.SOLICITED_RESPONSES[i], matchobj
-        return None, None
+__all__ = ["TessInfo", "HTMLInfo", "DBaseInfo"]

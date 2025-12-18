@@ -4,32 +4,30 @@
 # See the LICENSE file for details
 # ----------------------------------------------------------------------
 
+
+# -------------------
+# System wide imports
+# -------------------
+
+from enum import IntEnum, StrEnum
+from datetime import datetime
+from typing import Dict, Union
+
 # ---------------------
 # Third party libraries
 # ---------------------
-import sys
-import enum
+
 import decouple
 
-if sys.version_info[1] < 11:
-    from typing_extensions import Self
-else:
-    from typing import Self
-
-from typing import Dict, Union
-from datetime import datetime
-
-from ... import StrEnum
-
 # Typing the message received by photometers
-Message = Dict[str,Union[str,int,float,datetime]]
+Message = Dict[str, Union[str, int, float, datetime]]
 
 # ---------
 # Constants
 # ---------
 
 
-class Role(enum.IntEnum):
+class Role(IntEnum):
     REF = 1
     TEST = 0
 
@@ -48,7 +46,7 @@ class Role(enum.IntEnum):
     def __next__(self):
         return Role.TEST if self is Role.REF else Role.REF
 
-    def other(self) -> Self:
+    def other(self) -> "Role":
         return next(self)
 
     def endpoint(self) -> str:
