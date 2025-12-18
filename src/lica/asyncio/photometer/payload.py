@@ -147,20 +147,21 @@ class OldPayload(Payload):
 
     def is_rejected(self, message) -> bool:
         rejected = super().is_rejected(message)
-        if not rejected:
-            # As serial messages do not have a sequnce number we introduce the
-            # heuristic that a sample is duplicated if all the (freq, tamb, tsky)
-            # readings are equal
-            prev_msg = self.prev[0]
-            rejected = (
-                True
-                if (
-                    message["tamb"] == prev_msg["tamb"]
-                    and message["tsky"] == prev_msg["tsky"]
-                    and message["freq"] == prev_msg["freq"]
-                )
-                else False
+        if rejected:
+            return True
+        # As serial messages do not have a sequnce number we introduce the
+        # heuristic that a sample is duplicated if all the (freq, tamb, tsky)
+        # readings are equal
+        prev_msg = self.prev[0]
+        rejected = (
+            True
+            if (
+                message["tamb"] == prev_msg["tamb"]
+                and message["tsky"] == prev_msg["tsky"]
+                and message["freq"] == prev_msg["freq"]
             )
+            else False
+        )
         if rejected:
             self._rej_values += 1
             self.log.debug("Duplicate payload by identical (freq, tamb, tsky) values: %s", message)
