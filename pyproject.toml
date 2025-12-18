@@ -27,6 +27,14 @@ dependencies = [
     "typing-extensions >= 4.12",
 ]
 
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.1",
+    "pytest-asyncio>=1.1.0",
+    "mypy>=1.15.0",
+]
+
 [project.optional-dependencies]
 
 # jinja2 module need this
@@ -86,10 +94,6 @@ script-files = []
 [tool.setuptools_scm]
 write_to = "src/lica/_version.py"
 
-[tool.uv]
-dev-dependencies = [
-    "pytest>=8.3.3",
-]
 
 [tool.setuptools.packages.find]
 # scanning for namespace packages is true by default in pyproject.toml, so
