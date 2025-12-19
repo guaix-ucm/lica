@@ -58,8 +58,6 @@ class Payload(ABC):
         self._nok_payload = 0
 
     def is_rejected(self, message) -> bool:
-        if len(self.prev) == 0:
-            return True
         prev_msg = self.prev[0]
         # This takes into account repeated sequence numbers
         if prev_msg["seq"] == message["seq"]:
@@ -125,9 +123,13 @@ class OldPayload(Payload):
             message = self._handle_unsolicited_response(data, tstamp)
             if message is not None:
                 self._ok_payload += 1
-                rejected = self.is_rejected(message)
-                self.prev.append(message)
-                result = None if rejected else self.prev[0]
+                if len(self.prev) > 0:
+                    rejected = self.is_rejected(message)
+                    prev = self.prev.popleft()
+                    self.prev.append(message)
+                    result = None if rejected else prev
+                else:
+                    self.prev.append(message)
             else:
                 self._nok_payload += 1
         return result
@@ -232,9 +234,13 @@ class JsonPayload(Payload):
                 message["tstamp"] = tstamp
                 message["seq"] = message["udp"]
                 del message["udp"]
-                rejected = self.is_rejected(message)
-                self.prev.append(message)
-                result = None if rejected else self.prev[0]
+                if len(self.prev) > 0:
+                    rejected = self.is_rejected(message)
+                    prev = self.prev.popleft()
+                    self.prev.append(message)
+                    result = None if rejected else prev
+                else:
+                    self.prev.append(message)
         return result
 
 
