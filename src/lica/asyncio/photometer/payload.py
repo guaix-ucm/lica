@@ -49,7 +49,7 @@ from collections import deque
 
 
 class Payload(ABC):
-    def __init__(self, logger: Logger, strict: bool = False):
+    def __init__(self, logger: Logger, strict: bool):
         self.log = logger
         self.qprev = deque(maxlen=1)  # ring buffer 1 slot long
         self._rej_seq = 0
@@ -108,8 +108,8 @@ class OldPayload(Payload):
     )
     UNSOLICITED_PATTERNS = [re.compile(ur["pattern"]) for ur in UNSOLICITED_RESPONSES]
 
-    def __init__(self, logger: Logger):
-        super().__init__(logger)
+    def __init__(self, logger: Logger, strict: bool):
+        super().__init__(logger, strict)
         self._i = 1
         self._rej_values = 0
         self.log.info("Using %s decoder", self.__class__.__name__)
@@ -210,8 +210,8 @@ class JsonPayload(Payload):
     Decodes new JSON style TESS payload:
     """
 
-    def __init__(self, logger: Logger):
-        super().__init__(logger)
+    def __init__(self, logger: Logger, strict: bool):
+        super().__init__(logger, strict)
         self.log.info("Using %s decoder", self.__class__.__name__)
 
     # --------------
