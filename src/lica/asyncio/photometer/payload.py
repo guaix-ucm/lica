@@ -49,21 +49,24 @@ from collections import deque
 
 
 class Payload(ABC):
-    def __init__(self, logger: Logger):
+    def __init__(self, logger: Logger, strict: bool = False):
         self.log = logger
-        self.prev = deque(maxlen=1)  # ring buffer 1 slot long
+        self.qprev = deque(maxlen=1)  # ring buffer 1 slot long
         self._rej_seq = 0
         self._rej_read = 0
         self._ok_payload = 0
         self._nok_payload = 0
+        self._strict = strict  # Strict rejection by read period shorter than square wave period
 
     def is_rejected(self, message) -> bool:
-        prev_msg = self.prev[0]
+        prev_msg = self.qprev[0]
         # This takes into account repeated sequence numbers
         if prev_msg["seq"] == message["seq"]:
             self._rej_seq += 1
             self.log.debug("Duplicate payload by identical #seq values: %s", message)
             return True
+        if not self._strict:
+            return False
         # This takes into account that the read period should be longer than the sqaure wave period
         aver_period = 2 / (prev_msg["freq"] + message["freq"])
         read_duration = (message["tstamp"] - prev_msg["tstamp"]).total_seconds()
@@ -123,13 +126,13 @@ class OldPayload(Payload):
             message = self._handle_unsolicited_response(data, tstamp)
             if message is not None:
                 self._ok_payload += 1
-                if len(self.prev) > 0:
+                if len(self.qprev) > 0:
                     rejected = self.is_rejected(message)
-                    prev = self.prev.popleft()
-                    self.prev.append(message)
+                    prev = self.qprev.popleft()
+                    self.qprev.append(message)
                     result = None if rejected else prev
                 else:
-                    self.prev.append(message)
+                    self.qprev.append(message)
             else:
                 self._nok_payload += 1
         return result
@@ -154,7 +157,7 @@ class OldPayload(Payload):
         # As serial messages do not have a sequnce number we introduce the
         # heuristic that a sample is duplicated if all the (freq, tamb, tsky)
         # readings are equal
-        prev_msg = self.prev[0]
+        prev_msg = self.qprev[0]
         rejected = (
             True
             if (
@@ -234,13 +237,13 @@ class JsonPayload(Payload):
                 message["tstamp"] = tstamp
                 message["seq"] = message["udp"]
                 del message["udp"]
-                if len(self.prev) > 0:
+                if len(self.qprev) > 0:
                     rejected = self.is_rejected(message)
-                    prev = self.prev.popleft()
-                    self.prev.append(message)
+                    prev = self.qprev.popleft()
+                    self.qprev.append(message)
                     result = None if rejected else prev
                 else:
-                    self.prev.append(message)
+                    self.qprev.append(message)
         return result
 
 

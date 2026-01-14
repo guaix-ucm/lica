@@ -9,7 +9,6 @@
 # -------------------
 
 import logging
-from asyncio import CancelledError
 from datetime import datetime
 from typing import Tuple, AsyncIterator, Any
 
