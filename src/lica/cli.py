@@ -49,6 +49,9 @@ def configure_logging(args: Namespace):
     # Log formatter
     # fmt = logging.Formatter('%(asctime)s - %(name)s [%(levelname)s] %(message)s')
     fmt = logging.Formatter("%(asctime)s [%(levelname)-8s] [%(name)s] %(message)s")
+    # remove previous handlers installed at load time by other libraries
+    for h in log.handlers:
+        log.removeHandler(h)
     # create console handler and set level to debug
     if args.console:
         ch = StreamHandler()
@@ -68,13 +71,9 @@ def arg_parser(name: str, version: str, description: str) -> ArgumentParser:
     # create the top-level parser
     parser = ArgumentParser(prog=name, description=description)
     # Generic args common to every command
-    parser.add_argument(
-        "--version", action="version", version="{0} {1}".format(name, version)
-    )
+    parser.add_argument("--version", action="version", version="{0} {1}".format(name, version))
     parser.add_argument("--console", action="store_true", help="Log to console.")
-    parser.add_argument(
-        "--log-file", type=str, metavar="<FILE>", default=None, help="Log to file."
-    )
+    parser.add_argument("--log-file", type=str, metavar="<FILE>", default=None, help="Log to file.")
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--verbose", action="store_true", help="Verbose output.")
     group.add_argument("--quiet", action="store_true", help="Quiet output.")

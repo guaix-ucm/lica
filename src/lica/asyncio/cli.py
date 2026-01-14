@@ -49,6 +49,9 @@ def configure_logging(args: Namespace) -> QueueListener:
     # Log formatter
     # fmt = logging.Formatter('%(asctime)s - %(name)s [%(levelname)s] %(message)s')
     fmt = logging.Formatter("%(asctime)s [%(levelname)-8s] [%(name)s] %(message)s")
+    # remove previous handlers installed at load time by other libraries
+    for h in log.handlers:
+        log.removeHandler(h)
     # create console handler and set level to debug
     q = queue.Queue()
     log.addHandler(QueueHandler(q))
@@ -83,7 +86,9 @@ def arg_parser(name: str, version: str, description: str) -> ArgumentParser:
     return parser
 
 
-async def _wrapped_main(main_func: Callable[[Namespace], None], args: Namespace, name: str, version: str) -> None:
+async def _wrapped_main(
+    main_func: Callable[[Namespace], None], args: Namespace, name: str, version: str
+) -> None:
     """Internal coroutine that starts logging thread and the main coroutine"""
     global listener
     listener = configure_logging(args)
