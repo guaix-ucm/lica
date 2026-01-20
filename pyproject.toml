@@ -3,7 +3,7 @@ name = "lica"
 dynamic = ["version"]
 description = "Assorte collection of utilities (functions, classes, etc.) used in other projects at LICA, UCM"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 license = "GPL-3.0-or-later"
 authors = [
     {name = "Rafael González", email = "rafael08@ucm.es"},
