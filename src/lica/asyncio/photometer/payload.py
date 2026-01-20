@@ -120,9 +120,9 @@ class OldPayload(Payload):
 
     def decode(self, data: str, tstamp: datetime) -> dict | None:
         data = data.strip()
-        self.log.debug("<== [%02d] %s", len(data), data)
         result = None  # Assume bad result by default
         if len(data):
+            self.log.debug("<== [%02d] %s", len(data), data)
             message = self._handle_unsolicited_response(data, tstamp)
             if message is not None:
                 self._ok_payload += 1
@@ -177,7 +177,7 @@ class OldPayload(Payload):
         for i, regexp in enumerate(OldPayload.UNSOLICITED_PATTERNS, 0):
             matchobj = regexp.search(line)
             if matchobj:
-                self.log.debug("Matched %s", OldPayload.UNSOLICITED_RESPONSES[i]["name"])
+                #self.log.debug("Matched %s", OldPayload.UNSOLICITED_RESPONSES[i]["name"])
                 return OldPayload.UNSOLICITED_RESPONSES[i], matchobj
         return None, None
 
