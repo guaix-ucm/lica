@@ -104,7 +104,6 @@ class StreamProtocol(asyncio.Protocol):
                 and not self.on_data_received.cancelled()
                 and not self.on_data_received.done()
             ):
-                self.log.debug(message)
                 self.on_data_received.set_result((now, message))
                 # Only fulfill one waiter; caller can call next_message() again.
                 break
@@ -241,7 +240,6 @@ class UdpProtocol(asyncio.DatagramProtocol):
             and not self.on_data_received.cancelled()
             and not self.on_data_received.done()
         ):
-            self.log.debug(message)
             self.on_data_received.set_result((now, message))
 
     # ----------------------
