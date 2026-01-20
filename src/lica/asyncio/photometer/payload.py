@@ -94,6 +94,8 @@ class OldPayload(Payload):
     """
     Decodes Old Style TESS payload:
     <fH 04606><tA +2987><tO +2481><mZ -0000>
+    <fm 00080><tA +2987><tO +2481><mZ -0000>
+    <fm-00000><tA +2987><tO +2481><mZ -0000>
     """
 
     UNSOLICITED_RESPONSES = (
@@ -103,7 +105,7 @@ class OldPayload(Payload):
         },
         {
             "name": "mHz message",
-            "pattern": r"^<fm([ +]\d{5})><tA ([+-]\d{4})><tO ([+-]\d{4})><mZ ([+-]\d{4})>",
+            "pattern": r"^<fm([ +-]\d{5})><tA ([+-]\d{4})><tO ([+-]\d{4})><mZ ([+-]\d{4})>",
         },
     )
     UNSOLICITED_PATTERNS = [re.compile(ur["pattern"]) for ur in UNSOLICITED_RESPONSES]
